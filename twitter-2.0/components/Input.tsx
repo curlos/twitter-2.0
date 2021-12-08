@@ -19,8 +19,11 @@ import {
 } from "@heroicons/react/outline";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+import { useSession } from 'next-auth/react';
 
 const Input = () => {
+  const { data: session } = useSession()
+
   const [input, setInput] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
   const filePickerRef = useRef(null)
@@ -82,12 +85,10 @@ const Input = () => {
     }
   }
 
-  console.log(showEmojis)
-
   return (
     <div className={`flex p-2 space-x-4 border-b border-gray-500 ${loading && 'opacity-60'}`}>
       <div>
-        <Image src="/assets/icon.jpg" width={60} height={60} className="rounded-full cursor-pointer" />
+        <Image src={session.user.image} width={60} height={60} className="rounded-full cursor-pointer" />
       </div>
 
       <div className="w-full">

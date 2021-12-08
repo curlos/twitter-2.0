@@ -10,10 +10,17 @@ import {
   UserIcon,
   DotsCircleHorizontalIcon,
   DotsHorizontalIcon,
+  LogoutIcon
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
+import { signOut, useSession } from "next-auth/react";
 
 const Sidebar = () => {
+
+  const { data: session } = useSession()
+
+  console.log(session)
+
   return (
     <div className="flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-500 lg:w-[280px]">
       <div className="space-y-6 flex-grow">
@@ -29,6 +36,11 @@ const Sidebar = () => {
         <SidebarLink text="Profile" Icon={DotsCircleHorizontalIcon} active={false} />
         <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} />
 
+        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => signOut()}>
+          <LogoutIcon className="h-[30px] w-[30px]" />
+          <div>Logout</div>
+        </div>
+
         <button className="flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full">
           Tweet
         </button>
@@ -37,12 +49,12 @@ const Sidebar = () => {
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center space-x-2">
           <div>
-            <Image src="/assets/icon.jpg" width={50} height={50} className="rounded-full" />
+            <Image src={session.user.image} width={50} height={50} className="rounded-full" />
           </div>
 
           <div className="">
-            <div>firebase 1875</div>
-            <div className="text-gray-500">@firebase1875</div>
+            <div>{session.user.name}</div>
+            <div className="text-gray-500">{session.user.email}</div>
           </div>
         </div>
 
