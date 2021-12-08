@@ -87,7 +87,7 @@ const Input = () => {
   return (
     <div className={`flex p-2 space-x-4 border-b border-gray-500 ${loading && 'opacity-60'}`}>
       <div>
-        <Image src="/assets/pucci.jpeg" width={60} height={60} className="rounded-full cursor-pointer" />
+        <Image src="/assets/icon.jpg" width={60} height={60} className="rounded-full cursor-pointer" />
       </div>
 
       <div className="w-full">

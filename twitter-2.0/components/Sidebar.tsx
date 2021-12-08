@@ -37,7 +37,7 @@ const Sidebar = () => {
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center space-x-2">
           <div>
-            <Image src="/assets/pucci.jpeg" width={50} height={50} className="rounded-full" />
+            <Image src="/assets/icon.jpg" width={50} height={50} className="rounded-full" />
           </div>
 
           <div className="">
