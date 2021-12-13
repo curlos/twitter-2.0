@@ -5,18 +5,18 @@ import Input from './Input'
 import { useSession } from 'next-auth/react';
 import { onSnapshot, query } from '@firebase/firestore';
 import { collection, orderBy } from 'firebase/firestore';
-import Post from './Post';
+import Tweet from './Tweet';
 
 const Feed = () => {
 
   const { data: session } = useSession()
-  const [posts, setPosts] = useState([])
+  const [tweets, setTweets] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => onSnapshot(
-    query(collection(db, "posts"), orderBy("timestamp", "desc")),
+    query(collection(db, "tweets"), orderBy("timestamp", "desc")),
     (snapshot) => {
-      setPosts(snapshot.docs)
+      setTweets(snapshot.docs)
       setLoading(false)
     }
   ), [db])
@@ -29,9 +29,8 @@ const Feed = () => {
           <SparklesIcon className="h-5 w-5" />
         </div>
 
-
         <Input />
-        {posts.map((post) => <Post key={post.id} id={post.id} post={post.data()} />)}
+        {tweets.map((tweet) => <Tweet key={tweet.id} id={tweet.id} tweet={tweet.data()} />)}
 
       </div>
     )

@@ -1,17 +1,17 @@
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
 import React from 'react'
+import { useRecoilState } from 'recoil'
+import { newTweetModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
+import { NewTweetModal } from '../components/NewTweetModal'
 import Sidebar from '../components/Sidebar'
 import Login from './Login'
 
 export default function Home({ trendingResults, followResults, providers }) {
 
   const { data: session, status } = useSession()
-  console.log(status)
-  console.log(session)
-  console.log(process.env.GOOGLE_CLIENT_ID)
-  console.log(process.env.GOOGLE_CLIENT_SECRET)
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
   if (!session) return <Login providers={providers} />
 
@@ -25,6 +25,8 @@ export default function Home({ trendingResults, followResults, providers }) {
       <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
         <Sidebar />
         <Feed />
+
+        {isOpen && <NewTweetModal />}
       </main>
 
     </div>

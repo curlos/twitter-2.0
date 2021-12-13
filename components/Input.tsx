@@ -6,6 +6,7 @@ import {
   collection,
   doc,
   serverTimestamp,
+  setDoc,
   updateDoc,
 } from '@firebase/firestore'
 import { getDownloadURL, ref, uploadString } from '@firebase/storage'
@@ -20,21 +21,30 @@ import {
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
+import { useRecoilState } from 'recoil';
+import { newTweetModalState, tweetIdState } from '../atoms/atom';
 
-const Input = () => {
+interface Props {
+  replyModal?: boolean
+}
+
+const Input = ({ replyModal }: Props) => {
   const { data: session } = useSession()
+  const [postId, setPostId] = useState(tweetIdState)
 
   const [input, setInput] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
   const filePickerRef = useRef(null)
   const [showEmojis, setShowEmojis] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
-  const sendPost = async () => {
+  const sendTweet = async () => {
     if (loading) return
     setLoading(true)
 
-    const docRef = await addDoc(collection(db, 'posts'), {
+    console.log('new tweet')
+    const docRef = await addDoc(collection(db, 'tweets'), {
       id: session.user.uid,
       username: session.user.name,
       userImg: session.user.image,
@@ -43,12 +53,12 @@ const Input = () => {
       timestamp: serverTimestamp()
     })
 
-    const imageRef = ref(storage, `posts/${docRef.id}/image`)
+    const imageRef = ref(storage, `tweets/${docRef.id}/image`)
 
     if (selectedFile) {
       await uploadString(imageRef, selectedFile, "data_url").then(async () => {
         const downloadURL = await getDownloadURL(imageRef)
-        await updateDoc(doc(db, "posts", docRef.id), {
+        await updateDoc(doc(db, "tweets", docRef.id), {
           image: downloadURL
         })
       })
@@ -58,6 +68,7 @@ const Input = () => {
     setInput('')
     setSelectedFile(null)
     setShowEmojis(false)
+    setIsOpen(false)
   }
 
   const addImageToPost = (e) => {
@@ -86,9 +97,9 @@ const Input = () => {
   }
 
   return (
-    <div className={`flex p-2 space-x-4 border-b border-gray-500 ${loading && 'opacity-60'}`}>
+    <div className={`flex p-3 space-x-2 border-b border-gray-500 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <div>
-        <Image src={session.user.image} width={60} height={60} className="rounded-full cursor-pointer" />
+        <img src={session.user.image} height={60} width={60} className="rounded-full h-[55px] w=[55px]" />
       </div>
 
       <div className="w-full">
@@ -96,7 +107,7 @@ const Input = () => {
           <TextareaAutosize
             value={input}
             onChange={handleTextChange}
-            className="bg-black outline-none placeholder-gray-500 min-h-[60px] w-full resize-none font-sans" placeholder="What's happening?" />
+            className={`bg-black outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
 
           {selectedFile && (
             <div className="py-3">
@@ -156,7 +167,10 @@ const Input = () => {
               <div>{input.length}/400</div>
               <button
                 className="bg-lightblue-500 px-4 py-2 rounded-full font-bold"
-                onClick={sendPost}>Tweet</button>
+                onClick={sendTweet}>
+                {!replyModal ? 'Tweet' : 'Reply'}
+              </button>
+
             </div>
           </div>
         )}

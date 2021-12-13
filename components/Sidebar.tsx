@@ -14,10 +14,13 @@ import {
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
+import { useRecoilState } from "recoil";
+import { newTweetModalState } from "../atoms/atom";
 
 const Sidebar = () => {
 
   const { data: session } = useSession()
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
   console.log(session)
 
@@ -41,7 +44,7 @@ const Sidebar = () => {
           <div>Logout</div>
         </div>
 
-        <button className="flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full">
+        <button className="flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full" onClick={() => setIsOpen(true)}>
           Tweet
         </button>
       </div>
