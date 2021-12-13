@@ -1,11 +1,11 @@
 import { atom } from 'recoil'
 
-export const modalState = atom({
-  key: "modalState",
+export const newTweetModalState = atom({
+  key: "newTweetModalState",
   default: false,
 })
 
-export const postIdState = atom({
-  key: "postIdState",
-  default: false,
+export const tweetIdState = atom({
+  key: "tweetIdState",
+  default: '',
 })
