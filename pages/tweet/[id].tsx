@@ -10,6 +10,7 @@ import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
 import { SparklesIcon } from '@heroicons/react/outline'
 import Tweet from '../../components/Tweet'
+import { collection, orderBy, query, where } from 'firebase/firestore'
 
 interface Props {
   trendingResults: any,
@@ -33,9 +34,25 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
       onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
         console.log(snapshot)
         setTweet(snapshot.data());
-        setLoading(false)
       }),
-    [db]
+    [db, id]
+  )
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "tweets"),
+          where("parentTweet", "==", id),
+          orderBy("timestamp", "desc"),
+        ),
+        (snapshot) => {
+          console.log(snapshot)
+          setReplies(snapshot.docs)
+          setLoading(false)
+        }
+      ),
+    [db, id]
   )
 
   console.log(tweet)
@@ -56,16 +73,19 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
         {loading ? <div>Loading...</div> : (
           <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-500">
             <div className="flex justify-between border-b border-gray-500 p-3">
-              <h2 className="font-bold">Home</h2>
+              <h2 className="font-bold">Tweet</h2>
               <SparklesIcon className="h-5 w-5" />
             </div>
 
             <Tweet id={String(id)} tweet={tweet} tweetPage={true} />
 
+            {replies.map((tweetObj) => <Tweet id={tweetObj.id} tweet={tweetObj.data()} parentTweet={tweet} />)}
 
 
           </div>
         )}
+
+
 
         {isOpen && <NewTweetModal />}
       </main>

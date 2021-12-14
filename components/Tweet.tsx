@@ -6,15 +6,17 @@ import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { newTweetModalState, tweetIdState } from '../atoms/atom';
-import { collection, deleteDoc, doc, onSnapshot, setDoc } from '@firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, onSnapshot, setDoc } from '@firebase/firestore';
 import { db } from '../firebase';
 import { orderBy, query } from 'firebase/firestore';
 import { Dropdown } from './Dropdown';
+import Head from 'next/head';
 
 interface Props {
   id: string,
   tweet: any,
   tweetPage?: boolean
+  parentTweet?: Object
 }
 
 const Tweet = ({ id, tweet, tweetPage }: Props) => {
@@ -82,7 +84,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     router.push('/')
   }
 
-  console.log(replies)
+  // console.log(parentTweet)
 
   return (
     !tweetPage ? (
@@ -106,6 +108,12 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
             </div>
 
             <div className="pb-3">
+              {/* {parentTweet && (
+                <div className="text-[15px] text-gray-500">
+                  Replying to
+                  <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
+                </div>
+              )} */}
               <div>{tweet.text}</div>
               {tweet.image && (
                 <div className="pt-3">
@@ -150,21 +158,38 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
       </div>
     ) : (
       <div className="text-base p-3 border-b border-gray-500 w-full">
-        <div className="flex">
-          <div className="mr-2">
-            <img src={tweet.userImg} alt={tweet.username} className="rounded-full h-[55px] w=[55px]" />
+        <div className="flex justify-between">
+          <div className="flex">
+            <div className="mr-2">
+              <img src={tweet.userImg} alt={tweet.username} className="rounded-full h-[55px] w=[55px]" />
+            </div>
+
+            <div className="">
+              <div className="flex">
+                <div>{tweet.username}</div>
+                <BadgeCheckIcon className="h-5 w-5 ml-[2px]" />
+              </div>
+              <div className="text-gray-400 p-0 m-0">@{tweet.tag}</div>
+            </div>
           </div>
 
-          <div className="">
-            <div className="flex">
-              <div>{tweet.username}</div>
-              <BadgeCheckIcon className="h-5 w-5 ml-[2px]" />
-            </div>
-            <div className="text-gray-400 p-0 m-0">@{tweet.tag}</div>
-          </div>
+          <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
         </div>
 
-        <div className="text-xl py-3">{tweet.text}</div>
+        <div className="text-xl py-3">
+          {/* {parentTweet && (
+            <div className="text-[15px] text-gray-500">
+              Replying to
+              <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
+            </div>
+          )} */}
+          <div>{tweet.text}</div>
+          {tweet.image && (
+            <div className="pt-3">
+              <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-500" />
+            </div>
+          )}
+        </div>
 
         <div className="divide-y divide-gray-500">
           <div className="flex py-2">
