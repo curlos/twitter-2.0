@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline'
 import { signIn } from 'next-auth/react'
+import Head from 'next/head'
+import AnimatedButton from '../components/AnimatedButton'
 
 interface Props {
   providers: any
@@ -9,10 +11,24 @@ interface Props {
 
 const Login = ({ providers }: Props) => {
 
-  console.log(providers)
+  const [signUp, setSignUp] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleAuth = (provider: any) => {
+    if (signUp) {
+
+    } else {
+      signIn(provider.id, { callbackUrl: "/" })
+    }
+  }
 
   return (
     <div className="flex h-screen w-screen">
+      <Head>
+        <title>Login to Twitter 2.0</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <div className="flex-1 bg-lightblue-500 flex flex-col justify-center items-center p-24">
         <div className="space-y-5">
           <div className="flex space-x-3">
@@ -37,21 +53,22 @@ const Login = ({ providers }: Props) => {
           <Image src="https://rb.gy/ogau5a" alt="" height={30} width={30} className="text-lightblue-500" />
           <h2 className="text-2xl font-bold">See what's happening in the world right now</h2>
           <h6 className="font-bold">Join Twitter 2.0 today</h6>
+
+          <form>
+            <input className="w-full p-3 bg-black border border-gray-500 rounded-lg focus:outline-none mb-3" placeholder="Username"></input>
+            <input className="w-full p-3 bg-black border border-gray-500 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
+          </form>
+
+          <AnimatedButton handleAuth={handleAuth} provider={{ id: 'email' }} authName={'email'} signUp={signUp} />
+
           {Object.values(providers).map((provider: any) => (
             <div key={provider.name} className="py-3">
 
-              <button
-                className="relative inline-flex items-center justify-start px-6 py-3 overflow-hidden font-medium transition-all bg-white rounded hover:bg-white group"
-                onClick={() => signIn(provider.id, { callbackUrl: "/" })}
-              >
-                <span className="w-48 h-48 rounded rotate-[-40deg] bg-[#1d9bf0] absolute bottom-0 left-0 -translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
-                <span className="relative w-full text-left text-black transition-colors duration-300 ease-in-out group-hover:text-white">
-                  <div className="flex items-center space-x-2">
-                    <img src="/assets/google.png" alt="Google Logo" className="h-5 w-5" />
-                    <div>Sign in with {provider.name}</div>
-                  </div>
-                </span>
-              </button>
+              <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
+
+              {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(true)}>Sign up</a></div>}
+
+              {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(false)}>Sign in</a></div>}
             </div>
           ))}
         </div>
