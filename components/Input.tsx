@@ -26,11 +26,11 @@ import { newTweetModalState, tweetIdState } from '../atoms/atom';
 
 interface Props {
   replyModal?: boolean
+  tweetId?: string
 }
 
-const Input = ({ replyModal }: Props) => {
+const Input = ({ replyModal, tweetId }: Props) => {
   const { data: session } = useSession()
-  const [postId, setPostId] = useState(tweetIdState)
 
   const [input, setInput] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
@@ -44,14 +44,37 @@ const Input = ({ replyModal }: Props) => {
     setLoading(true)
 
     console.log('new tweet')
-    const docRef = await addDoc(collection(db, 'tweets'), {
-      id: session.user.uid,
+    console.log(replyModal)
+    console.log(tweetId)
+    console.log({
+      userID: session.user.uid,
       username: session.user.name,
       userImg: session.user.image,
       tag: session.user.tag,
       text: input,
+      parentTweet: replyModal ? tweetId : '',
       timestamp: serverTimestamp()
     })
+
+    const docRef = await addDoc(collection(db, 'tweets'), {
+      userID: session.user.uid,
+      username: session.user.name,
+      userImg: session.user.image,
+      tag: session.user.tag,
+      text: input,
+      parentTweet: replyModal ? tweetId : '',
+      timestamp: serverTimestamp()
+    })
+
+    if (replyModal) {
+      console.log('adding reply to replies')
+      console.log(tweetId)
+      console.log(docRef)
+      console.log(docRef.id)
+      await setDoc(doc(db, "tweets", tweetId, "replies", docRef.id), {
+        username: session.user.name,
+      })
+    }
 
     const imageRef = ref(storage, `tweets/${docRef.id}/image`)
 
@@ -63,6 +86,8 @@ const Input = ({ replyModal }: Props) => {
         })
       })
     }
+
+
 
     setLoading(false)
     setInput('')

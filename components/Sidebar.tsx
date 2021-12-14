@@ -16,18 +16,17 @@ import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { newTweetModalState } from "../atoms/atom";
+import router from "next/router";
 
 const Sidebar = () => {
 
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
-  console.log(session)
-
   return (
     <div className="flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-500 lg:w-[280px]">
       <div className="space-y-6 flex-grow">
-        <div className="">
+        <div className="cursor-pointer" onClick={() => router.push('/')}>
           <Image src="https://rb.gy/ogau5a" width={30} height={30} />
         </div>
         <SidebarLink text="Home" Icon={HomeIcon} active={true} />

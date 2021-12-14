@@ -79,7 +79,7 @@ export const NewTweetModal = () => {
 
               {!loading && <ParentTweet tweet={tweet} />}
 
-              <Input />
+              <Input replyModal={String(tweetId) !== ''} tweetId={tweetId} />
             </div>
           </Transition.Child>
         </div>

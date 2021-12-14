@@ -21,6 +21,8 @@ const Feed = () => {
     }
   ), [db])
 
+  console.log(tweets)
+
   return (
     loading ? <div>Loading...</div> : (
       <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-500">
