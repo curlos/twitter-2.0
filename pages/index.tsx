@@ -1,5 +1,6 @@
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import React from 'react'
 import { useRecoilState } from 'recoil'
 import { newTweetModalState } from '../atoms/atom'
@@ -7,14 +8,11 @@ import Feed from '../components/Feed'
 import { NewTweetModal } from '../components/NewTweetModal'
 import Sidebar from '../components/Sidebar'
 import Widgets from '../components/Widgets'
-import Login from './Login'
 
 export default function Home({ trendingResults, followResults, providers }) {
 
   const { data: session, status } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-
-  if (!session) return <Login providers={providers} />
 
   return (
     <div className="px-12 min-h-screen min-w-screen">
@@ -43,6 +41,17 @@ export const getServerSideProps = async (context) => {
   const providers = await getProviders()
   const session = await getSession(context)
 
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/auth'
+      }
+    }
+  }
+
+  console.log(session)
+
   return {
     props: {
       trendingResults,
@@ -51,5 +60,4 @@ export const getServerSideProps = async (context) => {
       session
     }
   }
-
 }

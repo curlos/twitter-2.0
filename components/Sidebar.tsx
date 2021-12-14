@@ -38,7 +38,10 @@ const Sidebar = () => {
         <SidebarLink text="Profile" Icon={DotsCircleHorizontalIcon} active={false} />
         <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} />
 
-        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => signOut()}>
+        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
+          router.push('/')
+          signOut()
+        }}>
           <LogoutIcon className="h-[30px] w-[30px]" />
           <div>Logout</div>
         </div>

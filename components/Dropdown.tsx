@@ -34,7 +34,7 @@ export const Dropdown = ({ tweet, deleteTweet }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md shadow-gray-500 shadow-lg outline-none border border-gray-500"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md shadow-gray-500 shadow-lg outline-none border border-gray-500 z-[100]"
                 >
 
                   <div className="py-1 bg-black rounded-md" onClick={deleteTweet}>

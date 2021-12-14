@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline'
-import { signIn } from 'next-auth/react'
+import { getProviders, getSession, signIn } from 'next-auth/react'
 import Head from 'next/head'
 import AnimatedButton from '../components/AnimatedButton'
 
@@ -9,7 +9,7 @@ interface Props {
   providers: any
 }
 
-const Login = ({ providers }: Props) => {
+const Auth = ({ providers }: Props) => {
 
   const [signUp, setSignUp] = useState(false)
   const [email, setEmail] = useState('')
@@ -77,4 +77,23 @@ const Login = ({ providers }: Props) => {
   )
 }
 
-export default Login
+export default Auth
+
+
+export const getServerSideProps = async (context) => {
+  const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then((res) => res.json())
+
+  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then((res) => res.json());
+
+  const providers = await getProviders()
+  const session = await getSession(context)
+
+  return {
+    props: {
+      trendingResults,
+      followResults,
+      providers,
+      session
+    }
+  }
+}
