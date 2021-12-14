@@ -39,22 +39,11 @@ const Input = ({ replyModal, tweetId }: Props) => {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
+  console.log(session)
+
   const sendTweet = async () => {
     if (loading) return
     setLoading(true)
-
-    console.log('new tweet')
-    console.log(replyModal)
-    console.log(tweetId)
-    console.log({
-      userID: session.user.uid,
-      username: session.user.name,
-      userImg: session.user.image,
-      tag: session.user.tag,
-      text: input,
-      parentTweet: replyModal ? tweetId : '',
-      timestamp: serverTimestamp()
-    })
 
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
@@ -67,10 +56,6 @@ const Input = ({ replyModal, tweetId }: Props) => {
     })
 
     if (replyModal) {
-      console.log('adding reply to replies')
-      console.log(tweetId)
-      console.log(docRef)
-      console.log(docRef.id)
       await setDoc(doc(db, "tweets", tweetId, "replies", docRef.id), {
         username: session.user.name,
       })
@@ -86,8 +71,6 @@ const Input = ({ replyModal, tweetId }: Props) => {
         })
       })
     }
-
-
 
     setLoading(false)
     setInput('')
