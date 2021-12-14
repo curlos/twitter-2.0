@@ -6,6 +6,7 @@ import { newTweetModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
 import { NewTweetModal } from '../components/NewTweetModal'
 import Sidebar from '../components/Sidebar'
+import Widgets from '../components/Widgets'
 import Login from './Login'
 
 export default function Home({ trendingResults, followResults, providers }) {
@@ -25,6 +26,7 @@ export default function Home({ trendingResults, followResults, providers }) {
       <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
         <Sidebar />
         <Feed />
+        <Widgets />
 
         {isOpen && <NewTweetModal />}
       </main>

@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { onSnapshot, query } from '@firebase/firestore';
 import { collection, orderBy } from 'firebase/firestore';
 import Tweet from './Tweet';
+import Widgets from './Widgets';
 
 const Feed = () => {
 
@@ -26,7 +27,7 @@ const Feed = () => {
   return (
     loading ? <div>Loading...</div> : (
       <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-500">
-        <div className="flex justify-between border-b border-gray-500 p-3">
+        <div className="flex justify-between bg-black border-b border-gray-500 p-3 sticky top-0 z-50">
           <h2 className="font-bold">Home</h2>
           <SparklesIcon className="h-5 w-5" />
         </div>

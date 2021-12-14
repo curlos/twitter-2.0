@@ -90,7 +90,10 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     !tweetPage ? (
       <div className="text-base p-3 border-b border-gray-500 w-full cursor-pointer" onClick={() => router.push(`/tweet/${id}`)}>
         <div className="flex">
-          <div className="mr-2">
+          <div className="mr-2" onClick={(e) => {
+            e.stopPropagation()
+            router.push(`/profile/${tweet.tag}`)
+          }}>
             <img src={tweet.userImg} alt={tweet.username} className="rounded-full h-[55px] w=[55px]" />
           </div>
           <div className="flex flex-col justify-between w-full">
