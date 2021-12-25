@@ -11,6 +11,7 @@ import { NewTweetModal } from '../../components/NewTweetModal'
 import { SparklesIcon } from '@heroicons/react/outline'
 import Tweet from '../../components/Tweet'
 import { collection, orderBy, query, where } from 'firebase/firestore'
+import Widgets from '../../components/Widgets'
 
 interface Props {
   trendingResults: any,
@@ -19,6 +20,8 @@ interface Props {
 }
 
 const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
+
+
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweet, setTweet] = useState<DocumentData>()
@@ -86,7 +89,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
         )}
 
 
-
+        <Widgets />
         {isOpen && <NewTweetModal />}
       </main>
 

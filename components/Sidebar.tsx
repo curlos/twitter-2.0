@@ -41,7 +41,7 @@ const Sidebar = () => {
         <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} />
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-          router.push('/')
+          router.push('/auth')
           signOut()
         }}>
           <LogoutIcon className="h-[30px] w-[30px]" />

@@ -1,9 +1,24 @@
 import React from 'react'
+import Tweet from './Tweet'
 
-const Tweets = () => {
+interface Props {
+  author: any,
+  tweets: any,
+  retweets: any
+}
+
+const Tweets = ({ author, tweets, retweets }: Props) => {
+  const allTweets = [...tweets, ...retweets]
+
   return (
     <div>
-      Tweet #1
+      {allTweets.map((tweet) => {
+        const tweetData = tweet.data()
+
+        return (
+          <Tweet id={tweet.id} tweet={tweetData} />
+        )
+      })}
     </div>
   )
 }
