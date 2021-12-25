@@ -29,6 +29,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
   const [author, setAuthor] = useState(null)
+  const [tweets, setTweets] = useState([])
+  const [retweets, setRetweets] = useState([])
   const router = useRouter()
   const { id } = router.query
 
@@ -36,14 +38,26 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
   useEffect(() => {
     const fetchFromDB = async () => {
-      const q = query(collection(db, "users"), where('tag', '==', id))
-      const querySnapshot = await getDocs(q)
-      setAuthor(querySnapshot.docs[0].data())
+      const userQuery = query(collection(db, "users"), where('tag', '==', id))
+      const userQuerySnapshot = await getDocs(userQuery)
+      setAuthor(userQuerySnapshot.docs[0].data())
+
+      const tweetsQuery = query(collection(db, "tweets"),
+        where('userID', '==', userQuerySnapshot.docs[0].id),
+        orderBy('timestamp', 'desc')
+      )
+      const tweetsQuerySnapshot = await getDocs(tweetsQuery)
+      console.log(tweetsQuerySnapshot)
+      setTweets(tweetsQuerySnapshot.docs)
+
+      const retweetsQuery = query(collection(db, 'users', userQuerySnapshot.docs[0].id, 'retweets'))
+      const retweetsQuerySnapshot = await getDocs(retweetsQuery)
+      setRetweets(retweetsQuerySnapshot.docs)
+
       setLoading(false)
     }
     fetchFromDB()
   }, [])
-
 
   return (
     <div className="px-12 min-h-screen min-w-screen">
@@ -177,7 +191,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <div className="w-full h-[1px] m-0 bg-gray-400 rounded-full"
             />
 
-            <Tweets />
+            <Tweets author={author} tweets={tweets} retweets={retweets} />
           </div>
         )}
 

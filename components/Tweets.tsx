@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { sortByNewest, sortByOldest } from '../utils/sortTweets'
 import Tweet from './Tweet'
 
 interface Props {
@@ -7,8 +8,13 @@ interface Props {
   retweets: any
 }
 
+const getSortedTweets = (tweets) => {
+  console.log(tweets)
+  return sortByNewest(tweets)
+}
+
 const Tweets = ({ author, tweets, retweets }: Props) => {
-  const allTweets = [...tweets, ...retweets]
+  const [allTweets, setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]))
 
   return (
     <div>
