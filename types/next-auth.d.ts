@@ -11,6 +11,10 @@ declare module "next-auth" {
       image?: string;
       tag?: string;
       uid?: string;
+      bio?: string;
+      location?: string;
+      website?: string;
+      dateJoined?: object;
     }
   }
 }

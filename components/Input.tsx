@@ -109,7 +109,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
   return (
     <div className={`flex p-3 space-x-2 border-b border-gray-500 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <div>
-        <img src={session.user.image} className="rounded-full h-[60px] w=[60px]" />
+        <img src={session.user.image} className="rounded-full h-[55px] w=[55px] max-w-none" />
       </div>
 
       <div className="w-full">

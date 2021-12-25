@@ -12,7 +12,10 @@ const addNewUser = async (session: Session) => {
     username: session.user.name,
     userImg: session.user.image,
     tag: session.user.tag,
-    timestamp: serverTimestamp()
+    bio: null,
+    location: null,
+    website: null,
+    dateJoined: serverTimestamp()
   })
 
   return docRef
@@ -40,19 +43,28 @@ export default NextAuth({
       const q = query(collection(db, "users"), where('email', '==', session.user.email))
       const querySnapshot = await getDocs(q)
 
-
-      console.log('querying, results: ')
-      console.log(querySnapshot.docs[0].data())
-      console.log(querySnapshot.docs[0].id)
-      console.log('-----')
-
       if (querySnapshot.docs.length > 0) {
         // If user is signing in with an exisitng account
+        const { bio, location, website, dateJoined } = querySnapshot.docs[0].data()
+
         session.user.uid = querySnapshot.docs[0].id
+        session.user.bio = bio
+        session.user.location = location
+        session.user.website = website
+        session.user.dateJoined = dateJoined
       } else {
         // If user is signing up with a new account
         const docRef = await addNewUser(session)
-        console.log(docRef)
+        session.user.uid = docRef.id
+
+        const userDoc = await getDoc(docRef)
+
+        const { bio, location, website, dateJoined } = userDoc.data()
+
+        session.user.bio = bio
+        session.user.location = location
+        session.user.website = website
+        session.user.dateJoined = dateJoined
       }
 
       return session;

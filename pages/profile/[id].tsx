@@ -1,4 +1,4 @@
-import { doc, DocumentData, onSnapshot } from '@firebase/firestore'
+import { doc, DocumentData, getDocs, onSnapshot } from '@firebase/firestore'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -15,6 +15,7 @@ import Widgets from '../../components/Widgets'
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline'
 import Feed from '../../components/Feed'
 import Tweets from '../../components/Tweets'
+import moment from 'moment'
 
 interface Props {
   trendingResults: any,
@@ -25,38 +26,23 @@ interface Props {
 const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
+  const [author, setAuthor] = useState(null)
   const router = useRouter()
   const { id } = router.query
 
   console.log(id)
 
-  // useEffect(
-  //   () =>
-  //     onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
-  //       console.log(snapshot)
-  //       setTweet(snapshot.data());
-  //     }),
-  //   [db, id]
-  // )
-
-  // useEffect(
-  //   () =>
-  //     onSnapshot(
-  //       query(
-  //         collection(db, "tweets"),
-  //         where("parentTweet", "==", id),
-  //         orderBy("timestamp", "desc"),
-  //       ),
-  //       (snapshot) => {
-  //         console.log(snapshot)
-  //         setReplies(snapshot.docs)
-  //         setLoading(false)
-  //       }
-  //     ),
-  //   [db, id]
-  // )
+  useEffect(() => {
+    const fetchFromDB = async () => {
+      const q = query(collection(db, "users"), where('tag', '==', id))
+      const querySnapshot = await getDocs(q)
+      setAuthor(querySnapshot.docs[0].data())
+      setLoading(false)
+    }
+    fetchFromDB()
+  }, [])
 
 
   return (
@@ -79,7 +65,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
               <div className="">
                 <div className="flex items-center mb-0 p-0">
-                  <h2 className="font-bold">Los Angeles Lakers</h2>
+                  <h2 className="font-bold">{author.username}</h2>
                   <BadgeCheckIcon className="h-6 w-6" />
                 </div>
 
@@ -92,19 +78,15 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             </div>
 
             <div className="flex justify-between items-start p-4 pb-0">
-              <img src="/assets/profile_icon.jpeg" alt="" className="rounded-full h-[133.5px] w-[133.5px] border-2 border-gray-500 mt-[-88px]" />
+              <img src={author.userImg} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-black mt-[-88px]" />
 
-              <div className="flex space-x-2">
-                <div className="flex justify-center items-center p-2 border border-gray-500 rounded-full w-10 h-10">
+              <div className="flex items-center space-x-2">
+                <div className="flex justify-center items-center p-2 border-2 border-gray-500 rounded-full w-10 h-10">
                   <DotsHorizontalIcon className="h-5 w-5" />
                 </div>
 
-                <div className="flex justify-center items-center p-2 border border-gray-500 rounded-full w-10 h-10">
-                  <DotsHorizontalIcon className="h-5 w-5" />
-                </div>
-
-                <div className="flex justify-center items-center p-2 px-4 border border-gray-500 rounded-full">
-                  Following
+                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-500 rounded-full">
+                  {session.user.tag === id ? 'Edit Profile' : 'Follow'}
                 </div>
               </div>
 
@@ -113,28 +95,32 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
             <div className="p-4 pt-2">
               <div className="flex items-center">
-                <h2 className="text-xl font-[900]">Los Angeles Lakers</h2>
+                <h2 className="text-xl font-[900]">{author.username}</h2>
                 <BadgeCheckIcon className="h-5 w-5" />
               </div>
 
-              <div className="text-base text-gray-500">@Lakers</div>
+              <div className="text-base text-gray-500">@{author.tag}</div>
 
-              <div className="text-base">Welcome to the #LakeShow | 17x Champions</div>
+              <div className="text-base">{author.bio}</div>
 
               <div className="flex text-base text-gray-500 space-x-4 py-2">
-                <div className="flex text-gray-500 space-x-1">
-                  <LocationMarkerIcon className="h-5 w-5" />
-                  <div className="">Los Angeles, CA</div>
-                </div>
+                {author.location ? (
+                  <div className="flex text-gray-500 space-x-1">
+                    <LocationMarkerIcon className="h-5 w-5" />
+                    <div className="">{author.location}</div>
+                  </div>
+                ) : null}
 
-                <div className="flex space-x-1">
-                  <LinkIcon className="h-5 w-5" />
-                  <a href="http://lakers.com/" target="_blank" className="text-lightblue-400 hover:underline">lakers.com</a>
-                </div>
+                {author.website ? (
+                  <div className="flex space-x-1">
+                    <LinkIcon className="h-5 w-5" />
+                    <a href="http://lakers.com/" target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
+                  </div>
+                ) : null}
 
                 <div className="flex space-x-1">
                   <CalendarIcon className="h-5 w-5" />
-                  <div className="">Joined February 2009</div>
+                  <div className="">Joined {moment(new Date(author.dateJoined.seconds * 1000)).format('MMMM YYYY')}</div>
                 </div>
 
               </div>
@@ -159,13 +145,39 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                 </div>
                 <div>Followed by halsey and1, Sports Section, and 10 others you follow</div>
               </div>
+            </div>
 
-              <div className="flex text-base text-gray-500 space-x-3">
-                <div className={`${filter === 'Tweets' && 'text-white font-bold border-b-4 border-lightblue-400'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+            <div className="flex">
+              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2 ml-2">
+                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                />
               </div>
 
-              <Tweets />
+              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
+                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                />
+              </div>
+
+              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
+                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                />
+              </div>
+
+              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
+                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                />
+              </div>
+
             </div>
+
+            <div className="w-full h-[1px] m-0 bg-gray-400 rounded-full"
+            />
+
+            <Tweets />
           </div>
         )}
 
