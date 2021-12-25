@@ -1,4 +1,4 @@
-import { doc, DocumentData, getDocs, onSnapshot } from '@firebase/firestore'
+import { deleteDoc, doc, DocumentData, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -10,7 +10,7 @@ import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
 import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid'
 import Tweet from '../../components/Tweet'
-import { collection, orderBy, query, where } from 'firebase/firestore'
+import { collection, orderBy, query, setDoc, where } from 'firebase/firestore'
 import Widgets from '../../components/Widgets'
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline'
 import Tweets from '../../components/Tweets'
@@ -28,19 +28,25 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
   const [author, setAuthor] = useState(null)
+  const [authorID, setAuthorID] = useState('')
   const [tweets, setTweets] = useState([])
   const [retweets, setRetweets] = useState([])
   const [likes, setLikes] = useState([])
+  const [followers, setFollowers] = useState([])
+  const [following, setFollowing] = useState([])
+
+  const [followed, setFollowed] = useState(false)
   const router = useRouter()
   const { id } = router.query
 
-  console.log(id)
-
   useEffect(() => {
+    setLoading(true)
+
     const fetchFromDB = async () => {
       const userQuery = query(collection(db, "users"), where('tag', '==', id))
       const userQuerySnapshot = await getDocs(userQuery)
       setAuthor(userQuerySnapshot.docs[0].data())
+      setAuthorID(userQuerySnapshot.docs[0].id)
 
       const tweetsQuery = query(collection(db, "tweets"),
         where('userID', '==', userQuerySnapshot.docs[0].id),
@@ -61,7 +67,43 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       setLoading(false)
     }
     fetchFromDB()
-  }, [])
+  }, [id])
+
+  useEffect(() => {
+    if (!loading) {
+      onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs))
+    }
+  }, [db, id, loading])
+
+  useEffect(() => {
+    if (!loading) {
+      onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs))
+    }
+  }, [db, id, loading])
+
+  useEffect(() => {
+    console.log('searching...')
+    console.log(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
+    setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
+  }, [followers])
+
+  const handleFollow = async () => {
+    console.log(followed)
+    if (followed) {
+      await deleteDoc(doc(db, "users", authorID, "followers", String(session.user.uid)))
+      await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorID))
+    } else {
+      await setDoc(doc(db, "users", authorID, "followers", String(session.user.uid)), {
+        followedAt: serverTimestamp(),
+        followedBy: session.user
+      })
+      await setDoc(doc(db, "users", String(session.user.uid), "following", authorID), {
+        followedAt: serverTimestamp(),
+        followedBy: session.user
+      })
+    }
+  }
+
 
   return (
     <div className="px-12 min-h-screen min-w-screen">
@@ -103,8 +145,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                   <DotsHorizontalIcon className="h-5 w-5" />
                 </div>
 
-                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-500 rounded-full">
-                  {session.user.tag === id ? 'Edit Profile' : 'Follow'}
+                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-500 rounded-full cursor-pointer" onClick={handleFollow}>
+                  {session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
 

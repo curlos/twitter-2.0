@@ -67,21 +67,6 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
   }, [retweets])
 
-  // useEffect(
-  //   () => {
-  //     console.log(tweet)
-  //     if (tweet.parentTweet && tweet.parentTweet !== "") {
-  //       onSnapshot(doc(db, "tweets", tweet.parentTweet), async (snapshot) => {
-  //         const { userID } = snapshot.data()
-
-  //         const docRef = doc(db, "users", userID)
-  //         const docSnap = await getDoc(docRef)
-  //         setParentTweetAuthor(docSnap)
-  //         setLoading(false)
-  //       })
-  //     }
-  //   }, [db, id])
-
   useEffect(
     () => {
       console.log(tweet)

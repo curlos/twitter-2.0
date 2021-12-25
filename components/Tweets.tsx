@@ -47,7 +47,7 @@ const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
     }
   }
 
-  console.log(likes)
+  console.log('page changed')
 
   return (
     <div>

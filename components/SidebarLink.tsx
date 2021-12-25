@@ -9,8 +9,6 @@ interface Props {
 }
 
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
-
-
   return (
     <Link href={text === 'Profile' ? `/profile/${tag}` : '/'}>
       <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold'}`}>
