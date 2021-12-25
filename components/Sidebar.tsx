@@ -23,6 +23,8 @@ const Sidebar = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
+  console.log(session)
+
   return (
     <div className="flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-500 lg:w-[280px]">
       <div className="space-y-6 flex-grow">
@@ -53,9 +55,7 @@ const Sidebar = () => {
 
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center space-x-2">
-          <div>
-            <Image src={session.user.image} width={50} height={50} className="rounded-full" />
-          </div>
+          <img src={session.user.image} alt="fag" className="rounded-full w-[55px] h-[55px] bg-red-500" />
 
           <div className="">
             <div>{session.user.name}</div>

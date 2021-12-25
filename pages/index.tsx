@@ -13,40 +13,11 @@ import Sidebar from '../components/Sidebar'
 import Widgets from '../components/Widgets'
 import { db } from "../firebase"
 
-const addNewUser = async (session: Session) => {
-  await addDoc(collection(db, 'users'), {
-    userID: session.user.uid,
-    username: session.user.name,
-    userImg: session.user.image,
-    tag: session.user.tag,
-    timestamp: serverTimestamp()
-  })
-}
-
 
 export default function Home({ trendingResults, followResults, providers }) {
   const { data: session, status } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const checkIfUserExists = async (session: Session) => {
-      onSnapshot(
-        query(collection(db, "users")),
-        async (snapshot) => {
-          if (snapshot.docs.length < 1) {
-            await addNewUser(session)
-            setLoading(false)
-          } else {
-            console.log('setting id')
-            session.user.uid = snapshot.docs[0].id
-            console.log('id set')
-          }
-        })
-    }
-
-    checkIfUserExists(session)
-  }, [])
 
   return (
     <div className="px-12 min-h-screen min-w-screen">

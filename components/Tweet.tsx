@@ -6,9 +6,9 @@ import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { newTweetModalState, tweetIdState } from '../atoms/atom';
-import { collection, deleteDoc, doc, DocumentData, onSnapshot, setDoc } from '@firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, onSnapshot, setDoc, where } from '@firebase/firestore';
 import { db } from '../firebase';
-import { orderBy, query } from 'firebase/firestore';
+import { getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import { Dropdown } from './Dropdown';
 import Head from 'next/head';
 
@@ -28,6 +28,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
   const [replies, setReplies] = useState([])
   const [liked, setLiked] = useState(false)
   const [retweeted, setRetweeted] = useState(false)
+  const [author, setAuthor] = useState<DocumentData>()
   const router = useRouter()
 
   useEffect(() => {
@@ -58,6 +59,31 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
   }, [retweets])
 
+  useEffect(() => {
+    const fetchFromDB = async () => {
+      console.log(tweet)
+      const userDocRef = doc(db, 'users', tweet.userID)
+      const userSnap = await getDoc(userDocRef)
+
+      if (userSnap.exists()) {
+        console.log(userSnap.data())
+      } else {
+        console.log('No such document!')
+      }
+
+
+      // const querySnapshot = await getDocs(collection(userDoc))
+      // onSnapshot(
+      //   query(collection(db, "users"), where('id', '==', tweet.userID)),
+      //   (snapshot) => {
+      //     console.log(snapshot.docs[0].data())
+      //   }
+      // )
+    }
+
+    fetchFromDB()
+  }, [db])
+
   const likeTweet = async () => {
     if (liked) {
       await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid))
@@ -83,8 +109,6 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     deleteDoc(doc(db, 'tweets', id))
     router.push('/')
   }
-
-  // console.log(parentTweet)
 
   return (
     !tweetPage ? (
