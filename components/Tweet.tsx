@@ -30,7 +30,9 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
   const [replies, setReplies] = useState([])
   const [liked, setLiked] = useState(false)
   const [retweeted, setRetweeted] = useState(false)
+  const [parentTweet, setParentTweet] = useState<DocumentData>()
   const [author, setAuthor] = useState<DocumentData>()
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -62,20 +64,38 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
   }, [retweets])
 
   useEffect(() => {
-    const fetchFromDB = async () => {
+    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
+  }, [retweets])
+
+  // useEffect(
+  //   () => {
+  //     console.log(tweet)
+  //     if (tweet.parentTweet && tweet.parentTweet !== "") {
+  //       onSnapshot(doc(db, "tweets", tweet.parentTweet), async (snapshot) => {
+  //         const { userID } = snapshot.data()
+
+  //         const docRef = doc(db, "users", userID)
+  //         const docSnap = await getDoc(docRef)
+  //         setParentTweetAuthor(docSnap)
+  //         setLoading(false)
+  //       })
+  //     }
+  //   }, [db, id])
+
+  useEffect(
+    () => {
       console.log(tweet)
-      const userDocRef = doc(db, 'users', tweet.userID)
-      const userSnap = await getDoc(userDocRef)
+      if (tweet.parentTweet && tweet.parentTweet !== "") {
+        console.log('---')
+        const docRef = doc(db, "tweets", String(tweet.parentTweet))
+        const docSnap = getDoc(docRef).then((snap) => {
+          console.log(snap.data())
+          setParentTweet(snap)
+        })
+        console.log('---')
 
-      // if (userSnap.exists()) {
-      //   console.log(userSnap.data())
-      // } else {
-      //   console.log('No such document!')
-      // }
-    }
-
-    fetchFromDB()
-  }, [db])
+      }
+    }, [db, id])
 
   const likeTweet = async () => {
     if (liked) {
@@ -119,8 +139,6 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     router.push('/')
   }
 
-  console.log(tweet)
-
   return (
     !tweetPage ? (
       <div className="text-base p-3 border-b border-gray-500 w-full cursor-pointer" onClick={() => router.push(`/tweet/${id}`)}>
@@ -156,12 +174,12 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
             </div>
 
             <div className="pb-3">
-              {/* {parentTweet && (
+              {parentTweet ? (
                 <div className="text-[15px] text-gray-500">
                   Replying to
-                  <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
+                  <span className="ml-1 text-lightblue-400">@{parentTweet.data().tag}</span>
                 </div>
-              )} */}
+              ) : null}
               <div>{tweet.text}</div>
               {tweet.image && (
                 <div className="pt-3">

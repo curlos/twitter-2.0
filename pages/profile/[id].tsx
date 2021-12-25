@@ -13,7 +13,6 @@ import Tweet from '../../components/Tweet'
 import { collection, orderBy, query, where } from 'firebase/firestore'
 import Widgets from '../../components/Widgets'
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline'
-import Feed from '../../components/Feed'
 import Tweets from '../../components/Tweets'
 import moment from 'moment'
 
@@ -31,6 +30,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [author, setAuthor] = useState(null)
   const [tweets, setTweets] = useState([])
   const [retweets, setRetweets] = useState([])
+  const [likes, setLikes] = useState([])
   const router = useRouter()
   const { id } = router.query
 
@@ -54,6 +54,10 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       const retweetsQuerySnapshot = await getDocs(retweetsQuery)
       setRetweets(retweetsQuerySnapshot.docs)
 
+      const likesQuery = query(collection(db, 'users', userQuerySnapshot.docs[0].id, 'likes'))
+      const likesQuerySnapshot = await getDocs(likesQuery)
+      setLikes(likesQuerySnapshot.docs)
+
       setLoading(false)
     }
     fetchFromDB()
@@ -72,7 +76,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Sidebar />
 
         {loading ? <div>Loading...</div> : (
-          <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-500">
+          <div className="flex-grow ml-[280px] text-lg border-r border-gray-500">
             <div className="flex items-center space-x-4 border-b border-gray-500 p-2 bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
@@ -162,28 +166,39 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             </div>
 
             <div className="flex">
-              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2 ml-2">
+              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 ml-2 cursor-pointer" onClick={() => setFilter('Tweets')}>
                 <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
-                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                />
+                {filter === 'Tweets' ? (
+                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                  />
+                ) : null}
               </div>
 
-              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
-                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
-                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                />
+              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Tweets & Replies')}>
+                <div className={`${filter === 'Tweets & Replies' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets & Replies</div>
+
+                {filter === 'Tweets & Replies' ? (
+                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                  />
+                ) : null}
               </div>
 
-              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
-                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
-                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                />
+              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Media')}>
+                <div className={`${filter === 'Media' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Media</div>
+
+                {filter === 'Media' ? (
+                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                  />
+                ) : null}
               </div>
 
-              <div className="flex flex-col items-center flex-1 text-base text-gray-500 mr-2">
-                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
-                <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                />
+              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Likes')}>
+                <div className={`${filter === 'Likes' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Likes</div>
+
+                {filter === 'Likes' ? (
+                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                  />
+                ) : null}
               </div>
 
             </div>
@@ -191,7 +206,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <div className="w-full h-[1px] m-0 bg-gray-400 rounded-full"
             />
 
-            <Tweets author={author} tweets={tweets} retweets={retweets} />
+            <Tweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
           </div>
         )}
 

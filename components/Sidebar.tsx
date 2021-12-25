@@ -17,6 +17,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { newTweetModalState } from "../atoms/atom";
 import router from "next/router";
+import Link from "next/link";
 
 const Sidebar = () => {
 
@@ -37,7 +38,9 @@ const Sidebar = () => {
         <SidebarLink text="Messages" Icon={BookmarkIcon} active={false} />
         <SidebarLink text="Bookmarks" Icon={ClipboardListIcon} active={false} />
         <SidebarLink text="Lists" Icon={UserIcon} active={false} />
-        <SidebarLink text="Profile" Icon={DotsCircleHorizontalIcon} active={false} />
+
+        <SidebarLink text="Profile" Icon={DotsCircleHorizontalIcon} active={false} tag={session.user.tag} />
+
         <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} />
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {

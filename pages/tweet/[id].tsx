@@ -74,7 +74,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
         <Sidebar />
 
         {loading ? <div>Loading...</div> : (
-          <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-500">
+          <div className="flex-grow ml-[280px] text-lg border-r border-gray-500">
             <div className="flex justify-between border-b border-gray-500 p-3">
               <h2 className="font-bold">Tweet</h2>
               <SparklesIcon className="h-5 w-5" />
