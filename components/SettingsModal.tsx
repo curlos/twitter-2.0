@@ -1,10 +1,13 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { XIcon } from '@heroicons/react/solid'
-import { onSnapshot } from 'firebase/firestore'
+import { PhotographIcon, XIcon } from '@heroicons/react/solid'
+import { doc, onSnapshot, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { useSession } from 'next-auth/react'
-import React, { useEffect, useState, Fragment } from 'react'
+import React, { useEffect, useState, Fragment, useRef } from 'react'
 import { useRecoilState } from 'recoil'
 import { settingsModalState } from '../atoms/atom'
+import { FiCamera } from 'react-icons/fi'
+import { db, storage } from '../firebase'
+import { getDownloadURL, ref, uploadString } from 'firebase/storage'
 
 const SettingsModal = () => {
   const { data: session } = useSession()
@@ -13,6 +16,84 @@ const SettingsModal = () => {
   const [bio, setBio] = useState(session.user.bio || '')
   const [location, setLocation] = useState(session.user.location || '')
   const [website, setWebsite] = useState(session.user.website || '')
+  const [banner, setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg')
+  const [profilePic, setProfilePic] = useState(session.user.profilePic || '/assets/default_profile_pic.jpg')
+
+  const profilePicFilePickerRef = useRef(null)
+  const bannerFilePickerRef = useRef(null)
+
+  const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null)
+  const [selectedFileBanner, setSelectedFileBanner] = useState(null)
+
+  const updateUserProfile = async () => {
+    const updatedUserData = {
+      name,
+      bio,
+      location,
+      website,
+      banner,
+      profilePic,
+      updatedAt: serverTimestamp()
+    }
+
+    const imageRef = ref(storage, `users/${session.user.uid}/image`)
+
+    if (selectedFileProfilePic) {
+      await uploadString(imageRef, selectedFileProfilePic, "data_url").then(async () => {
+        const downloadURL = await getDownloadURL(imageRef)
+        updatedUserData.profilePic = downloadURL
+      })
+    }
+
+    if (selectedFileBanner) {
+      await uploadString(imageRef, selectedFileBanner, "data_url").then(async () => {
+        const downloadURL = await getDownloadURL(imageRef)
+        updatedUserData.banner = downloadURL
+      })
+    }
+
+    console.log(updatedUserData)
+
+    const result = await updateDoc(doc(db, "users", session.user.uid), {
+      ...updatedUserData,
+    })
+
+    console.log(result)
+
+    // setIsOpen(false)
+  }
+
+  const changeProfilePic = (e) => {
+    const reader = new FileReader()
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0])
+    }
+
+    reader.onload = (readerEvent) => [
+      setSelectedFileProfilePic(readerEvent.target.result)
+    ]
+  }
+
+  const changeBannerPic = (e) => {
+    const reader = new FileReader()
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0])
+    }
+
+    reader.onload = (readerEvent) => [
+      setSelectedFileBanner(readerEvent.target.result)
+    ]
+  }
+
+  console.log({
+    name,
+    bio,
+    location,
+    website,
+    banner,
+    profilePic,
+    updatedAt: serverTimestamp()
+  })
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -56,61 +137,94 @@ const SettingsModal = () => {
                     <div className="ml-4 text-xl font-bold">Edit Profile</div>
                   </div>
 
-                  <div className="bg-white text-black font-bold px-5 py-2 rounded-full">Save</div>
+                  <div className="bg-white text-black font-bold px-5 py-2 rounded-full cursor-pointer" onClick={updateUserProfile}>Save</div>
                 </div>
               </div>
 
-              <div className="p-3 h-[70vh] overflow-y-scroll space-y-4">
+              <div className="h-[70vh] overflow-y-scroll">
 
-                <div className="p-2 border border-gray-500 space-y-1 rounded">
-                  <div className="text-sm text-gray-400 flex justify-between">
-                    <div>Name</div>
-                    <div>{name.length} / 50</div>
+                <div>
+                  <img src={selectedFileBanner || banner} className="w-full max-h-[225px] object-cover" />
+                  <div className="mt-[-50px]">
+                    <FiCamera className="h-5 w-5 ml-[47px] mb-[-40px] z-50" />
+
+                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2" />
                   </div>
-                  <input className="bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
-                    if (e.target.value.length <= 50) {
-                      setName(e.target.value)
-                    }
-                  }
-                  }></input>
+
+                  <div className="icon" onClick={() => profilePicFilePickerRef.current.click()}>
+                    <PhotographIcon className="h-7 w-7 hoverAnimation" />
+
+                    <input
+                      type="file"
+                      ref={profilePicFilePickerRef}
+                      hidden
+                      onChange={changeProfilePic}
+                    />
+                  </div>
+
+                  <div className="icon" onClick={() => bannerFilePickerRef.current.click()}>
+                    <PhotographIcon className="h-7 w-7 hoverAnimation" />
+
+                    <input
+                      type="file"
+                      ref={bannerFilePickerRef}
+                      hidden
+                      onChange={changeBannerPic}
+                    />
+                  </div>
                 </div>
 
-                <div className="p-2 border border-gray-500 space-y-1 rounded">
-                  <div className="text-sm text-gray-400 flex justify-between">
-                    <div>Bio</div>
-                    <div>{bio.length} / 160</div>
-                  </div>
-                  <textarea className="w-full bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
-                    if (e.target.value.length <= 160) {
-                      setBio(e.target.value)
+                <div className="p-3 space-y-4">
+                  <div className="p-2 border border-gray-500 space-y-1 rounded">
+                    <div className="text-sm text-gray-400 flex justify-between">
+                      <div>Name</div>
+                      <div>{name.length} / 50</div>
+                    </div>
+                    <input className="bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
+                      if (e.target.value.length <= 50) {
+                        setName(e.target.value)
+                      }
                     }
-                  }
-                  }></textarea>
-                </div>
+                    }></input>
+                  </div>
 
-                <div className="p-2 border border-gray-500 space-y-1 rounded">
-                  <div className="text-sm text-gray-400 flex justify-between">
-                    <div>Location</div>
-                    <div>{location.length} / 30</div>
-                  </div>
-                  <input className="bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
-                    if (e.target.value.length <= 30) {
-                      setLocation(e.target.value)
+                  <div className="p-2 border border-gray-500 space-y-1 rounded">
+                    <div className="text-sm text-gray-400 flex justify-between">
+                      <div>Bio</div>
+                      <div>{bio.length} / 160</div>
+                    </div>
+                    <textarea className="w-full bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
+                      if (e.target.value.length <= 160) {
+                        setBio(e.target.value)
+                      }
                     }
-                  }
-                  }></input>
-                </div>
+                    }></textarea>
+                  </div>
 
-                <div className="p-2 border border-gray-500 space-y-1 rounded">
-                  <div className="text-sm text-gray-400 flex justify-between">
-                    <div>Website</div>
-                    <div>{website.length} / 100</div>
-                  </div>
-                  <input className="bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
-                    if (e.target.value.length <= 100) {
-                      setWebsite(e.target.value)
+                  <div className="p-2 border border-gray-500 space-y-1 rounded">
+                    <div className="text-sm text-gray-400 flex justify-between">
+                      <div>Location</div>
+                      <div>{location.length} / 30</div>
+                    </div>
+                    <input className="bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
+                      if (e.target.value.length <= 30) {
+                        setLocation(e.target.value)
+                      }
                     }
-                  }}></input>
+                    }></input>
+                  </div>
+
+                  <div className="p-2 border border-gray-500 space-y-1 rounded">
+                    <div className="text-sm text-gray-400 flex justify-between">
+                      <div>Website</div>
+                      <div>{website.length} / 100</div>
+                    </div>
+                    <input className="bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
+                      if (e.target.value.length <= 100) {
+                        setWebsite(e.target.value)
+                      }
+                    }}></input>
+                  </div>
                 </div>
 
               </div>

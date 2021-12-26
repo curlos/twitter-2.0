@@ -8,7 +8,9 @@ declare module "next-auth" {
     user: {
       name?: string;
       email?: string;
+      profilePic?: string;
       image?: string;
+      banner?: string;
       tag?: string;
       uid?: string;
       bio?: string;

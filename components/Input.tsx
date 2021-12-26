@@ -50,7 +50,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
       username: session.user.name,
-      userImg: session.user.image,
+      profilePic: session.user.profilePic,
       tag: session.user.tag,
       text: input,
       parentTweet: replyModal ? tweetId : '',
@@ -109,7 +109,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
   return (
     <div className={`flex p-3 space-x-2 border-b border-gray-500 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <div>
-        <img src={session.user.image} className="rounded-full h-[55px] w=[55px] max-w-none" />
+        <img src={session.user.profilePic} className="rounded-full h-[55px] w=[55px] max-w-none" />
       </div>
 
       <div className="w-full">

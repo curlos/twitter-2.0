@@ -58,7 +58,7 @@ const Sidebar = () => {
 
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center space-x-2">
-          <img src={session.user.image} alt="fag" className="rounded-full w-[55px] h-[55px] bg-red-500" />
+          <img src={session.user.profilePic} alt="fag" className="rounded-full w-[55px] h-[55px] bg-red-500" />
 
           <div className="">
             <div>{session.user.name}</div>

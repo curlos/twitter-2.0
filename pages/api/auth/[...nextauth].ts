@@ -7,14 +7,16 @@ import { db } from "../../../firebase"
 const addNewUser = async (session: Session) => {
 
   console.log('adding')
+  console.log(session)
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
     username: session.user.name,
-    userImg: session.user.image,
+    profilePic: session.user.image,
     tag: session.user.tag,
     bio: null,
     location: null,
     website: null,
+    banner: null,
     dateJoined: serverTimestamp()
   })
 
@@ -37,6 +39,7 @@ export default NextAuth({
         .split(" ")
         .join("")
         .toLocaleLowerCase();
+      session.user.profilePic = session.user.image
 
       console.log(session)
 
