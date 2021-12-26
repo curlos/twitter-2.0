@@ -150,90 +150,94 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   return (
     !tweetPage ? (
       !loading && author ? (
-        <div className={`text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`} onClick={() => router.push(`/tweet/${id}`)}>
-          <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
-            <div className="font-semibold ml-[63px]">
-              <Link href={`/profile/${tweet.retweetedBy.tag}`}>
-                <span className="flex hover:underline">
-                  <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
-                  {tweet.retweetedBy.tag === session.user.tag ? 'You retweeted' : `${tweet.retweetedBy.name} retweeted`}
-                </span>
-              </Link>
-            </div>
-          ) : null}</div>
-          <div className="flex">
-            <div className="mr-2">
-              <Link href={`/profile/${author.tag}`}>
-                <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
-              </Link>
-            </div>
-            <div className="flex flex-col justify-between w-full">
-              <div className="flex justify-between w-full">
-                <div className="flex">
-                  <div className="flex">
-                    <Link href={`/profile/${author.tag}`}>
-                      <div className="cursor-pointer hover:underline">{author.name}</div>
-                    </Link>
-                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+        <div className={`text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`}>
+          <Link href={`/tweet/${tweetID}`}>
+            <div>
+              <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
+                <div className="font-semibold ml-[63px]">
+                  <Link href={`/profile/${tweet.retweetedBy.tag}`}>
+                    <span className="flex hover:underline">
+                      <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
+                      {tweet.retweetedBy.tag === session.user.tag ? 'You retweeted' : `${tweet.retweetedBy.name} retweeted`}
+                    </span>
+                  </Link>
+                </div>
+              ) : null}</div>
+              <div className="flex">
+                <div className="mr-2">
+                  <Link href={`/profile/${author.tag}`}>
+                    <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
+                  </Link>
+                </div>
+                <div className="flex flex-col justify-between w-full">
+                  <div className="flex justify-between w-full">
+                    <div className="flex">
+                      <div className="flex">
+                        <Link href={`/profile/${author.tag}`}>
+                          <div className="cursor-pointer hover:underline">{author.name}</div>
+                        </Link>
+                        <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                      </div>
+                      <div className="text-gray-500">@{author.tag}</div>
+                      <div className="text-gray-500 mx-1 font-bold">·</div>
+                      {tweet.timestamp && tweet.timestamp.seconds && (
+                        <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
+                      )}
+                    </div>
+
+                    <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
                   </div>
-                  <div className="text-gray-500">@{author.tag}</div>
-                  <div className="text-gray-500 mx-1 font-bold">·</div>
-                  {tweet.timestamp && tweet.timestamp.seconds && (
-                    <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
-                  )}
-                </div>
 
-                <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
-              </div>
-
-              <div className="pb-3">
-                {parentTweet && parentTweetAuthor ? (
-                  <div className="text-[15px] text-gray-500">
-                    Replying to
-                    <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
+                  <div className="pb-3">
+                    {parentTweet && parentTweetAuthor ? (
+                      <div className="text-[15px] text-gray-500">
+                        Replying to
+                        <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
+                      </div>
+                    ) : null}
+                    <div>{tweet.text}</div>
+                    {tweet.image && (
+                      <div className="pt-3">
+                        <img src={tweet.image} alt="" className="rounded-2xl max-h-80 object-contain" />
+                      </div>
+                    )}
                   </div>
-                ) : null}
-                <div>{tweet.text}</div>
-                {tweet.image && (
-                  <div className="pt-3">
-                    <img src={tweet.image} alt="" className="rounded-2xl max-h-80 object-contain" />
+
+                  <div className="flex justify-start w-full text-gray-500" onClick={(e) => {
+                    e.stopPropagation()
+                    setTweetId(id)
+                    setIsOpen(true)
+                  }}>
+                    <div className="flex-1 items-center flex space-x-2">
+                      <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
+                      <div>{replies.length}</div>
+                    </div>
+
+                    <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+                      e.stopPropagation()
+                      retweetTweet()
+                    }}>
+                      {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
+                      <div className="text-green-400">{retweets.length}</div>
+                    </div>
+
+
+                    <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+                      e.stopPropagation()
+                      likeTweet()
+                    }}>
+                      {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
+                      <div className="text-red-500">{likes.length}</div>
+                    </div>
+
+                    <div className="flex-1">
+                      <FiShare className="h-[18px] w-[18px] cursor-pointer" />
+                    </div>
                   </div>
-                )}
-              </div>
-
-              <div className="flex justify-start w-full text-gray-500" onClick={(e) => {
-                e.stopPropagation()
-                setTweetId(id)
-                setIsOpen(true)
-              }}>
-                <div className="flex-1 items-center flex space-x-2">
-                  <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
-                  <div>{replies.length}</div>
-                </div>
-
-                <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                  e.stopPropagation()
-                  retweetTweet()
-                }}>
-                  {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
-                  <div className="text-green-400">{retweets.length}</div>
-                </div>
-
-
-                <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                  e.stopPropagation()
-                  likeTweet()
-                }}>
-                  {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
-                  <div className="text-red-500">{likes.length}</div>
-                </div>
-
-                <div className="flex-1">
-                  <FiShare className="h-[18px] w-[18px] cursor-pointer" />
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       ) : null
     ) : (
