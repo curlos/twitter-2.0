@@ -12,6 +12,7 @@ import { SparklesIcon } from '@heroicons/react/outline'
 import Tweet from '../../components/Tweet'
 import { collection, orderBy, query, where } from 'firebase/firestore'
 import Widgets from '../../components/Widgets'
+import SettingsModal from '../../components/SettingsModal'
 
 interface Props {
   trendingResults: any,

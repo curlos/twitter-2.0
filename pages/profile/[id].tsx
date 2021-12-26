@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { newTweetModalState } from '../../atoms/atom'
+import { newTweetModalState, settingsModalState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -15,6 +15,7 @@ import Widgets from '../../components/Widgets'
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline'
 import Tweets from '../../components/Tweets'
 import moment from 'moment'
+import SettingsModal from '../../components/SettingsModal'
 
 interface Props {
   trendingResults: any,
@@ -34,6 +35,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [likes, setLikes] = useState([])
   const [followers, setFollowers] = useState([])
   const [following, setFollowing] = useState([])
+  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
 
   const [followed, setFollowed] = useState(false)
   const router = useRouter()
@@ -254,6 +256,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
         <Widgets />
         {isOpen && <NewTweetModal />}
+        <SettingsModal />
       </main>
 
 

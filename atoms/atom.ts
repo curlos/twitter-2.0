@@ -5,6 +5,11 @@ export const newTweetModalState = atom({
   default: false,
 })
 
+export const settingsModalState = atom({
+  key: "settingsModalState",
+  default: true,
+})
+
 export const tweetIdState = atom({
   key: "tweetIdState",
   default: '',

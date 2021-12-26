@@ -6,9 +6,10 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { newTweetModalState } from '../atoms/atom'
+import { newTweetModalState, settingsModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
 import { NewTweetModal } from '../components/NewTweetModal'
+import SettingsModal from '../components/SettingsModal'
 import Sidebar from '../components/Sidebar'
 import Widgets from '../components/Widgets'
 import { db } from "../firebase"
@@ -16,8 +17,8 @@ import { db } from "../firebase"
 
 export default function Home({ trendingResults, followResults, providers }) {
   const { data: session, status } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [loading, setLoading] = useState(true)
+  const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState)
+  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
 
   return (
     <div className="px-12 min-h-screen min-w-screen">
@@ -31,7 +32,10 @@ export default function Home({ trendingResults, followResults, providers }) {
         <Feed />
         <Widgets />
 
-        {isOpen && <NewTweetModal />}
+        {isNewTweetModalOpen && <NewTweetModal />}
+        {/* {isSettingsModalOpen && <SettingsModal />} */}
+
+        <SettingsModal />
       </main>
 
     </div>
