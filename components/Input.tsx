@@ -49,9 +49,6 @@ const Input = ({ replyModal, tweetId }: Props) => {
 
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
-      username: session.user.name,
-      profilePic: session.user.profilePic,
-      tag: session.user.tag,
       text: input,
       parentTweet: replyModal ? tweetId : '',
       timestamp: serverTimestamp()

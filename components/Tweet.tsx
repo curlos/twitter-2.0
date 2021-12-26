@@ -82,6 +82,17 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
       }
     }, [db, id])
 
+  useEffect(() => {
+    console.log(tweet)
+    const docRef = doc(db, "users", tweet.userID)
+    getDoc(docRef).then((snap) => {
+      console.log(snap.data())
+      setAuthor(snap.data())
+      setLoading(false)
+    })
+
+  }, [db, id])
+
   const likeTweet = async () => {
     if (liked) {
       await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid))
@@ -126,174 +137,178 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
 
   return (
     !tweetPage ? (
-      <div className="text-base p-3 border-b border-gray-500 w-full cursor-pointer" onClick={() => router.push(`/tweet/${id}`)}>
-        <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
-          <div className="font-semibold ml-[63px]">
-            <Link href={`/profile/${tweet.retweetedBy.tag}`}>
-              <span className="flex hover:underline">
-                <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
-                {tweet.retweetedBy.tag === session.user.tag ? 'You retweeted' : `${tweet.retweetedBy.name} retweeted`}
-              </span>
-            </Link>
-          </div>
-        ) : null}</div>
-        <div className="flex">
-          <div className="mr-2" onClick={(e) => {
-            e.stopPropagation()
-            router.push(`/profile/${tweet.tag}`)
-          }}>
-            <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w-[55px] object-cover max-w-none" />
-          </div>
-          <div className="flex flex-col justify-between w-full">
-            <div className="flex justify-between w-full">
-              <div className="flex">
-                <div className="flex">{tweet.username} <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" /></div>
-                <div className="text-gray-500">@{tweet.tag}</div>
-                <div className="text-gray-500 mx-1 font-bold">·</div>
-                {tweet.timestamp && tweet.timestamp.seconds && (
-                  <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
+      !loading ? (
+        <div className="text-base p-3 border-b border-gray-500 w-full cursor-pointer" onClick={() => router.push(`/tweet/${id}`)}>
+          <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
+            <div className="font-semibold ml-[63px]">
+              <Link href={`/profile/${tweet.retweetedBy.tag}`}>
+                <span className="flex hover:underline">
+                  <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
+                  {tweet.retweetedBy.tag === session.user.tag ? 'You retweeted' : `${tweet.retweetedBy.name} retweeted`}
+                </span>
+              </Link>
+            </div>
+          ) : null}</div>
+          <div className="flex">
+            <div className="mr-2" onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/profile/${tweet.tag}`)
+            }}>
+              <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none" />
+            </div>
+            <div className="flex flex-col justify-between w-full">
+              <div className="flex justify-between w-full">
+                <div className="flex">
+                  <div className="flex">{author.name} <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" /></div>
+                  <div className="text-gray-500">@{author.tag}</div>
+                  <div className="text-gray-500 mx-1 font-bold">·</div>
+                  {tweet.timestamp && tweet.timestamp.seconds && (
+                    <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
+                  )}
+                </div>
+
+                <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
+              </div>
+
+              <div className="pb-3">
+                {parentTweet ? (
+                  <div className="text-[15px] text-gray-500">
+                    Replying to
+                    <span className="ml-1 text-lightblue-400">@{parentTweet.data().tag}</span>
+                  </div>
+                ) : null}
+                <div>{tweet.text}</div>
+                {tweet.image && (
+                  <div className="pt-3">
+                    <img src={tweet.image} alt="" className="rounded-2xl max-h-80 object-contain" />
+                  </div>
                 )}
               </div>
 
-              <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
+              <div className="flex justify-start w-full text-gray-500" onClick={(e) => {
+                e.stopPropagation()
+                setTweetId(id)
+                setIsOpen(true)
+              }}>
+                <div className="flex-1 items-center flex space-x-2">
+                  <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
+                  <div>{replies.length}</div>
+                </div>
+
+                <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+                  e.stopPropagation()
+                  retweetTweet()
+                }}>
+                  {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
+                  <div className="text-green-400">{retweets.length}</div>
+                </div>
+
+
+                <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+                  e.stopPropagation()
+                  likeTweet()
+                }}>
+                  {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
+                  <div className="text-red-500">{likes.length}</div>
+                </div>
+
+                <div className="flex-1">
+                  <FiShare className="h-[18px] w-[18px] cursor-pointer" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null
+    ) : (
+      !loading ? (
+        <div className="text-base p-3 border-b border-gray-500 w-full">
+          <div className="flex justify-between">
+            <div className="flex">
+              <div className="mr-2">
+                <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] max-w-none" />
+              </div>
+
+              <div className="">
+                <div className="flex">
+                  <div>{author.name}</div>
+                  <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                </div>
+                <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
+              </div>
             </div>
 
-            <div className="pb-3">
-              {parentTweet ? (
-                <div className="text-[15px] text-gray-500">
-                  Replying to
-                  <span className="ml-1 text-lightblue-400">@{parentTweet.data().tag}</span>
-                </div>
-              ) : null}
-              <div>{tweet.text}</div>
-              {tweet.image && (
-                <div className="pt-3">
-                  <img src={tweet.image} alt="" className="rounded-2xl max-h-80 object-contain" />
-                </div>
-              )}
+            <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
+          </div>
+
+          <div className="text-xl py-3">
+            {/* {parentTweet && (
+              <div className="text-[15px] text-gray-500">
+                Replying to
+                <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
+              </div>
+            )} */}
+            <div>{tweet.text}</div>
+            {tweet.image && (
+              <div className="pt-3">
+                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-800" />
+              </div>
+            )}
+          </div>
+
+          <div className="divide-y divide-gray-500">
+            <div className="flex py-2">
+              <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('LT')}</div>
+              <div className="text-gray-500 mx-1 font-bold">·</div>
+              <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('ll')}</div>
+              <div className="text-gray-500 mx-1 font-bold">·</div>
+              <div className="text-gray-500">Twitter for Web</div>
             </div>
 
-            <div className="flex justify-start w-full text-gray-500" onClick={(e) => {
+            <div className="flex space-x-4 py-2">
+              <div className="space-x-1">
+                <span className="font-bold">{replies.length}</span>
+                <span className="text-gray-500">Replies</span>
+              </div>
+
+              <div className="space-x-1">
+                <span className="font-bold">{retweets.length}</span>
+                <span className="text-gray-500">Retweets</span>
+              </div>
+
+              <div className="space-x-1">
+                <span className="font-bold">{likes.length}</span>
+                <span className="text-gray-500">Likes</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between w-full text-gray-500 py-2 px-12" onClick={(e) => {
               e.stopPropagation()
               setTweetId(id)
               setIsOpen(true)
             }}>
-              <div className="flex-1 items-center flex space-x-2">
-                <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
-                <div>{replies.length}</div>
+              <div className="flex space-x-2">
+                <FaRegComment className="h-6 w-6 cursor-pointer" />
               </div>
 
-              <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+              <div className="flex space-x-2" onClick={(e) => {
                 e.stopPropagation()
                 retweetTweet()
               }}>
-                {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
-                <div className="text-green-400">{retweets.length}</div>
+                {!retweeted ? <FaRetweet className={`h-6 w-6 cursor-pointer`} /> : <FaRetweet className={`h-6 w-6 cursor-pointer text-green-400`} />}
               </div>
 
 
-              <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+              <div className="flex space-x-2" onClick={(e) => {
                 e.stopPropagation()
                 likeTweet()
               }}>
-                {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
-                <div className="text-red-500">{likes.length}</div>
-              </div>
-
-              <div className="flex-1">
-                <FiShare className="h-[18px] w-[18px] cursor-pointer" />
+                {!liked ? <RiHeart3Line className={`h-6 w-6 cursor-pointer`} /> : <RiHeart3Fill className={`h-6 w-6 cursor-pointer text-red-500`} />}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    ) : (
-      <div className="text-base p-3 border-b border-gray-500 w-full">
-        <div className="flex justify-between">
-          <div className="flex">
-            <div className="mr-2">
-              <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w-[55px] max-w-none" />
-            </div>
-
-            <div className="">
-              <div className="flex">
-                <div>{tweet.username}</div>
-                <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
-              </div>
-              <div className="text-gray-400 p-0 m-0">@{tweet.tag}</div>
-            </div>
-          </div>
-
-          <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
-        </div>
-
-        <div className="text-xl py-3">
-          {/* {parentTweet && (
-            <div className="text-[15px] text-gray-500">
-              Replying to
-              <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
-            </div>
-          )} */}
-          <div>{tweet.text}</div>
-          {tweet.image && (
-            <div className="pt-3">
-              <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-500" />
-            </div>
-          )}
-        </div>
-
-        <div className="divide-y divide-gray-500">
-          <div className="flex py-2">
-            <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('LT')}</div>
-            <div className="text-gray-500 mx-1 font-bold">·</div>
-            <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('ll')}</div>
-            <div className="text-gray-500 mx-1 font-bold">·</div>
-            <div className="text-gray-500">Twitter for Web</div>
-          </div>
-
-          <div className="flex space-x-4 py-2">
-            <div className="space-x-1">
-              <span className="font-bold">{replies.length}</span>
-              <span className="text-gray-500">Replies</span>
-            </div>
-
-            <div className="space-x-1">
-              <span className="font-bold">{retweets.length}</span>
-              <span className="text-gray-500">Retweets</span>
-            </div>
-
-            <div className="space-x-1">
-              <span className="font-bold">{likes.length}</span>
-              <span className="text-gray-500">Likes</span>
-            </div>
-          </div>
-
-          <div className="flex justify-between w-full text-gray-500 py-2 px-12" onClick={(e) => {
-            e.stopPropagation()
-            setTweetId(id)
-            setIsOpen(true)
-          }}>
-            <div className="flex space-x-2">
-              <FaRegComment className="h-6 w-6 cursor-pointer" />
-            </div>
-
-            <div className="flex space-x-2" onClick={(e) => {
-              e.stopPropagation()
-              retweetTweet()
-            }}>
-              {!retweeted ? <FaRetweet className={`h-6 w-6 cursor-pointer`} /> : <FaRetweet className={`h-6 w-6 cursor-pointer text-green-400`} />}
-            </div>
-
-
-            <div className="flex space-x-2" onClick={(e) => {
-              e.stopPropagation()
-              likeTweet()
-            }}>
-              {!liked ? <RiHeart3Line className={`h-6 w-6 cursor-pointer`} /> : <RiHeart3Fill className={`h-6 w-6 cursor-pointer text-red-500`} />}
-            </div>
-          </div>
-        </div>
-      </div>
+      ) : null
     )
   )
 }

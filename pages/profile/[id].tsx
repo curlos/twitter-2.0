@@ -142,7 +142,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             </div>
 
             <div>
-              <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[240px] object-cover" />
+              <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[225px] object-cover" />
             </div>
 
             <div className="flex justify-between items-start p-4 pb-0">

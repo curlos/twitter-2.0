@@ -143,16 +143,28 @@ const SettingsModal = () => {
 
               <div className="h-[70vh] overflow-y-scroll">
 
-                <div>
-                  <img src={selectedFileBanner || banner} className="w-full max-h-[225px] object-cover" />
-                  <div className="mt-[-50px]">
-                    <FiCamera className="h-5 w-5 ml-[47px] mb-[-40px] z-50" />
+                <div className="">
+                  <div className="w-full rounded-full cursor-pointer" onClick={() => bannerFilePickerRef.current.click()}>
+                    <img src={selectedFileBanner || banner} className="w-full max-h-[240px] object-cover" />
 
-                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2" />
+                    <FiCamera className="h-5 w-5 ml-[50%] mt-[-125px] z-50" />
+
+                    <input
+                      type="file"
+                      ref={bannerFilePickerRef}
+                      hidden
+                      onChange={changeBannerPic}
+                    />
                   </div>
 
-                  <div className="icon" onClick={() => profilePicFilePickerRef.current.click()}>
-                    <PhotographIcon className="h-7 w-7 hoverAnimation" />
+                  <div className="mt-[120px]">
+
+                  </div>
+
+                  <div className="mt-[-70px] h-[112px] w-[112px] ml-2 rounded-full cursor-pointer" onClick={() => profilePicFilePickerRef.current.click()}>
+                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2 border-4 border-black" />
+
+                    <FiCamera className="h-5 w-5 ml-[53px] mt-[-67px] z-50" />
 
                     <input
                       type="file"
@@ -162,16 +174,7 @@ const SettingsModal = () => {
                     />
                   </div>
 
-                  <div className="icon" onClick={() => bannerFilePickerRef.current.click()}>
-                    <PhotographIcon className="h-7 w-7 hoverAnimation" />
 
-                    <input
-                      type="file"
-                      ref={bannerFilePickerRef}
-                      hidden
-                      onChange={changeBannerPic}
-                    />
-                  </div>
                 </div>
 
                 <div className="p-3 space-y-4">
