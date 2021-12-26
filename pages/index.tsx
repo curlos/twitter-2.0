@@ -35,7 +35,7 @@ export default function Home({ trendingResults, followResults, providers }) {
         {isNewTweetModalOpen && <NewTweetModal />}
         {/* {isSettingsModalOpen && <SettingsModal />} */}
 
-        <SettingsModal />
+        {isSettingsModalOpen && <SettingsModal />}
       </main>
 
     </div>

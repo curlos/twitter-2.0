@@ -7,7 +7,7 @@ export const newTweetModalState = atom({
 
 export const settingsModalState = atom({
   key: "settingsModalState",
-  default: true,
+  default: false,
 })
 
 export const tweetIdState = atom({

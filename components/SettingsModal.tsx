@@ -36,31 +36,31 @@ const SettingsModal = () => {
       updatedAt: serverTimestamp()
     }
 
-    const imageRef = ref(storage, `users/${session.user.uid}/image`)
+    const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`)
+
+    const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`)
 
     if (selectedFileProfilePic) {
-      await uploadString(imageRef, selectedFileProfilePic, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef)
+      await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
+        const downloadURL = await getDownloadURL(profilePicRef)
         updatedUserData.profilePic = downloadURL
       })
     }
 
     if (selectedFileBanner) {
-      await uploadString(imageRef, selectedFileBanner, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef)
+      await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
+        const downloadURL = await getDownloadURL(bannerRef)
         updatedUserData.banner = downloadURL
       })
     }
 
     console.log(updatedUserData)
 
-    const result = await updateDoc(doc(db, "users", session.user.uid), {
+    await updateDoc(doc(db, "users", session.user.uid), {
       ...updatedUserData,
     })
 
-    console.log(result)
-
-    // setIsOpen(false)
+    setIsOpen(false)
   }
 
   const changeProfilePic = (e) => {

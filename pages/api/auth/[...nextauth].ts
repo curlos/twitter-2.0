@@ -48,13 +48,15 @@ export default NextAuth({
 
       if (querySnapshot.docs.length > 0) {
         // If user is signing in with an exisitng account
-        const { bio, location, website, dateJoined } = querySnapshot.docs[0].data()
+        const { bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data()
 
         session.user.uid = querySnapshot.docs[0].id
         session.user.bio = bio
         session.user.location = location
         session.user.website = website
         session.user.dateJoined = dateJoined
+        session.user.profilePic = profilePic
+        session.user.banner = banner
       } else {
         // If user is signing up with a new account
         const docRef = await addNewUser(session)
@@ -63,6 +65,7 @@ export default NextAuth({
         const userDoc = await getDoc(docRef)
 
         const { bio, location, website, dateJoined } = userDoc.data()
+
 
         session.user.bio = bio
         session.user.location = location

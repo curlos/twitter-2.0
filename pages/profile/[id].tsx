@@ -69,7 +69,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       setLoading(false)
     }
     fetchFromDB()
-  }, [id])
+  }, [db, id])
 
   useEffect(() => {
     if (!loading) {
@@ -110,6 +110,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
     session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow()
   }
 
+  console.log(author)
+
 
   return (
     <div className="px-12 min-h-screen min-w-screen">
@@ -140,11 +142,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             </div>
 
             <div>
-              <img src="/assets/profile_banner.jpg" alt="" />
+              <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[240px] object-cover" />
             </div>
 
             <div className="flex justify-between items-start p-4 pb-0">
-              <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-black mt-[-88px]" />
+              <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-black mt-[-88px] object-cover" />
 
               <div className="flex items-center space-x-2">
                 <div className="flex justify-center items-center p-2 border-2 border-gray-500 rounded-full w-10 h-10">
@@ -260,7 +262,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
         <Widgets />
         {isOpen && <NewTweetModal />}
-        <SettingsModal />
+        {isSettingsModalOpen && <SettingsModal />}
       </main>
 
 

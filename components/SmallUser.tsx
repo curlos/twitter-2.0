@@ -5,7 +5,7 @@ const SmallUser = () => {
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center space-x-2">
-        <img src="/assets/profile_icon.jpeg" alt="" className="rounded-full h-[55px] w-[55px]" />
+        <img src="/assets/profile_icon.jpeg" alt="" className="rounded-full h-[55px] w-[55px] object-cover" />
 
         <div>
           <div className="flex">

@@ -9,7 +9,7 @@ const ParentTweet = ({ tweet }: Props) => {
   return (
     <div className="flex p-3 space-x-2 pb-0 h-full">
       <div className="h-full">
-        <img src={tweet.profilePic} alt="" className="rounded-full h-[55px] w=[55px]" />
+        <img src={tweet.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover" />
         <span className="border-r-2 border-gray-500 h-1/2 absolute ml-[27px]" />
       </div>
 

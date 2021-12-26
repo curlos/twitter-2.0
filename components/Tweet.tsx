@@ -142,7 +142,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
             e.stopPropagation()
             router.push(`/profile/${tweet.tag}`)
           }}>
-            <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w=[55px] max-w-none" />
+            <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w-[55px] object-cover max-w-none" />
           </div>
           <div className="flex flex-col justify-between w-full">
             <div className="flex justify-between w-full">
@@ -212,7 +212,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
         <div className="flex justify-between">
           <div className="flex">
             <div className="mr-2">
-              <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w=[55px] max-w-none" />
+              <img src={tweet.profilePic} alt={tweet.username} className="rounded-full h-[55px] w-[55px] max-w-none" />
             </div>
 
             <div className="">
