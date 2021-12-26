@@ -126,18 +126,18 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Sidebar />
 
         {loading ? <div>Loading...</div> : (
-          <div className="flex-grow ml-[280px] text-lg border-r border-gray-500">
-            <div className="flex items-center space-x-4 border-b border-gray-500 p-2 bg-black sticky top-0">
+          <div className="flex-grow ml-[280px] text-lg border-r border-gray-700">
+            <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
               </div>
               <div className="">
                 <div className="flex items-center mb-0 p-0">
-                  <h2 className="font-bold">{author.username}</h2>
+                  <h2 className="font-bold">{author.name}</h2>
                   <BadgeCheckIcon className="h-6 w-6" />
                 </div>
 
-                <div className="text-gray-400 text-sm">74.6K Tweets</div>
+                <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
               </div>
             </div>
 
@@ -149,11 +149,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-black mt-[-88px] object-cover" />
 
               <div className="flex items-center space-x-2">
-                <div className="flex justify-center items-center p-2 border-2 border-gray-500 rounded-full w-10 h-10">
+                <div className="flex justify-center items-center p-2 border-2 border-gray-700 rounded-full w-10 h-10">
                   <DotsHorizontalIcon className="h-5 w-5" />
                 </div>
 
-                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-500 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
+                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
                   {session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
@@ -163,7 +163,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
             <div className="p-4 pt-2">
               <div className="flex items-center">
-                <h2 className="text-xl font-[900]">{author.username}</h2>
+                <h2 className="text-xl font-[900]">{author.name}</h2>
                 <BadgeCheckIcon className="h-5 w-5" />
               </div>
 
@@ -195,12 +195,12 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
               <div className="text-gray-500 text-base flex space-x-4">
                 <div className="space-x-1">
-                  <span className="text-white font-bold">75</span>
+                  <span className="text-white font-bold">{following.length}</span>
                   <span>Following</span>
                 </div>
 
                 <div className="space-x-1">
-                  <span className="text-white font-bold">10.3M</span>
+                  <span className="text-white font-bold">{followers.length}</span>
                   <span>Followers</span>
                 </div>
               </div>

@@ -56,7 +56,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
 
     if (replyModal) {
       await setDoc(doc(db, "tweets", tweetId, "replies", docRef.id), {
-        username: session.user.name,
+        name: session.user.name,
       })
     }
 
@@ -100,17 +100,19 @@ const Input = ({ replyModal, tweetId }: Props) => {
   const handleTextChange = (e) => {
     if (e.target.value.length <= 400) {
       setInput(e.target.value)
+    } else {
+      setInput(e.target.value.slice(0, 400))
     }
   }
 
   return (
-    <div className={`flex p-3 space-x-2 border-b border-gray-500 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`flex p-3 space-x-2 border-b border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <div>
         <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] max-w-none object-cover" />
       </div>
 
       <div className="w-full">
-        <div className="border-b border-gray-500 ">
+        <div className="border-b border-gray-700 ">
           <TextareaAutosize
             value={input}
             onChange={handleTextChange}

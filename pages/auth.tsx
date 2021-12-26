@@ -55,8 +55,8 @@ const Auth = ({ providers }: Props) => {
           <h6 className="font-bold">Join Twitter 2.0 today</h6>
 
           <form className="my-4">
-            <input className="w-full p-3 bg-black border border-gray-500 rounded-lg focus:outline-none mb-3" placeholder="Username"></input>
-            <input className="w-full p-3 bg-black border border-gray-500 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
+            <input className="w-full p-3 bg-black border border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Username"></input>
+            <input className="w-full p-3 bg-black border border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
           </form>
 
           <AnimatedButton handleAuth={handleAuth} provider={{ id: 'email' }} authName={'email'} signUp={signUp} />

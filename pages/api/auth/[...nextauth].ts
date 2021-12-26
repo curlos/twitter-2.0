@@ -10,7 +10,7 @@ const addNewUser = async (session: Session) => {
   console.log(session)
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
-    username: session.user.name,
+    name: session.user.name,
     profilePic: session.user.image,
     tag: session.user.tag,
     bio: null,

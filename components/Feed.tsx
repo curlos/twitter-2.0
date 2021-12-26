@@ -29,14 +29,14 @@ const Feed = () => {
 
   return (
     loading ? <div>Loading...</div> : (
-      <div className="flex-grow ml-[280px] text-lg border-r border-gray-500">
-        <div className={`flex justify-between bg-black border-b border-gray-500 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
+      <div className="flex-grow ml-[280px] text-lg border-r border-gray-700">
+        <div className={`flex justify-between bg-black border-b border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
           <h2 className="font-bold">Home</h2>
           <SparklesIcon className="h-5 w-5" />
         </div>
 
         <Input />
-        {tweets.map((tweet) => <Tweet key={tweet.id} id={tweet.id} tweet={tweet.data()} />)}
+        {tweets.map((tweet) => <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={tweet.data()} />)}
 
       </div>
     )

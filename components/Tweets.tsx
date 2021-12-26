@@ -56,7 +56,7 @@ const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
         console.log(tweetData)
 
         return (
-          <Tweet id={tweet.id} tweet={tweetData} />
+          <Tweet id={tweet.id} tweet={tweetData} tweetID={tweet.id} />
         )
       })}
     </div>

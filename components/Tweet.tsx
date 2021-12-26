@@ -17,11 +17,12 @@ import Link from 'next/link';
 interface Props {
   id: string,
   tweet: any,
+  tweetID: any,
   tweetPage?: boolean
-  parentTweet?: Object
+  topParentTweet?: boolean
 }
 
-const Tweet = ({ id, tweet, tweetPage }: Props) => {
+const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
@@ -31,29 +32,32 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
   const [liked, setLiked] = useState(false)
   const [retweeted, setRetweeted] = useState(false)
   const [parentTweet, setParentTweet] = useState<DocumentData>()
+  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
   const [author, setAuthor] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
+  console.log(tweetID)
+
   useEffect(() => {
     onSnapshot(query(
-      collection(db, 'tweets', id, 'replies'),
+      collection(db, 'tweets', String(tweetID), 'replies'),
       orderBy('timestamp', 'desc')
     ),
       (snapshot) => setReplies(snapshot.docs))
-  }, [db, id])
+  }, [db, id, tweetID])
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', id, 'likes'), (snapshot) => setLikes(snapshot.docs))
-  }, [db, id])
+    onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs))
+  }, [db, id, tweetID])
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', id, 'retweets'), (snapshot) => setRetweets(snapshot.docs))
-  }, [db, id])
+    onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs))
+  }, [db, id, tweetID])
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', id, 'replies'), (snapshot) => setReplies(snapshot.docs))
-  }, [db, id])
+    onSnapshot(collection(db, 'tweets', tweetID, 'replies'), (snapshot) => setReplies(snapshot.docs))
+  }, [db, id, tweetID])
 
   useEffect(() => {
     setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1)
@@ -67,31 +71,37 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
   }, [retweets])
 
+  useEffect(() => {
+    const docRef = doc(db, "users", tweet.userID)
+    getDoc(docRef).then((snap) => {
+      setAuthor(snap.data())
+      setLoading(false)
+    })
+  }, [db, id])
+
   useEffect(
     () => {
-      console.log(tweet)
       if (tweet.parentTweet && tweet.parentTweet !== "") {
-        console.log('---')
         const docRef = doc(db, "tweets", String(tweet.parentTweet))
-        const docSnap = getDoc(docRef).then((snap) => {
-          console.log(snap.data())
+        getDoc(docRef).then((snap) => {
           setParentTweet(snap)
         })
-        console.log('---')
-
       }
     }, [db, id])
 
   useEffect(() => {
-    console.log(tweet)
-    const docRef = doc(db, "users", tweet.userID)
-    getDoc(docRef).then((snap) => {
-      console.log(snap.data())
-      setAuthor(snap.data())
+    if (parentTweet) {
+      const docRef = doc(db, "users", String(parentTweet.data().userID))
+      getDoc(docRef).then((snap) => {
+        setParentTweetAuthor(snap.data())
+        setLoading(false)
+      })
+    } else {
       setLoading(false)
-    })
+    }
+  }, [db, id, parentTweet])
 
-  }, [db, id])
+
 
   const likeTweet = async () => {
     if (liked) {
@@ -99,7 +109,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
       await deleteDoc(doc(db, "users", session.user.uid, "likes", id))
     } else {
       await setDoc(doc(db, "tweets", id, "likes", session.user.uid), {
-        username: session.user.name,
+        name: session.user.name,
         likedAt: serverTimestamp(),
         likedBy: session.user
       })
@@ -117,7 +127,7 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
       await deleteDoc(doc(db, "users", session.user.uid, "retweets", id))
     } else {
       await setDoc(doc(db, "tweets", id, "retweets", session.user.uid), {
-        username: session.user.name,
+        name: session.user.name,
         retweetedAt: serverTimestamp(),
         retweetedBy: session.user
       })
@@ -135,10 +145,12 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
     router.push('/')
   }
 
+  console.log(replies)
+
   return (
     !tweetPage ? (
-      !loading ? (
-        <div className="text-base p-3 border-b border-gray-500 w-full cursor-pointer" onClick={() => router.push(`/tweet/${id}`)}>
+      !loading && author ? (
+        <div className={`text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`} onClick={() => router.push(`/tweet/${id}`)}>
           <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
             <div className="font-semibold ml-[63px]">
               <Link href={`/profile/${tweet.retweetedBy.tag}`}>
@@ -150,16 +162,20 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
             </div>
           ) : null}</div>
           <div className="flex">
-            <div className="mr-2" onClick={(e) => {
-              e.stopPropagation()
-              router.push(`/profile/${tweet.tag}`)
-            }}>
-              <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none" />
+            <div className="mr-2">
+              <Link href={`/profile/${author.tag}`}>
+                <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
+              </Link>
             </div>
             <div className="flex flex-col justify-between w-full">
               <div className="flex justify-between w-full">
                 <div className="flex">
-                  <div className="flex">{author.name} <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" /></div>
+                  <div className="flex">
+                    <Link href={`/profile/${author.tag}`}>
+                      <div className="cursor-pointer hover:underline">{author.name}</div>
+                    </Link>
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                  </div>
                   <div className="text-gray-500">@{author.tag}</div>
                   <div className="text-gray-500 mx-1 font-bold">·</div>
                   {tweet.timestamp && tweet.timestamp.seconds && (
@@ -167,14 +183,14 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
                   )}
                 </div>
 
-                <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
+                <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
               </div>
 
               <div className="pb-3">
-                {parentTweet ? (
+                {parentTweet && parentTweetAuthor ? (
                   <div className="text-[15px] text-gray-500">
                     Replying to
-                    <span className="ml-1 text-lightblue-400">@{parentTweet.data().tag}</span>
+                    <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
                   </div>
                 ) : null}
                 <div>{tweet.text}</div>
@@ -221,37 +237,39 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
         </div>
       ) : null
     ) : (
-      !loading ? (
-        <div className="text-base p-3 border-b border-gray-500 w-full">
+      !loading && author ? (
+        <div className="text-base p-3 border-b border-gray-700 w-full">
           <div className="flex justify-between">
             <div className="flex">
               <div className="mr-2">
-                <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] max-w-none" />
+                <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] max-w-none cursor-pointer" />
               </div>
 
               <div className="">
-                <div className="flex">
-                  <div>{author.name}</div>
-                  <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
-                </div>
+                <Link href={`/profile/${author.tag}`}>
+                  <div className="flex">
+                    <div className="cursor-pointer hover:underline">{author.name}</div>
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                  </div>
+                </Link>
                 <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
               </div>
             </div>
 
-            <Dropdown tweet={tweet} deleteTweet={deleteTweet} />
+            <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
           </div>
 
           <div className="text-xl py-3">
-            {/* {parentTweet && (
+            {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
                 Replying to
-                <span className="ml-1 text-lightblue-400">@{parentTweet}</span>
+                <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
               </div>
-            )} */}
+            ) : null}
             <div>{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-800" />
+                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-700" />
               </div>
             )}
           </div>
@@ -304,6 +322,12 @@ const Tweet = ({ id, tweet, tweetPage }: Props) => {
                 likeTweet()
               }}>
                 {!liked ? <RiHeart3Line className={`h-6 w-6 cursor-pointer`} /> : <RiHeart3Fill className={`h-6 w-6 cursor-pointer text-red-500`} />}
+              </div>
+
+              <div className="flex space-x-2" onClick={(e) => {
+                e.stopPropagation()
+              }}>
+                <FiShare className={`h-6 w-6 cursor-pointer`} />
               </div>
             </div>
           </div>

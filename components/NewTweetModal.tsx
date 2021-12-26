@@ -68,7 +68,7 @@ export const NewTweetModal = () => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top sm:max-w-lg sm:w-full">
-              <div className="bg-black p-3 border-b border-gray-500">
+              <div className="bg-black p-3 border-b border-gray-700">
                 <div>
                   <XIcon className="h-7 w-7 cursor-pointer" onClick={(val) => {
                     setIsOpen(false)

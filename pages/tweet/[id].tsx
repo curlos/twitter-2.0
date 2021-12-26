@@ -26,8 +26,11 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweet, setTweet] = useState<DocumentData>()
+  const [tweetID, setTweetID] = useState('')
   const [author, setAuthor] = useState<DocumentData>()
   const [replies, setReplies] = useState([])
+  const [parentTweet, setParentTweet] = useState<DocumentData>()
+  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { id } = router.query
@@ -37,8 +40,9 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   useEffect(
     () =>
       onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
-        console.log(snapshot)
-        setTweet(snapshot.data());
+        console.log(snapshot.data())
+        setTweet(snapshot.data())
+        setTweetID(snapshot.id)
       }),
     [db, id]
   )
@@ -61,7 +65,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   )
 
   useEffect(() => {
-    if (!loading) {
+    if (tweet) {
       setLoading(true)
       const docRef = doc(db, "users", tweet.userID)
       getDoc(docRef).then((snap) => {
@@ -71,13 +75,37 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
       })
     }
 
-  }, [db, id])
+  }, [db, id, tweet])
 
-  console.log(author)
+  useEffect(
+    () => {
+      if (tweet && tweet.parentTweet && tweet.parentTweet !== "") {
+        const docRef = doc(db, "tweets", String(tweet.parentTweet))
+        getDoc(docRef).then((snap) => {
+          setParentTweet(snap)
+        })
+      }
+    }, [db, id, tweet])
+
+  useEffect(() => {
+    if (parentTweet) {
+      const docRef = doc(db, "users", String(parentTweet.data().userID))
+      getDoc(docRef).then((snap) => {
+        setParentTweetAuthor(snap.data())
+        setLoading(false)
+      })
+    } else {
+      setLoading(false)
+    }
+  }, [db, id, parentTweet])
+
+  // console.log(parentTweet.data())
+
+  console.log(tweet)
 
 
   return (
-    !loading ? (
+    !loading && tweet && author ? (
       <div className="px-12 min-h-screen min-w-screen">
         <Head>
           <title>
@@ -90,15 +118,17 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
           <Sidebar />
 
           {loading ? <div>Loading...</div> : (
-            <div className="flex-grow ml-[280px] text-lg border-r border-gray-500">
-              <div className="flex justify-between border-b border-gray-500 p-3">
+            <div className="flex-grow ml-[280px] text-lg border-r border-gray-700">
+              <div className="flex justify-between border-b border-gray-700 p-3">
                 <h2 className="font-bold">Tweet</h2>
                 <SparklesIcon className="h-5 w-5" />
               </div>
 
-              <Tweet id={String(id)} tweet={tweet} tweetPage={true} />
+              {parentTweet && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
 
-              {replies.map((tweetObj) => <Tweet id={tweetObj.id} tweet={tweetObj.data()} parentTweet={tweet} />)}
+              <Tweet id={String(id)} tweet={tweet} tweetID={tweetID} tweetPage={true} />
+
+              {replies.map((tweetObj) => <Tweet id={tweetObj.id} tweet={tweetObj.data()} tweetID={tweetObj.id} />)}
 
 
             </div>
