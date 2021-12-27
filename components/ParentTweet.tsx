@@ -53,7 +53,9 @@ const ParentTweet = ({ tweet }: Props) => {
           </div>
           <div className="my-3 text-gray-400">
             Replying to <span className="text-lightblue-400">
-              <Link href={`/profile/${author.tag}`}>@{author.tag}</Link>
+              <Link href={`/profile/${author.tag}`}>
+                <span>@{author.tag}</span>
+              </Link>
             </span>
           </div>
         </div>
