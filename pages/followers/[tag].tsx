@@ -2,6 +2,7 @@ import { ArrowLeftIcon, BadgeCheckIcon } from '@heroicons/react/solid'
 import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -40,7 +41,6 @@ const Followers = () => {
     getFollowers()
   }, [db, tag, loading])
 
-  console.log(followers)
 
   return (
     <div className="px-0 lg:px-12 min-h-screen min-w-screen">
@@ -68,6 +68,30 @@ const Followers = () => {
 
                   <div className="text-gray-400 text-sm">@{author.tag}</div>
                 </div>
+              </div>
+
+              <div className="flex">
+                <Link href={`/following/${author.tag}`}>
+                  <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
+                    <div className={`${router.asPath.includes('followers') && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
+
+                    {router.asPath.includes('followers') ? (
+                      <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                      />
+                    ) : null}
+                  </div>
+                </Link>
+
+                <Link href={`/following/${author.tag}`}>
+                  <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
+                    <div className={`${router.asPath.includes('following') && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Following</div>
+
+                    {router.asPath.includes('following') ? (
+                      <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
+                      />
+                    ) : null}
+                  </div>
+                </Link>
               </div>
 
               <div>
