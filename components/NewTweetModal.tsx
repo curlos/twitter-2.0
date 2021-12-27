@@ -41,7 +41,7 @@ export const NewTweetModal = () => {
         setIsOpen(val)
         setTweetId('')
       }}>
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -55,7 +55,7 @@ export const NewTweetModal = () => {
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
-          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+          <span className="hidden sm:inline-block sm:align-middle h-screen lg:h-full" aria-hidden="true">
             &#8203;
           </span>
           <Transition.Child
@@ -67,7 +67,7 @@ export const NewTweetModal = () => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top sm:max-w-lg sm:w-full">
+            <div className="inline-block bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-full">
               <div className="bg-black p-3 border-b border-gray-700">
                 <div>
                   <XIcon className="h-7 w-7 cursor-pointer" onClick={(val) => {
@@ -77,7 +77,7 @@ export const NewTweetModal = () => {
                 </div>
               </div>
 
-              {!loading && <ParentTweet tweet={tweet} />}
+              {!loading && <ParentTweet tweet={tweet} fromModal={true} />}
 
               <Input replyModal={String(tweetId) !== ''} tweetId={tweetId} />
             </div>

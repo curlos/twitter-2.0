@@ -9,6 +9,7 @@ import Tweet from './Tweet';
 import Widgets from './Widgets';
 import { useRecoilState } from 'recoil';
 import { newTweetModalState } from '../atoms/atom';
+import { FaFeatherAlt } from 'react-icons/fa';
 
 const Feed = () => {
 
@@ -29,13 +30,15 @@ const Feed = () => {
 
   return (
     loading ? <div>Loading...</div> : (
-      <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700">
+      <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700 max-w-[700px]">
         <div className={`flex justify-between bg-black border-b border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
           <h2 className="font-bold">Home</h2>
           <SparklesIcon className="h-5 w-5" />
         </div>
 
-        <Input />
+        <div className="hidden lg:block">
+          <Input />
+        </div>
         {tweets.map((tweet) => <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={tweet.data()} />)}
 
       </div>

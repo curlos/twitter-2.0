@@ -107,9 +107,9 @@ const Input = ({ replyModal, tweetId }: Props) => {
   }
 
   return (
-    <div className={`flex p-3 space-x-2 border-b border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`flex p-3 space-x-2 border-b z-10 border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <Link href={`/profile/${session.user.tag}`}>
-        <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
+        <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
       </Link>
 
       <div className="w-full">
@@ -133,54 +133,65 @@ const Input = ({ replyModal, tweetId }: Props) => {
         </div>
 
         {!loading && (
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-3 text-lightblue-400 py-4">
-              <div className="icon" onClick={() => filePickerRef.current.click()}>
-                <PhotographIcon className="h-7 w-7 hoverAnimation" />
+          <div>
+            <div className="flex justify-between items-center">
+              <div className="flex space-x-3 text-lightblue-400 py-4">
+                <div className="icon" onClick={() => filePickerRef.current.click()}>
+                  <PhotographIcon className="h-7 w-7 hoverAnimation" />
 
-                <input
-                  type="file"
-                  ref={filePickerRef}
-                  hidden
-                  onChange={addImageToPost}
-                />
+                  <input
+                    type="file"
+                    ref={filePickerRef}
+                    hidden
+                    onChange={addImageToPost}
+                  />
+                </div>
+
+                <div className="icon">
+                  <ChartBarIcon className="h-7 w-7 hoverAnimation" />
+                </div>
+
+                <div className="icon" onClick={() => setShowEmojis(!showEmojis)}>
+                  <EmojiHappyIcon className="h-7 w-7 hoverAnimation" />
+                </div>
+
+                <div className="icon">
+                  <CalendarIcon className="h-7 w-7 hoverAnimation" />
+                </div>
+
+                {showEmojis && (
+                  <Picker
+                    onSelect={addEmoji}
+                    style={{
+                      position: "absolute",
+                      marginTop: "40px",
+                      marginLeft: -40,
+                      maxWidth: "320px",
+                      borderRadius: "20px"
+                    }}
+                    theme="dark"
+                  />
+                )}
               </div>
 
-              <div className="icon">
-                <ChartBarIcon className="h-7 w-7 hoverAnimation" />
+              <div className="hidden lg:flex items-center space-x-4">
+                <div>{input.length}/400</div>
+                <button
+                  className="bg-lightblue-500 px-4 py-2 rounded-full font-bold"
+                  onClick={sendTweet}>
+                  {!replyModal ? 'Tweet' : 'Reply'}
+                </button>
               </div>
 
-              <div className="icon" onClick={() => setShowEmojis(!showEmojis)}>
-                <EmojiHappyIcon className="h-7 w-7 hoverAnimation" />
-              </div>
-
-              <div className="icon">
-                <CalendarIcon className="h-7 w-7 hoverAnimation" />
-              </div>
-
-              {showEmojis && (
-                <Picker
-                  onSelect={addEmoji}
-                  style={{
-                    position: "absolute",
-                    marginTop: "40px",
-                    marginLeft: -40,
-                    maxWidth: "320px",
-                    borderRadius: "20px"
-                  }}
-                  theme="dark"
-                />
-              )}
+              <div className="lg:hidden">{input.length}/400</div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div>{input.length}/400</div>
-              <button
-                className="bg-lightblue-500 px-4 py-2 rounded-full font-bold"
+            <div className="w-100 lg:hidden">
+              <div
+                className="bg-lightblue-500 px-4 py-2 rounded-full font-bold w-100 text-center"
                 onClick={sendTweet}>
                 {!replyModal ? 'Tweet' : 'Reply'}
-              </button>
-
+              </div>
             </div>
           </div>
         )}

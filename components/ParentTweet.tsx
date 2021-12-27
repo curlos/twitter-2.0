@@ -5,10 +5,11 @@ import React, { useEffect, useState } from 'react'
 import { db } from '../firebase'
 
 interface Props {
-  tweet: any
+  tweet: any,
+  fromModal: boolean
 }
 
-const ParentTweet = ({ tweet }: Props) => {
+const ParentTweet = ({ tweet, fromModal }: Props) => {
 
   const [author, setAuthor] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
@@ -27,27 +28,27 @@ const ParentTweet = ({ tweet }: Props) => {
   return (
     !loading ? (
       <div className="flex p-3 space-x-2 pb-0 h-full">
-        <div className="h-full">
+        <div className="min-w-[55px] h-full">
           <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover" />
-          <span className="border-r-2 border-gray-700 h-1/2 absolute ml-[27px]" />
+          <span className="border-r-2 border-gray-700 absolute ml-[27px] h-[100%]" />
         </div>
 
         <div>
-          <div className="flex text-gray-400">
+          <div className="text-gray-400 lg:flex">
             <div className="text-white mr-[2px]">{author.name}</div>
             <div>@{author.tag}</div>
-            <div className="text-gray-500 mx-1 font-bold">·</div>
+            <div className="text-gray-500 mx-1 font-bold hidden lg:block">·</div>
             {tweet.timestamp && tweet.timestamp.seconds && (
               <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
             )}
           </div>
 
           <div>
-            <div>{tweet.text}</div>
+            <div className="break-words max-w-[420px]">{tweet.text}</div>
 
             {tweet.image && (
               <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl max-h-80 object-contain" />
+                <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain" />
               </div>
             )}
           </div>
