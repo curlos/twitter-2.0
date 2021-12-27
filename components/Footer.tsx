@@ -6,7 +6,7 @@ import { HiMail } from 'react-icons/hi'
 
 const Footer = () => {
   return (
-    <div className="lg:hidden fixed bottom-0 w-full bg-black p-4 px-6 flex justify-between items-center">
+    <div className="sm:hidden fixed bottom-0 w-full bg-black p-4 px-6 flex justify-between items-center">
       <Link href={`/`}>
         <FaHome className="flex-1 h-6 w-6 cursor-pointer" />
       </Link>

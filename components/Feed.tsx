@@ -30,7 +30,7 @@ const Feed = () => {
 
   return (
     loading ? <div>Loading...</div> : (
-      <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700 max-w-[700px]">
+      <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700 max-w-[700px] 2xl:max-w-[800px]">
         <div className={`flex justify-between bg-black border-b border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
           <h2 className="font-bold">Home</h2>
           <SparklesIcon className="h-5 w-5" />

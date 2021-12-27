@@ -40,8 +40,8 @@ export default function Home({ trendingResults, followResults, providers }) {
 
         {isSettingsModalOpen && <SettingsModal />}
 
-        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
-          <FaFeatherAlt className="h-7 w-7" />
+        <div className="sm:hidden text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
+          <FaFeatherAlt className="h-7 w-7 cursor-pointer" />
         </div>
 
         <Footer />

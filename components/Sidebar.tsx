@@ -18,6 +18,7 @@ import { useRecoilState } from "recoil";
 import { newTweetModalState } from "../atoms/atom";
 import router from "next/router";
 import Link from "next/link";
+import { FaFeatherAlt } from "react-icons/fa";
 
 const Sidebar = () => {
 
@@ -25,8 +26,8 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
   return (
-    <div className="hidden lg:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 lg:w-[280px]">
-      <div className="space-y-6 flex-grow">
+    <div className="hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 w-[80px] xl:w-[280px] py-4">
+      <div className="flex flex-col justify-center items-center space-y-6 flex-grow xl:items-start">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <Image src="https://rb.gy/ogau5a" width={30} height={30} />
         </div>
@@ -46,15 +47,19 @@ const Sidebar = () => {
           signOut()
         }}>
           <LogoutIcon className="h-[30px] w-[30px]" />
-          <div>Logout</div>
+          <div className="hidden xl:block">Logout</div>
         </div>
 
-        <button className="flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full" onClick={() => setIsOpen(true)}>
+        <button className="hidden xl:flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => setIsOpen(true)}>
           Tweet
         </button>
+
+        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden" onClick={() => setIsOpen(true)}>
+          <FaFeatherAlt className="h-7 w-7 cursor-pointer" />
+        </div>
       </div>
 
-      <div className="flex items-center justify-between mt-3 w-100">
+      <div className="hidden xl:flex items-center justify-between mt-3 w-100">
         <div className="flex items-center space-x-2 w-100">
           <Link href={`/profile/${session.user.tag}`}>
             <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] bg-red-500 object-cover cursor-pointer" />

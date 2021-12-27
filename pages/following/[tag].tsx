@@ -54,7 +54,7 @@ const Following = () => {
 
       <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
         <Sidebar />
-        <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700">
+        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
           {!loading && author ? (
             <div>
               <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">

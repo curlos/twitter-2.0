@@ -132,11 +132,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Sidebar />
 
         {loading ? (
-          <div className="flex justify-center mt-4 flex-grow lg:ml-[280px] w-full">
+          <div className="flex justify-center mt-4 flex-grow sm:ml-[80px] xl:ml-[280px] w-full">
             <Spinner />
           </div>
         ) : (
-          author && <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700">
+          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
             <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />

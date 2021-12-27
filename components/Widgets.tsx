@@ -6,7 +6,7 @@ import SmallUser from './SmallUser'
 
 const Widgets = () => {
   return (
-    <div className="hidden pl-3 py-2 space-y-5 lg:block">
+    <div className="hidden pl-3 py-2 space-y-5 xl:block">
       <div className="flex items-center w-[350px]">
         <div className="text-gray-500 bg-gray-800 p-3 rounded-l-full">
           <SearchIcon className="h-6 w-6" />

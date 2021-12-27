@@ -174,7 +174,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   return (
     !tweetPage ? (
       !loading && author ? (
-        <div className={`max-w-full lg:max-w-[700px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`}>
+        <div className={`max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`}>
           <Link href={`/tweet/${tweetID}`}>
             <div>
               <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
@@ -221,7 +221,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         </Link>
                       </div>
                     ) : null}
-                    <div className="break-words max-w-[300px] lg:max-w-[600px]">{tweet.text}</div>
+                    <div className="break-words max-w-[300px] lg:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]">{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
                         <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain" />
@@ -307,7 +307,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                 </Link>
               </div>
             ) : null}
-            <div className="break-words max-w-[350px] lg:max-w-[670px]">{tweet.text}</div>
+            <div className="break-words max-w-[350px] lg:max-w-[700px] xl:max-w-[670px] 2xl:max-w-[850px]">{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
                 <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-700" />

@@ -188,7 +188,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
 
             <div className="w-100 lg:hidden">
               <div
-                className="bg-lightblue-500 px-4 py-2 rounded-full font-bold w-100 text-center"
+                className="bg-lightblue-500 px-4 py-2 rounded-full font-bold w-100 text-center cursor-pointer"
                 onClick={sendTweet}>
                 {!replyModal ? 'Tweet' : 'Reply'}
               </div>

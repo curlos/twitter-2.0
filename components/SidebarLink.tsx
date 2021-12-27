@@ -27,7 +27,7 @@ const SidebarLink = ({ text, Icon, active, tag }: Props) => {
     <Link href={getLinkHref(text)}>
       <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold'}`}>
         <Icon className="h-[30px] w-[30px]" />
-        <div>{text}</div>
+        <div className="hidden xl:block">{text}</div>
       </div>
     </Link>
   )
