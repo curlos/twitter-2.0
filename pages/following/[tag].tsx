@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { newTweetModalState } from '../../atoms/atom'
+import Footer from '../../components/Footer'
 import MediumUser from '../../components/MediumUser'
 import { NewTweetModal } from '../../components/NewTweetModal'
 import Sidebar from '../../components/Sidebar'
@@ -113,7 +114,10 @@ const Following = () => {
 
 
         <Widgets />
+
         {isOpen && <NewTweetModal />}
+
+        <Footer />
 
       </main>
     </div>

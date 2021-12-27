@@ -13,6 +13,7 @@ import Tweet from '../../components/Tweet'
 import { collection, getDoc, orderBy, query, where } from 'firebase/firestore'
 import Widgets from '../../components/Widgets'
 import SettingsModal from '../../components/SettingsModal'
+import Footer from '../../components/Footer'
 
 interface Props {
   trendingResults: any,
@@ -136,7 +137,10 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
 
           <Widgets />
+
           {isOpen && <NewTweetModal />}
+
+          <Footer />
         </main>
 
       </div>

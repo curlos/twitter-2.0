@@ -5,9 +5,12 @@ import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { FaBell, FaFeatherAlt, FaHome, FaSearch } from 'react-icons/fa'
+import { FiMail } from 'react-icons/fi'
 import { useRecoilState } from 'recoil'
 import { newTweetModalState, settingsModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
+import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
 import SettingsModal from '../components/SettingsModal'
 import Sidebar from '../components/Sidebar'
@@ -36,6 +39,12 @@ export default function Home({ trendingResults, followResults, providers }) {
         {/* {isSettingsModalOpen && <SettingsModal />} */}
 
         {isSettingsModalOpen && <SettingsModal />}
+
+        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
+          <FaFeatherAlt className="h-7 w-7" />
+        </div>
+
+        <Footer />
       </main>
 
     </div>

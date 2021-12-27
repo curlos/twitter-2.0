@@ -18,6 +18,7 @@ import moment from 'moment'
 import SettingsModal from '../../components/SettingsModal'
 import Spinner from '../../components/Spinner'
 import Link from 'next/link'
+import Footer from '../../components/Footer'
 
 interface Props {
   trendingResults: any,
@@ -283,6 +284,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Widgets />
         {isOpen && <NewTweetModal />}
         {isSettingsModalOpen && <SettingsModal />}
+
+        <Footer />
       </main>
 
 
