@@ -17,6 +17,7 @@ import Tweets from '../../components/Tweets'
 import moment from 'moment'
 import SettingsModal from '../../components/SettingsModal'
 import Spinner from '../../components/Spinner'
+import Link from 'next/link'
 
 interface Props {
   trendingResults: any,
@@ -98,11 +99,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
     } else {
       await setDoc(doc(db, "users", authorID, "followers", String(session.user.uid)), {
         followedAt: serverTimestamp(),
-        followedBy: session.user
+        followedBy: session.user.uid
       })
       await setDoc(doc(db, "users", String(session.user.uid), "following", authorID), {
         followedAt: serverTimestamp(),
-        followedBy: session.user
+        followedBy: session.user.uid
       })
     }
   }
@@ -201,15 +202,17 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
 
               <div className="text-gray-500 text-base flex space-x-4">
-                <div className="space-x-1">
+                <div className="space-x-1 cursor-pointer hover:underline">
                   <span className="text-white font-bold">{following.length}</span>
                   <span>Following</span>
                 </div>
 
-                <div className="space-x-1">
-                  <span className="text-white font-bold">{followers.length}</span>
-                  <span>Followers</span>
-                </div>
+                <Link href={`/followers/${author.tag}`}>
+                  <div className="space-x-1 cursor-pointer hover:underline">
+                    <span className="text-white font-bold">{followers.length}</span>
+                    <span>Followers</span>
+                  </div>
+                </Link>
               </div>
 
               <div className="text-sm text-gray-500 flex space-x-3 py-3">

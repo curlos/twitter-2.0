@@ -111,12 +111,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       await setDoc(doc(db, "tweets", id, "likes", session.user.uid), {
         name: session.user.name,
         likedAt: serverTimestamp(),
-        likedBy: session.user
+        likedBy: session.user.uid
       })
       await setDoc(doc(db, "users", session.user.uid, "likes", id), {
         ...tweet,
         likedAt: serverTimestamp(),
-        likedBy: session.user
+        likedBy: session.user.uid
       })
     }
   }
@@ -129,12 +129,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       await setDoc(doc(db, "tweets", id, "retweets", session.user.uid), {
         name: session.user.name,
         retweetedAt: serverTimestamp(),
-        retweetedBy: session.user
+        retweetedBy: session.user.uid
       })
       await setDoc(doc(db, "users", session.user.uid, "retweets", id), {
         ...tweet,
         retweetedAt: serverTimestamp(),
-        retweetedBy: session.user
+        retweetedBy: session.user.uid
       })
     }
   }
@@ -192,7 +192,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     {parentTweet && parentTweetAuthor ? (
                       <div className="text-[15px] text-gray-500">
                         Replying to
-                        <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
+                        <Link href={`/profile/${author.tag}`}>
+                          <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@{parentTweetAuthor.tag}</span>
+                        </Link>
                       </div>
                     ) : null}
                     <div>{tweet.text}</div>
@@ -266,8 +268,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
           <div className="text-xl py-3">
             {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
-                Replying to
-                <span className="ml-1 text-lightblue-400">@{parentTweetAuthor.tag}</span>
+                <span>Replying to</span>
+                <Link href={`/profile/${author.tag}`}>
+                  <span className="ml-1 text-lightblue-400 cursor-pointer underline">@{parentTweetAuthor.tag}</span>
+                </Link>
               </div>
             ) : null}
             <div>{tweet.text}</div>

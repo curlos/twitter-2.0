@@ -1,5 +1,6 @@
 import { doc, DocumentData, getDoc } from 'firebase/firestore'
 import moment from 'moment'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { db } from '../firebase'
 
@@ -51,7 +52,9 @@ const ParentTweet = ({ tweet }: Props) => {
             )}
           </div>
           <div className="my-3 text-gray-400">
-            Replying to <span className="text-lightblue-400">@{author.tag}</span>
+            Replying to <span className="text-lightblue-400">
+              <Link href={`/profile/${author.tag}`}>@{author.tag}</Link>
+            </span>
           </div>
         </div>
       </div>
