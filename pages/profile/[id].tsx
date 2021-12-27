@@ -104,7 +104,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       })
       await setDoc(doc(db, "users", String(session.user.uid), "following", authorID), {
         followedAt: serverTimestamp(),
-        followedBy: session.user.uid
+        followingID: authorID
       })
     }
   }
@@ -203,10 +203,16 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
 
               <div className="text-gray-500 text-base flex space-x-4">
-                <div className="space-x-1 cursor-pointer hover:underline">
-                  <span className="text-white font-bold">{following.length}</span>
-                  <span>Following</span>
-                </div>
+                <Link href={{
+                  pathname: `/following/[tag]`,
+                  query: { tag: author.tag || 't' }
+                }}>
+                  <div className="space-x-1 cursor-pointer hover:underline">
+                    <span className="text-white font-bold">{following.length}</span>
+                    <span>Following</span>
+                  </div>
+                </Link>
+
 
                 <Link href={{
                   pathname: `/followers/[tag]`,

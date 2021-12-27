@@ -14,18 +14,18 @@ import Spinner from '../../components/Spinner'
 import Widgets from '../../components/Widgets'
 import { db } from '../../firebase'
 
-const Followers = () => {
+const Following = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [author, setAuthor] = useState<DocumentData>()
-  const [followers, setFollowers] = useState([])
+  const [following, setFollowing] = useState([])
   const [loading, setLoading] = useState(true)
 
   const router = useRouter()
   const { tag } = router.query
 
   useEffect(() => {
-    const getFollowers = async () => {
+    const getFollowing = async () => {
       const q = query(collection(db, "users"), where('tag', '==', String(tag)))
       const querySnapshot = await getDocs(q)
       console.log(querySnapshot.docs)
@@ -33,12 +33,12 @@ const Followers = () => {
 
       setAuthor(querySnapshot.docs[0].data())
 
-      const f = query(collection(db, "users", userID, "followers"))
+      const f = query(collection(db, "users", userID, "following"))
       const queryFollowersSnapshot = await getDocs(f)
-      setFollowers(queryFollowersSnapshot.docs)
+      setFollowing(queryFollowersSnapshot.docs)
       setLoading(false)
     }
-    getFollowers()
+    getFollowing()
   }, [db, tag, loading])
 
 
@@ -46,7 +46,7 @@ const Followers = () => {
     <div className="px-0 lg:px-12 min-h-screen min-w-screen">
       <Head>
         <title>
-          {`${tag}'s`} Followers
+          {`${tag}'s`} Following
         </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -71,7 +71,7 @@ const Followers = () => {
               </div>
 
               <div className="flex">
-                <Link href={`/following/${author.tag}`}>
+                <Link href={`/followers/${author.tag}`}>
                   <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
                     <div className={`${router.asPath.includes('followers') && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
 
@@ -95,13 +95,13 @@ const Followers = () => {
               </div>
 
               <div>
-                {followers.map((f) => {
-                  const follower = f.data()
+                {following.map((f) => {
+                  const user = f.data()
 
-                  console.log(follower)
+                  console.log(user)
 
                   return (
-                    <MediumUser userID={String(follower.followedBy)} />
+                    <MediumUser userID={String(user.followingID)} />
                   )
                 })}
               </div>
@@ -120,7 +120,7 @@ const Followers = () => {
   )
 }
 
-export default Followers
+export default Following
 
 export async function getServerSideProps(context) {
   const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then(

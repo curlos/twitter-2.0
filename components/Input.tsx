@@ -23,6 +23,7 @@ import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { newTweetModalState, tweetIdState } from '../atoms/atom';
+import Link from 'next/link';
 
 interface Props {
   replyModal?: boolean
@@ -107,9 +108,9 @@ const Input = ({ replyModal, tweetId }: Props) => {
 
   return (
     <div className={`flex p-3 space-x-2 border-b border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
-      <div>
-        <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] max-w-none object-cover" />
-      </div>
+      <Link href={`/profile/${session.user.tag}`}>
+        <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
+      </Link>
 
       <div className="w-full">
         <div className="border-b border-gray-700 ">
