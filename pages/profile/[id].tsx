@@ -16,6 +16,7 @@ import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/out
 import Tweets from '../../components/Tweets'
 import moment from 'moment'
 import SettingsModal from '../../components/SettingsModal'
+import Spinner from '../../components/Spinner'
 
 interface Props {
   trendingResults: any,
@@ -122,10 +123,16 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+
+
       <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
         <Sidebar />
 
-        {loading ? <div>Loading...</div> : (
+        {loading ? (
+          <div className="flex justify-center mt-4 flex-grow ml-[280px] w-full">
+            <Spinner />
+          </div>
+        ) : (
           <div className="flex-grow ml-[280px] text-lg border-r border-gray-700">
             <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
