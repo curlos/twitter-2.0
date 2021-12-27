@@ -171,7 +171,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                 </div>
                 <div className="flex flex-col justify-between w-full">
                   <div className="flex justify-between w-full">
-                    <div className="flex">
+                    <div className="lg:flex">
                       <div className="flex">
                         <Link href={`/profile/${author.tag}`}>
                           <div className="cursor-pointer hover:underline">{author.name}</div>
@@ -179,7 +179,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
                       </div>
                       <div className="text-gray-500">@{author.tag}</div>
-                      <div className="text-gray-500 mx-1 font-bold">·</div>
+                      <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
                       {tweet.timestamp && tweet.timestamp.seconds && (
                         <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
                       )}

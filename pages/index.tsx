@@ -21,7 +21,7 @@ export default function Home({ trendingResults, followResults, providers }) {
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
 
   return (
-    <div className="px-12 min-h-screen min-w-screen">
+    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
       <Head>
         <title>Twitter 2.0</title>
         <link rel="icon" href="/favicon.ico" />

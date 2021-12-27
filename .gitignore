@@ -29,8 +29,14 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-firebase.js
-firebase.ts
 
 # vercel
 .vercel
+
+#other
+firebase.js
+firebase.ts
+.github
+.firebase
+.firebaserc
+firebase.json

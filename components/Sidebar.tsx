@@ -25,7 +25,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
   return (
-    <div className="flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 lg:w-[280px]">
+    <div className="hidden lg:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 lg:w-[280px]">
       <div className="space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <Image src="https://rb.gy/ogau5a" width={30} height={30} />

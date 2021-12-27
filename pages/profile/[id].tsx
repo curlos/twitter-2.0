@@ -49,6 +49,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
     const fetchFromDB = async () => {
       const userQuery = query(collection(db, "users"), where('tag', '==', id))
       const userQuerySnapshot = await getDocs(userQuery)
+
       setAuthor(userQuerySnapshot.docs[0].data())
       setAuthorID(userQuerySnapshot.docs[0].id)
 
@@ -116,7 +117,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
   return (
-    <div className="px-12 min-h-screen min-w-screen">
+    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
       <Head>
         <title>
           Twitter 2.0
@@ -130,11 +131,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Sidebar />
 
         {loading ? (
-          <div className="flex justify-center mt-4 flex-grow ml-[280px] w-full">
+          <div className="flex justify-center mt-4 flex-grow lg:ml-[280px] w-full">
             <Spinner />
           </div>
         ) : (
-          <div className="flex-grow ml-[280px] text-lg border-r border-gray-700">
+          author && <div className="flex-grow lg:ml-[280px] text-lg border-r border-gray-700">
             <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
@@ -207,7 +208,10 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                   <span>Following</span>
                 </div>
 
-                <Link href={`/followers/${author.tag}`}>
+                <Link href={{
+                  pathname: `/followers/[tag]`,
+                  query: { tag: author.tag || 't' }
+                }}>
                   <div className="space-x-1 cursor-pointer hover:underline">
                     <span className="text-white font-bold">{followers.length}</span>
                     <span>Followers</span>
@@ -263,7 +267,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
             </div>
 
-            <div className="w-full h-[1px] m-0 bg-gray-400 rounded-full"
+            <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
             />
 
             <Tweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
