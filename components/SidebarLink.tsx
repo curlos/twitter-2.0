@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface Props {
   text: string,
@@ -9,8 +9,22 @@ interface Props {
 }
 
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
+
+  const getLinkHref = (text) => {
+    switch (text) {
+      case 'Profile':
+        return `/profile/${tag}`
+      case 'Messages':
+        return `/messages`
+      case 'Bookmarks':
+        return `/bookmarks`
+      default:
+        return '/'
+    }
+  }
+
   return (
-    <Link href={text === 'Profile' ? `/profile/${tag}` : '/'}>
+    <Link href={getLinkHref(text)}>
       <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold'}`}>
         <Icon className="h-[30px] w-[30px]" />
         <div>{text}</div>
