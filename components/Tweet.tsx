@@ -8,7 +8,7 @@ import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, 
 import { db } from '../firebase';
 import { getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import { Dropdown } from './Dropdown';
-import { FaRetweet, FaRegComment } from 'react-icons/fa'
+import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa'
 import { FiShare } from 'react-icons/fi'
 import { HiBadgeCheck } from 'react-icons/hi'
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
@@ -28,9 +28,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
   const [likes, setLikes] = useState([])
   const [retweets, setRetweets] = useState([])
+  const [bookmarks, setBookmarks] = useState([])
   const [replies, setReplies] = useState([])
   const [liked, setLiked] = useState(false)
   const [retweeted, setRetweeted] = useState(false)
+  const [bookmarked, setBookmarked] = useState(false)
   const [parentTweet, setParentTweet] = useState<DocumentData>()
   const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
   const [author, setAuthor] = useState<DocumentData>()
@@ -60,6 +62,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   }, [db, id, tweetID])
 
   useEffect(() => {
+    onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs))
+  }, [db, id, tweetID])
+
+  useEffect(() => {
     setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1)
   }, [likes])
 
@@ -68,8 +74,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   }, [retweets])
 
   useEffect(() => {
-    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
-  }, [retweets])
+    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1)
+  }, [bookmarks])
 
   useEffect(() => {
     const docRef = doc(db, "users", tweet.userID)
@@ -135,6 +141,24 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
         ...tweet,
         retweetedAt: serverTimestamp(),
         retweetedBy: session.user.uid
+      })
+    }
+  }
+
+  const bookmarkTweet = async () => {
+    console.log('hello')
+
+    if (bookmarked) {
+      console.log('bookmarked')
+      await deleteDoc(doc(db, "tweets", id, "bookmarks", session.user.uid))
+      await deleteDoc(doc(db, "users", session.user.uid, "bookmarks", id))
+    } else {
+      console.log('not')
+      await setDoc(doc(db, "tweets", id, "bookmarks", session.user.uid), {
+        userID: session.user.uid
+      })
+      await setDoc(doc(db, "users", session.user.uid, "bookmarks", id), {
+        tweetID: id
       })
     }
   }
@@ -232,8 +256,15 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                       <div className="text-red-500">{likes.length}</div>
                     </div>
 
-                    <div className="flex-1">
-                      <FiShare className="h-[18px] w-[18px] cursor-pointer" />
+                    <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
+                      e.stopPropagation()
+                      bookmarkTweet()
+                    }}>
+                      {bookmarked ? (
+                        <FaBookmark className={`h-[18px] w-[18px] cursor-pointer text-yellow-500`} />
+                      ) : (
+                        <FaRegBookmark className={`h-[18px] w-[18px] cursor-pointer`} />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -334,8 +365,13 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
               <div className="flex space-x-2" onClick={(e) => {
                 e.stopPropagation()
+                bookmarkTweet()
               }}>
-                <FiShare className={`h-6 w-6 cursor-pointer`} />
+                {bookmarked ? (
+                  <FaBookmark className={`h-6 w-6 cursor-pointer text-yellow-500`} />
+                ) : (
+                  <FaRegBookmark className={`h-6 w-6 cursor-pointer`} />
+                )}
               </div>
             </div>
           </div>
