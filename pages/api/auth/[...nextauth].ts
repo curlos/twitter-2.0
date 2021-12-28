@@ -5,9 +5,6 @@ import GoogleProvider from "next-auth/providers/google";
 import { db } from "../../../firebase"
 
 const addNewUser = async (session: Session) => {
-
-  console.log('adding')
-  console.log(session)
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
     name: session.user.name,
@@ -41,8 +38,6 @@ export default NextAuth({
         .toLocaleLowerCase();
       session.user.profilePic = session.user.image
 
-      console.log(session)
-
       const q = query(collection(db, "users"), where('email', '==', session.user.email))
       const querySnapshot = await getDocs(q)
 
@@ -66,7 +61,6 @@ export default NextAuth({
 
         const { bio, location, website, dateJoined } = userDoc.data()
 
-
         session.user.bio = bio
         session.user.location = location
         session.user.website = website
@@ -76,4 +70,5 @@ export default NextAuth({
       return session;
     },
   },
+  secret: process.env.JWT_SECRET
 });
