@@ -120,7 +120,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
           {loading ? <div>Loading...</div> : (
             <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
-              <div className="flex justify-between border-b border-gray-700 p-3">
+              <div className="flex justify-between items-center border-b border-gray-700 p-3">
                 <h2 className="font-bold">Tweet</h2>
                 <SparklesIcon className="h-5 w-5" />
               </div>
