@@ -39,8 +39,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  console.log(tweetID)
-
   useEffect(() => {
     onSnapshot(query(
       collection(db, 'tweets', String(tweetID), 'replies'),
@@ -168,8 +166,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     deleteDoc(doc(db, 'tweets', id))
     router.push('/')
   }
-
-  console.log(replies)
 
   return (
     !tweetPage ? (
