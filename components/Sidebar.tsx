@@ -27,7 +27,7 @@ const Sidebar = () => {
 
   return (
     <div className="hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 w-[80px] xl:w-[280px] py-4">
-      <div className="flex flex-col justify-center items-center space-y-6 flex-grow sm:items-start">
+      <div className="flex flex-col justify-start items-start space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <Image src="https://rb.gy/ogau5a" width={30} height={30} />
         </div>
@@ -55,7 +55,7 @@ const Sidebar = () => {
         </button>
 
         <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden" onClick={() => setIsOpen(true)}>
-          <FaFeatherAlt className="h-7 w-7 cursor-pointer" />
+          <FaFeatherAlt className="h-5 w-5 cursor-pointer" />
         </div>
       </div>
 

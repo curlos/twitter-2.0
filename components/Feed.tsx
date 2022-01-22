@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SparklesIcon } from '@heroicons/react/outline'
 import { db } from "../firebase";
 import Input from './Input'
@@ -14,6 +14,7 @@ import Spinner from './Spinner';
 import { sortByNewest, sortByOldest } from '../utils/sortTweets'
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
+import { debounce } from 'lodash'
 
 const Feed = () => {
 
@@ -21,24 +22,45 @@ const Feed = () => {
   const [tweets, setTweets] = useState([])
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [loading, setLoading] = useState(true)
-  const [sortType, setSortType] = useState('Oldest')
+  const [sortType, setSortType] = useState('Newest')
+  const [filteredTweets, setFilteredTweets] = useState([])
 
   const router = useRouter()
 
   useEffect(() => onSnapshot(
     query(collection(db, "tweets"), orderBy("timestamp", "desc")),
     (snapshot) => {
+      console.log(router.query.query)
       setTweets(snapshot.docs)
+      setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs))
       setLoading(false)
     }
-  ), [db, router.query])
+  ), [db])
 
   useEffect(() => {
-    setTweets(getSortedTweets())
+    setLoading(true)
+    const filteredTweets = getFilteredTweets(router.query.query, tweets)
+    setFilteredTweets(getSortedTweets(filteredTweets))
     setLoading(false)
-  }, [sortType])
+  }, [sortType, router.query.query])
 
-  const getSortedTweets = () => {
+  const getFilteredTweets = (searchQuery, tweets) => {
+    console.log(searchQuery)
+    if (searchQuery === '' || !searchQuery || !tweets) {
+      return tweets
+    } else {
+      const filteredTweets = tweets.filter((tweet) => {
+        console.log(searchQuery)
+        if (searchQuery && typeof searchQuery === 'string') {
+          return tweet.data().text.toLowerCase().includes(searchQuery.toLowerCase())
+        }
+        return tweet
+      })
+      return filteredTweets
+    }
+  }
+
+  const getSortedTweets = (tweets) => {
     switch (sortType) {
       case 'Newest':
         return sortByNewest(tweets)
@@ -48,6 +70,9 @@ const Feed = () => {
         return sortByNewest(tweets)
     }
   }
+
+  console.log(filteredTweets)
+  console.log(router.query)
 
   return (
     loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
@@ -66,11 +91,13 @@ const Feed = () => {
         <div>
           <SortDropdown sortType={sortType} setSortType={setSortType} />
         </div>
-        {tweets.map((tweet) => {
+        {!loading ? filteredTweets.map((tweet) => {
           return (
             <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={tweet.data()} />
           )
-        })}
+        }) : (
+          <Spinner />
+        )}
 
       </div>
     )

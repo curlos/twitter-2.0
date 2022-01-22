@@ -1,7 +1,10 @@
-import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore";
-import NextAuth from "next-auth";
-import { Session } from "next-auth/core/types";
-import GoogleProvider from "next-auth/providers/google";
+import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore"
+import NextAuth from "next-auth"
+import { Session } from "next-auth/core/types"
+import GoogleProvider from "next-auth/providers/google"
+import TwitterPorivder from "next-auth/providers/twitter"
+import FacebookProvider from "next-auth/providers/facebook"
+import AppleProvider from "next-auth/providers/apple"
 import { db } from "../../../firebase"
 
 const addNewUser = async (session: Session) => {
@@ -27,6 +30,10 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    AppleProvider({
+      clientId: process.env.APPLE_ID,
+      clientSecret: process.env.APPLE_SECRET
+    })
     // ...add more providers here
   ],
   callbacks: {
