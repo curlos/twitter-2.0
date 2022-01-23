@@ -2,7 +2,6 @@ export const sortByNewest = (tweetsToSort: any) => {
   const tweetsToSortClone = [...tweetsToSort]
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
-    console.log(tweetOne)
 
     let timestampOne = tweetOne.data().retweetedAt ? tweetOne.data().retweetedAt.seconds : tweetOne.data().timestamp.seconds
 
@@ -16,7 +15,6 @@ export const sortByOldest = (tweetsToSort: any) => {
   const tweetsToSortClone = [...tweetsToSort]
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
-    console.log(tweetOne)
 
     let timestampOne = tweetOne.data().retweetedAt ? tweetOne.data().retweetedAt.seconds : tweetOne.data().timestamp.seconds
 

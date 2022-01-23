@@ -32,6 +32,11 @@ const Sidebar = () => {
   const router = useRouter()
 
   useEffect(() => {
+    console.log(localStorage.getItem('theme'))
+    setTheme(localStorage.getItem('theme'))
+  }, [])
+
+  useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {
       setActiveLink('bookmarks')
     } else if (router.pathname.startsWith('/profile')) {
@@ -41,21 +46,25 @@ const Sidebar = () => {
     }
   }, [router.pathname])
 
-  console.log(router)
-
   return (
     <div className={`${theme} hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
       <div className="flex flex-col justify-start items-center xl:items-start space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
-          <BsTwitter className="h-[30px] w-[30px] text-[#1DA1F2] dark:text-white" />
+          <BsTwitter className="h-[30px] w-[30px] text-lightblue-500 dark:text-white" />
         </div>
 
         {theme === 'dark' ? (
-          <div className="cursor-pointer" onClick={() => setTheme('light')}>
+          <div className="cursor-pointer" onClick={() => {
+            setTheme('light')
+            localStorage.theme = 'light'
+          }}>
             <SunIcon className="h-[30px] w-[30px] dark:text-white" />
           </div>
         ) : (
-          <div className="cursor-pointer" onClick={() => setTheme('dark')}>
+          <div className="cursor-pointer" onClick={() => {
+            setTheme('dark')
+            localStorage.theme = 'dark'
+          }}>
             <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
           </div>
         )}

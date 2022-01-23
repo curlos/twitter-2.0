@@ -65,7 +65,7 @@ const Followers = () => {
                 <div className="">
                   <div className="flex items-center mb-0 p-0">
                     <h2 className="font-bold">{author.name}</h2>
-                    <BadgeCheckIcon className="h-6 w-6 text-[#1DA1F2]" />
+                    <BadgeCheckIcon className="h-6 w-6 text-lightblue-500" />
                   </div>
 
                   <div className="text-gray-400 text-sm">@{author.tag}</div>
@@ -75,7 +75,7 @@ const Followers = () => {
               <div className="flex">
                 <Link href={`/following/${author.tag}`}>
                   <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
-                    <div className={`${router.asPath.includes('followers') && 'text-[#1DA1F2] dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
+                    <div className={`${router.asPath.includes('followers') && 'text-lightblue-500 dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
 
                     {router.asPath.includes('followers') ? (
                       <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
@@ -86,7 +86,7 @@ const Followers = () => {
 
                 <Link href={`/following/${author.tag}`}>
                   <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
-                    <div className={`${router.asPath.includes('following') && 'text-[#1DA1F2] dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Following</div>
+                    <div className={`${router.asPath.includes('following') && 'text-lightblue-500 dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Following</div>
 
                     {router.asPath.includes('following') ? (
                       <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"

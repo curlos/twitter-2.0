@@ -109,6 +109,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   useEffect(() => {
     if (tweet.retweetedBy) {
+      console.log(tweet)
       const docRef = doc(db, "users", tweet.retweetedBy)
       getDoc(docRef).then((snap) => {
         setRetweetedBy(snap.data())
@@ -208,7 +209,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         <Link href={`/profile/${author.tag}`}>
                           <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
                         </Link>
-                        <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-[#1DA1F2]" />
+                        <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                       </div>
                       <div className="text-gray-500">@{author.tag}</div>
                       <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
@@ -296,7 +297,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                 <Link href={`/profile/${author.tag}`}>
                   <div className="flex">
                     <div className="cursor-pointer hover:underline">{author.name}</div>
-                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-[#1DA1F2]" />
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                   </div>
                 </Link>
                 <div className="text-gray-400 p-0 m-0">@{author.tag}</div>

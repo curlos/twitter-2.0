@@ -4,7 +4,7 @@ import { doc, onSnapshot, serverTimestamp, setDoc, updateDoc } from 'firebase/fi
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState, Fragment, useRef } from 'react'
 import { useRecoilState } from 'recoil'
-import { settingsModalState } from '../atoms/atom'
+import { colorThemeState, settingsModalState } from '../atoms/atom'
 import { FiCamera } from 'react-icons/fi'
 import { db, storage } from '../firebase'
 import { getDownloadURL, ref, uploadString } from 'firebase/storage'
@@ -24,6 +24,7 @@ const SettingsModal = () => {
 
   const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null)
   const [selectedFileBanner, setSelectedFileBanner] = useState(null)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const updateUserProfile = async () => {
     const updatedUserData = {
@@ -61,6 +62,7 @@ const SettingsModal = () => {
     })
 
     setIsOpen(false)
+    window.location.reload()
   }
 
   const changeProfilePic = (e) => {
@@ -100,7 +102,7 @@ const SettingsModal = () => {
       <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
         setIsOpen(val)
       }}>
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className={`${theme} flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -126,11 +128,11 @@ const SettingsModal = () => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
-              <div className="bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
+            <div className="inline-block align-bottom bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
+              <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <XIcon className="h-6 w-6 cursor-pointer" onClick={(val) => {
+                    <XIcon className="h-6 w-6 cursor-pointer text-gray-400 dark:text-white" onClick={(val) => {
                       setIsOpen(false)
                     }} />
 
@@ -162,7 +164,7 @@ const SettingsModal = () => {
                   </div>
 
                   <div className="mt-[-70px] h-[112px] w-[112px] ml-2 rounded-full cursor-pointer" onClick={() => profilePicFilePickerRef.current.click()}>
-                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2 border-4 border-black" />
+                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2 border-4 border-transparent" />
 
                     <FiCamera className="h-5 w-5 ml-[53px] mt-[-67px] z-50" />
 
@@ -183,7 +185,7 @@ const SettingsModal = () => {
                       <div>Name</div>
                       <div>{name.length} / 50</div>
                     </div>
-                    <input className="bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
+                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
                       if (e.target.value.length <= 50) {
                         setName(e.target.value)
                       }
@@ -196,7 +198,7 @@ const SettingsModal = () => {
                       <div>Bio</div>
                       <div>{bio.length} / 160</div>
                     </div>
-                    <textarea className="w-full bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
+                    <textarea className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
                       if (e.target.value.length <= 160) {
                         setBio(e.target.value)
                       }
@@ -209,7 +211,7 @@ const SettingsModal = () => {
                       <div>Location</div>
                       <div>{location.length} / 30</div>
                     </div>
-                    <input className="bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
+                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
                       if (e.target.value.length <= 30) {
                         setLocation(e.target.value)
                       }
@@ -222,7 +224,7 @@ const SettingsModal = () => {
                       <div>Website</div>
                       <div>{website.length} / 100</div>
                     </div>
-                    <input className="bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
+                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
                       if (e.target.value.length <= 100) {
                         setWebsite(e.target.value)
                       }

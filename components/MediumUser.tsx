@@ -77,7 +77,7 @@ const MediumUser = ({ userID }: Props) => {
               <Link href={`/profile/${user.tag}`}>
                 <div className="flex items-center gap-1 font-semibold cursor-pointer hover:underline">
                   <div>{user.name}</div>
-                  <div><BadgeCheckIcon className="h-[18px] w-[18px] text-[#1DA1F2]" /></div>
+                  <div><BadgeCheckIcon className="h-[18px] w-[18px] text-lightblue-500" /></div>
                 </div>
               </Link>
               <div className="text-gray-400">@{user.tag}</div>

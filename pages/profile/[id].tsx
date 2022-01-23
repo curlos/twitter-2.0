@@ -1,4 +1,4 @@
-import { deleteDoc, doc, DocumentData, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore'
+import { deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -39,12 +39,15 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [likes, setLikes] = useState([])
   const [followers, setFollowers] = useState([])
   const [following, setFollowing] = useState([])
+  const [followersYouFollow, setFollowersYouFollow] = useState([])
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const [followed, setFollowed] = useState(false)
   const router = useRouter()
   const { id } = router.query
+
+  console.log(session.user.uid)
 
   useEffect(() => {
     setLoading(true)
@@ -76,6 +79,23 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   useEffect(() => {
     if (!loading) {
       onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs))
+    }
+  }, [db, id, loading])
+
+  useEffect(() => {
+    if (!loading) {
+      onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
+        let newFollowersYouFollow = []
+        for (let user of snapshot.docs) {
+          console.log(user.data())
+          const docRef = doc(db, "users", user.data().followingID)
+          const snap = await getDoc(docRef)
+          const follower = snap.data()
+          newFollowersYouFollow.push(follower)
+        }
+
+        setFollowersYouFollow(newFollowersYouFollow.filter((user) => user.tag !== author.tag))
+      })
     }
   }, [db, id, loading])
 
@@ -122,8 +142,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
     session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow()
   }
 
-  console.log(author)
-
+  console.log(followersYouFollow)
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -145,14 +164,14 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
           </div>
         ) : (
           author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
-            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[100]">
+            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[50]">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
               </div>
               <div className="">
                 <div className="flex items-center mb-0 p-0">
                   <h2 className="font-bold">{author.name}</h2>
-                  <BadgeCheckIcon className="h-6 w-6 text-[#1DA1F2]" />
+                  <BadgeCheckIcon className="h-6 w-6 text-lightblue-500" />
                 </div>
 
                 <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
@@ -182,7 +201,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <div className="p-4 pt-2">
               <div className="flex items-center">
                 <h2 className="text-xl font-[900]">{author.name}</h2>
-                <BadgeCheckIcon className="h-5 w-5 text-[#1DA1F2]" />
+                <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
               </div>
 
               <div className="text-base text-gray-500">@{author.tag}</div>
@@ -234,14 +253,31 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                 </Link>
               </div>
 
-              <div className="text-sm text-gray-500 flex space-x-3 py-3">
-                <div className="flex">
-                  <img src="/assets/halsey.jpeg" alt="" className="h-[18px] border border-white rounded-full z-50" />
-                  <img src="/assets/halsey.jpeg" alt="" className="h-[18px] border border-white rounded-full ml-[-7px] z-40" />
-                  <img src="/assets/halsey.jpeg" alt="" className="h-[18px] border border-white rounded-full ml-[-7px]" />
+              {followersYouFollow && followersYouFollow.length ? (
+                <div className="text-sm text-gray-500 flex space-x-3 py-3">
+                  <div className="flex">
+                    {followersYouFollow.slice(0, 3).map((user, i) => (
+                      <Link href={`/profile/${user.tag}`}>
+                        <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full z-50 ${i > 0 ? 'ml-[-9px]' : ''}`} />
+                      </Link>
+                    ))}
+                  </div>
+                  <div>
+                    Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
+                      <span>
+                        <Link href={`/profile/${follower.tag}`}>
+                          <span className="cursor-pointer hover:underline">{follower.name}
+                          </span>
+                        </Link>
+                        <span>
+                          {i === followersYouFollow.slice(0, 3).length - 1 ? '' : ', '}
+                        </span>
+                      </span>
+
+                    ))} {followersYouFollow.length > followersYouFollow.slice(0, 3).length ? `, and ${followersYouFollow.length - followersYouFollow.slice(0, 3).length} ${(followersYouFollow.length - followersYouFollow.slice(0, 3).length) > 1 ? 'others' : 'other'} you follow` : null}
+                  </div>
                 </div>
-                <div>Followed by halsey and1, Sports Section, and 10 others you follow</div>
-              </div>
+              ) : null}
             </div>
 
             <div className="flex">

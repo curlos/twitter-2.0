@@ -11,7 +11,6 @@ interface Props {
 }
 
 const getSortedTweets = (tweets) => {
-  console.log(tweets)
   return sortByNewest(tweets)
 }
 
@@ -46,13 +45,10 @@ const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
     }
   }
 
-  console.log('page changed')
-
   return (
     <div>
       {filteredTweets.map((tweet) => {
         const tweetData = tweet.data()
-        console.log(tweetData)
 
         return (
           <Tweet id={tweet.id} tweet={tweetData} tweetID={tweet.id} />

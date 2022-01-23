@@ -17,5 +17,5 @@ export const tweetIdState = atom({
 
 export const colorThemeState = atom({
   key: "colorThemeState",
-  default: 'light'
+  default: 'dark'
 })

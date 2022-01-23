@@ -10,7 +10,7 @@ const SmallUser = () => {
         <div>
           <div className="flex">
             <div>Los Angeles Lakers</div>
-            <BadgeCheckIcon className="h-5 w-5 text-[#1DA1F2]" />
+            <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
           </div>
 
           <div className="text-gray-400">

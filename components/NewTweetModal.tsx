@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationIcon } from '@heroicons/react/outline'
 import { useRecoilState } from 'recoil'
-import { newTweetModalState, tweetIdState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState, tweetIdState } from '../atoms/atom'
 import { XIcon } from '@heroicons/react/solid'
 import { useSession } from 'next-auth/react'
 import TextareaAutosize from 'react-textarea-autosize';
@@ -20,11 +20,9 @@ export const NewTweetModal = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
   const [tweet, setTweet] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
-
-  console.log('modal')
-  console.log(tweetId)
 
   useEffect(() => {
     if (tweetId) {
@@ -37,11 +35,11 @@ export const NewTweetModal = () => {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={(val) => {
+      <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
         setIsOpen(val)
         setTweetId('')
       }}>
-        <div className="flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0">
+        <div className={`${theme} flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
