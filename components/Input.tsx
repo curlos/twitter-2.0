@@ -22,7 +22,7 @@ import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
-import { newTweetModalState, tweetIdState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState, tweetIdState } from '../atoms/atom';
 import Link from 'next/link';
 
 interface Props {
@@ -107,17 +107,17 @@ const Input = ({ replyModal, tweetId }: Props) => {
   }
 
   return (
-    <div className={`flex p-3 space-x-2 border-b z-10 border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`flex p-3 space-x-2 border-b z-10 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <Link href={`/profile/${session.user.tag}`}>
         <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
       </Link>
 
       <div className="w-full">
-        <div className="border-b border-gray-700 ">
+        <div className="border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 ">
           <TextareaAutosize
             value={input}
             onChange={handleTextChange}
-            className={`bg-black outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
+            className={`bg-white dark:bg-black text-black dark:text-white outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
 
           {selectedFile && (
             <div className="py-3">
@@ -177,7 +177,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
               <div className="hidden lg:flex items-center space-x-4">
                 <div>{input.length}/400</div>
                 <button
-                  className="bg-lightblue-500 px-4 py-2 rounded-full font-bold"
+                  className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
                   onClick={sendTweet}>
                   {!replyModal ? 'Tweet' : 'Reply'}
                 </button>
@@ -188,7 +188,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
 
             <div className="w-100 lg:hidden">
               <div
-                className="bg-lightblue-500 px-4 py-2 rounded-full font-bold w-100 text-center cursor-pointer"
+                className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-100 text-center cursor-pointer"
                 onClick={sendTweet}>
                 {!replyModal ? 'Tweet' : 'Reply'}
               </div>

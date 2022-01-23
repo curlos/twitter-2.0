@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { newTweetModalState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState } from '../atoms/atom'
+import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
 import Sidebar from '../components/Sidebar'
 import Spinner from '../components/Spinner'
@@ -19,6 +20,7 @@ const Followers = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweets, setTweets] = useState([])
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const router = useRouter()
 
@@ -31,7 +33,7 @@ const Followers = () => {
 
 
   return (
-    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
+    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>
         <title>
           Bookmarks / Twitter 2.0
@@ -39,12 +41,12 @@ const Followers = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen lg:px-12 flex`}>
         <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
+        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
           {!loading ? (
             <div>
-              <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
+              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0">
                 <div className="">
                   <div className="flex items-center mb-0 p-0">
                     <h2 className="font-bold text-xl">Bookmarks</h2>
@@ -68,6 +70,8 @@ const Followers = () => {
 
         <Widgets />
         {isOpen && <NewTweetModal />}
+
+        <Footer />
 
       </main>
     </div>

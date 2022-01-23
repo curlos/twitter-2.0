@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { FaBell, FaFeatherAlt, FaHome, FaSearch } from 'react-icons/fa'
 import { FiMail } from 'react-icons/fi'
 import { useRecoilState } from 'recoil'
-import { newTweetModalState, settingsModalState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState, settingsModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
 import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
@@ -22,15 +22,16 @@ export default function Home({ trendingResults, followResults, providers }) {
   const { data: session, status } = useSession()
   const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState)
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   return (
-    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
+    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>
         <title>Twitter 2.0</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen min-w-screen flex`}>
         <Sidebar />
         <Feed />
         <Widgets />
@@ -40,7 +41,7 @@ export default function Home({ trendingResults, followResults, providers }) {
 
         {isSettingsModalOpen && <SettingsModal />}
 
-        <div className="sm:hidden text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
+        <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
           <FaFeatherAlt className="h-7 w-7 cursor-pointer" />
         </div>
 

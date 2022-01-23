@@ -18,9 +18,9 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
           {({ open }) => (
             <>
               <span className="rounded-md shadow-sm">
-                <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-black rounded-md">
+                <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white dark:bg-black rounded-md">
                   <span className="flex gap-2 p-2">
-                    <span className="text-white">{sortType}</span>
+                    <span className="text-black dark:text-white">{sortType}</span>
                     <DotsHorizontalIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
                   </span>
                 </Menu.Button>
@@ -37,7 +37,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md outline-none border border-gray-700 z-[100]"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md outline-none border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 z-[100]"
                 >
 
                   <div className="py-1 bg-black rounded-md" onClick={() => setSortType('Newest')}>

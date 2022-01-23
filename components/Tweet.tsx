@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { newTweetModalState, tweetIdState } from '../atoms/atom';
+import { newTweetModalState, tweetIdState, colorThemeState } from '../atoms/atom';
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, setDoc, where } from '@firebase/firestore';
 import { db } from '../firebase';
 import { getDoc, getDocs, orderBy, query } from 'firebase/firestore';
@@ -26,6 +26,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
   const [likes, setLikes] = useState([])
   const [retweets, setRetweets] = useState([])
   const [bookmarks, setBookmarks] = useState([])
@@ -170,7 +171,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   return (
     !tweetPage ? (
       !loading && author ? (
-        <div className={`max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-gray-700' : ''}`}>
+        <div className={`${theme} max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700' : ''}`}>
           <Link href={`/tweet/${tweetID}`}>
             <div>
               <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
@@ -194,9 +195,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     <div className="lg:flex">
                       <div className="flex">
                         <Link href={`/profile/${author.tag}`}>
-                          <div className="cursor-pointer hover:underline">{author.name}</div>
+                          <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
                         </Link>
-                        <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                        <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-[#1DA1F2]" />
                       </div>
                       <div className="text-gray-500">@{author.tag}</div>
                       <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
@@ -271,7 +272,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       ) : null
     ) : (
       !loading && author ? (
-        <div className="text-base p-3 border-b border-gray-700 w-full">
+        <div className="text-base p-3 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 w-full">
           <div className="flex justify-between">
             <div className="flex">
               <Link href={`/profile/${author.tag}`}>
@@ -284,7 +285,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                 <Link href={`/profile/${author.tag}`}>
                   <div className="flex">
                     <div className="cursor-pointer hover:underline">{author.name}</div>
-                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px]" />
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-[#1DA1F2]" />
                   </div>
                 </Link>
                 <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
@@ -306,7 +307,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
             <div className="break-words max-w-[350px] lg:max-w-[700px] xl:max-w-[670px] 2xl:max-w-[850px]">{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-gray-700" />
+                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700" />
               </div>
             )}
           </div>

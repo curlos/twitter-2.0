@@ -13,13 +13,13 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
   const { data: session } = useSession()
 
   return (
-    <div className="flex items-center justify-center shadow-lg">
+    <div className="flex items-center justify-center">
       <div className="relative inline-block text-left">
         <Menu>
           {({ open }) => (
             <>
-              <span className="rounded-md shadow-sm">
-                <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-black rounded-md ">
+              <span className="rounded-md">
+                <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-transparent rounded-md ">
                   <span><DotsHorizontalIcon className="h-5 w-5 text-gray-400 cursor-pointer" /></span>
                 </Menu.Button>
               </span>
@@ -35,7 +35,7 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md shadow-gray-500 shadow-lg outline-none border border-gray-700 z-[100]"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 z-[100]"
                 >
 
                   <div className="py-1 bg-black rounded-md" onClick={deleteTweet}>

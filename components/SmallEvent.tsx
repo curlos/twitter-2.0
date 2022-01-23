@@ -6,7 +6,7 @@ interface Props {
 
 const SmallEvent = ({ image }: Props) => {
   return (
-    <div className="flex justify-between items-center cursor-pointer hover:bg-gray-700 px-3 py-2">
+    <div className="flex justify-between items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2">
       <div className="">
         <div className="text-gray-400">
           <span>NBA</span>

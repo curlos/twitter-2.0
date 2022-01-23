@@ -8,7 +8,7 @@ import { collection, orderBy } from 'firebase/firestore';
 import Tweet from './Tweet';
 import Widgets from './Widgets';
 import { useRecoilState } from 'recoil';
-import { newTweetModalState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState } from '../atoms/atom';
 import { FaFeatherAlt } from 'react-icons/fa';
 import Spinner from './Spinner';
 import { sortByNewest, sortByOldest } from '../utils/sortTweets'
@@ -21,6 +21,7 @@ const Feed = () => {
   const { data: session } = useSession()
   const [tweets, setTweets] = useState([])
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
   const [loading, setLoading] = useState(true)
   const [sortType, setSortType] = useState('Newest')
   const [filteredTweets, setFilteredTweets] = useState([])
@@ -78,8 +79,8 @@ const Feed = () => {
     loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
       <Spinner />
     </div> : (
-      <div className="flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-gray-700 max-w-[700px] 2xl:max-w-[800px]">
-        <div className={`flex justify-between items-center bg-black border-b border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
+      <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 dark:border-gray-400 dark:border-gray-700 max-w-[700px] 2xl:max-w-[800px]`}>
+        <div className={`flex justify-between items-center bg-white dark:bg-black border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
           <h2 className="font-bold">Home</h2>
           <SparklesIcon className="h-5 w-5" />
         </div>

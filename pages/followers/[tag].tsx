@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { newTweetModalState } from '../../atoms/atom'
+import { colorThemeState, newTweetModalState } from '../../atoms/atom'
 import Footer from '../../components/Footer'
 import MediumUser from '../../components/MediumUser'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -21,6 +21,7 @@ const Followers = () => {
   const [author, setAuthor] = useState<DocumentData>()
   const [followers, setFollowers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const router = useRouter()
   const { tag } = router.query
@@ -44,7 +45,7 @@ const Followers = () => {
 
 
   return (
-    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
+    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>
         <title>
           {`${tag}'s`} Followers
@@ -52,19 +53,19 @@ const Followers = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
+      <main className={`bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex  `}>
         <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
+        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
           {!loading && author ? (
             <div>
-              <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
+              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 sticky top-0">
                 <div className="cursor-pointer mx-3" onClick={() => router.push(`/profile/${author.tag}`)}>
                   <ArrowLeftIcon className="h-6 w-6" />
                 </div>
                 <div className="">
                   <div className="flex items-center mb-0 p-0">
                     <h2 className="font-bold">{author.name}</h2>
-                    <BadgeCheckIcon className="h-6 w-6" />
+                    <BadgeCheckIcon className="h-6 w-6 text-[#1DA1F2]" />
                   </div>
 
                   <div className="text-gray-400 text-sm">@{author.tag}</div>
@@ -74,7 +75,7 @@ const Followers = () => {
               <div className="flex">
                 <Link href={`/following/${author.tag}`}>
                   <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
-                    <div className={`${router.asPath.includes('followers') && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
+                    <div className={`${router.asPath.includes('followers') && 'text-[#1DA1F2] dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Followers</div>
 
                     {router.asPath.includes('followers') ? (
                       <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
@@ -85,7 +86,7 @@ const Followers = () => {
 
                 <Link href={`/following/${author.tag}`}>
                   <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer">
-                    <div className={`${router.asPath.includes('following') && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Following</div>
+                    <div className={`${router.asPath.includes('following') && 'text-[#1DA1F2] dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Following</div>
 
                     {router.asPath.includes('following') ? (
                       <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"

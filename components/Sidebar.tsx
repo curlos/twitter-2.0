@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { HomeIcon } from "@heroicons/react/solid";
 import {
@@ -10,37 +10,65 @@ import {
   UserIcon,
   DotsCircleHorizontalIcon,
   DotsHorizontalIcon,
-  LogoutIcon
+  LogoutIcon,
+  SunIcon,
+  MoonIcon
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { newTweetModalState } from "../atoms/atom";
-import router from "next/router";
+import { colorThemeState, newTweetModalState } from "../atoms/atom";
+import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt } from "react-icons/fa";
+import { BsTwitter } from "react-icons/bs"
 
 const Sidebar = () => {
 
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
+  const [activeLink, setActiveLink] = useState('home')
+  const router = useRouter()
+
+  useEffect(() => {
+    if (router.pathname.startsWith('/bookmarks')) {
+      setActiveLink('bookmarks')
+    } else if (router.pathname.startsWith('/profile')) {
+      setActiveLink('profile')
+    } else {
+      setActiveLink('home')
+    }
+  }, [router.pathname])
+
+  console.log(router)
 
   return (
-    <div className="hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-700 w-[80px] xl:w-[280px] py-4">
-      <div className="flex flex-col justify-start items-start space-y-6 flex-grow">
+    <div className={`${theme} hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
+      <div className="flex flex-col justify-start items-center xl:items-start space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
-          <Image src="https://rb.gy/ogau5a" width={30} height={30} />
+          <BsTwitter className="h-[30px] w-[30px] text-[#1DA1F2] dark:text-white" />
         </div>
-        <SidebarLink text="Home" Icon={HomeIcon} active={true} />
-        <SidebarLink text="Explore" Icon={HashtagIcon} active={false} />
+
+        {theme === 'dark' ? (
+          <div className="cursor-pointer" onClick={() => setTheme('light')}>
+            <SunIcon className="h-[30px] w-[30px] dark:text-white" />
+          </div>
+        ) : (
+          <div className="cursor-pointer" onClick={() => setTheme('dark')}>
+            <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
+          </div>
+        )}
+        <SidebarLink text="Home" Icon={HomeIcon} active={activeLink === 'home'} />
+        {/* <SidebarLink text="Explore" Icon={HashtagIcon} active={false} />
         <SidebarLink text="Notifications" Icon={BellIcon} active={false} />
-        <SidebarLink text="Messages" Icon={BookmarkIcon} active={false} />
-        <SidebarLink text="Bookmarks" Icon={ClipboardListIcon} active={false} />
-        <SidebarLink text="Lists" Icon={UserIcon} active={false} />
+        <SidebarLink text="Messages" Icon={BookmarkIcon} active={false} /> */}
+        <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
+        {/* <SidebarLink text="Lists" Icon={UserIcon} active={false} /> */}
 
-        <SidebarLink text="Profile" Icon={DotsCircleHorizontalIcon} active={false} tag={session.user.tag} />
+        <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
 
-        <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} />
+        {/* <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} /> */}
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
           router.push('/auth')
@@ -50,7 +78,7 @@ const Sidebar = () => {
           <div className="hidden xl:block">Logout</div>
         </div>
 
-        <button className="hidden xl:flex justify-center items-center bg-lightblue-500 rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => setIsOpen(true)}>
+        <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => setIsOpen(true)}>
           Tweet
         </button>
 

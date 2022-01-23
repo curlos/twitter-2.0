@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { newTweetModalState, settingsModalState } from '../../atoms/atom'
+import { colorThemeState, newTweetModalState, settingsModalState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -39,6 +39,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [followers, setFollowers] = useState([])
   const [following, setFollowing] = useState([])
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const [followed, setFollowed] = useState(false)
   const router = useRouter()
@@ -118,7 +119,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
   return (
-    <div className="px-0 lg:px-12 min-h-screen min-w-screen">
+    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>
         <title>
           Twitter 2.0
@@ -128,7 +129,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
 
-      <main className="bg-black min-h-screen flex max-w-[1500px] mx-auto">
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex  `}>
         <Sidebar />
 
         {loading ? (
@@ -136,15 +137,15 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <Spinner />
           </div>
         ) : (
-          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-700">
-            <div className="flex items-center space-x-4 border-b border-gray-700 p-2 bg-black sticky top-0">
+          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
+            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
               </div>
               <div className="">
                 <div className="flex items-center mb-0 p-0">
                   <h2 className="font-bold">{author.name}</h2>
-                  <BadgeCheckIcon className="h-6 w-6" />
+                  <BadgeCheckIcon className="h-6 w-6 text-[#1DA1F2]" />
                 </div>
 
                 <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
@@ -156,14 +157,14 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             </div>
 
             <div className="flex justify-between items-start p-4 pb-0">
-              <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-black mt-[-88px] object-cover" />
+              <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
 
               <div className="flex items-center space-x-2">
-                <div className="flex justify-center items-center p-2 border-2 border-gray-700 rounded-full w-10 h-10">
+                <div className="flex justify-center items-center p-2 border-2 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 rounded-full w-10 h-10">
                   <DotsHorizontalIcon className="h-5 w-5" />
                 </div>
 
-                <div className="flex justify-center items-center p-2 px-4 border-2 border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
+                <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
                   {session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
@@ -174,7 +175,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <div className="p-4 pt-2">
               <div className="flex items-center">
                 <h2 className="text-xl font-[900]">{author.name}</h2>
-                <BadgeCheckIcon className="h-5 w-5" />
+                <BadgeCheckIcon className="h-5 w-5 text-[#1DA1F2]" />
               </div>
 
               <div className="text-base text-gray-500">@{author.tag}</div>
@@ -209,7 +210,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                   query: { tag: author.tag || 't' }
                 }}>
                   <div className="space-x-1 cursor-pointer hover:underline">
-                    <span className="text-white font-bold">{following.length}</span>
+                    <span className="text-black dark:text-white font-bold">{following.length}</span>
                     <span>Following</span>
                   </div>
                 </Link>
@@ -220,7 +221,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                   query: { tag: author.tag || 't' }
                 }}>
                   <div className="space-x-1 cursor-pointer hover:underline">
-                    <span className="text-white font-bold">{followers.length}</span>
+                    <span className="text-black dark:text-white font-bold">{followers.length}</span>
                     <span>Followers</span>
                   </div>
                 </Link>
@@ -238,7 +239,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
             <div className="flex">
               <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 ml-2 cursor-pointer" onClick={() => setFilter('Tweets')}>
-                <div className={`${filter === 'Tweets' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
+                <div className={`${filter === 'Tweets' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
                 {filter === 'Tweets' ? (
                   <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
                   />
@@ -246,7 +247,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
 
               <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Tweets & Replies')}>
-                <div className={`${filter === 'Tweets & Replies' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets & Replies</div>
+                <div className={`${filter === 'Tweets & Replies' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets & Replies</div>
 
                 {filter === 'Tweets & Replies' ? (
                   <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
@@ -255,7 +256,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
 
               <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Media')}>
-                <div className={`${filter === 'Media' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Media</div>
+                <div className={`${filter === 'Media' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Media</div>
 
                 {filter === 'Media' ? (
                   <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
@@ -264,7 +265,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               </div>
 
               <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Likes')}>
-                <div className={`${filter === 'Likes' && 'text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Likes</div>
+                <div className={`${filter === 'Likes' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Likes</div>
 
                 {filter === 'Likes' ? (
                   <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"

@@ -14,3 +14,8 @@ export const tweetIdState = atom({
   key: "tweetIdState",
   default: '',
 })
+
+export const colorThemeState = atom({
+  key: "colorThemeState",
+  default: 'light'
+})

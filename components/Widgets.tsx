@@ -27,13 +27,13 @@ const Widgets = () => {
   return (
     <div className="hidden pl-3 py-2 space-y-5 xl:block">
       <form onSubmit={handleSubmit} className="flex items-center w-[350px]">
-        <div className="text-gray-500 bg-gray-800 p-3 rounded-l-full">
+        <div className="text-gray-500 bg-gray-100 dark:bg-gray-800 p-3 rounded-l-full cursor-pointer">
           <SearchIcon onClick={handleSubmit} className="h-6 w-6" />
         </div>
-        <input placeholder="Search Twitter" value={searchQuery} className="bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
+        <input placeholder="Search Twitter" value={searchQuery} className="bg-gray-100 dark:bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
       </form>
 
-      <div className="bg-gray-800 rounded-lg p-3 space-y-4 w-[350[x]">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 space-y-4 w-[350[x]">
         <h2 className="text-xl font-bold mb-4">Who to follow</h2>
 
         <SmallUser />
@@ -41,7 +41,7 @@ const Widgets = () => {
         <SmallUser />
       </div>
 
-      <div className="bg-gray-800 rounded-lg py-3 w-[350px]">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
         <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
 
         <SmallEvent image={true} />
