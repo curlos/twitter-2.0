@@ -36,14 +36,13 @@ const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
       case 'Tweets & Replies':
         return allTweets
       case 'Media':
-
         return allTweets.filter((tweet) => {
           if (tweet.data().image) {
             return tweet
           }
         })
       case 'Likes':
-        return likes
+        return sortByNewest(likes)
     }
   }
 

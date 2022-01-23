@@ -55,10 +55,10 @@ const Following = () => {
 
       <main className="bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex ">
         <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
+        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2]  dark:border-gray-700">
           {!loading && author ? (
             <div>
-              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 sticky top-0">
+              <div className="flex items-center space-x-4 border-b border-[#AAB8C2]  dark:border-gray-700 p-2 sticky top-0">
                 <div className="cursor-pointer mx-3" onClick={() => router.push(`/profile/${author.tag}`)}>
                   <ArrowLeftIcon className="h-6 w-6" />
                 </div>

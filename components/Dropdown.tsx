@@ -35,15 +35,15 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-black rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 z-[100]"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
                 >
 
-                  <div className="py-1 bg-black rounded-md" onClick={deleteTweet}>
+                  <div className="py-1 bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700" onClick={deleteTweet}>
                     {author.tag === session.user.tag && (
                       <Menu.Item>
                         {({ active }) => (
                           <div
-                            className={`bg-black w-full px-4 py-2 text-sm leading-5 text-left text-red-500 hover:bg-gray-900 cursor-pointer`}
+                            className={`bg-white dark:bg-black w-full px-4 py-2 text-sm leading-5 text-left text-red-500 hover:bg-gray-900 cursor-pointer`}
                           >
                             Delete
                           </div>
@@ -53,7 +53,7 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
                     <Menu.Item>
                       {({ active }) => (
                         <div
-                          className={`bg-black text-white w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-900 z-50`}
+                          className={`bg-white dark:bg-black text-black dark:text-white w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-900 z-50`}
                         >
                           Follow @{author.tag}
                         </div>

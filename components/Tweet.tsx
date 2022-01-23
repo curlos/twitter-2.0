@@ -37,6 +37,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const [parentTweet, setParentTweet] = useState<DocumentData>()
   const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
   const [author, setAuthor] = useState<DocumentData>()
+  const [retweetedBy, setRetweetedBy] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -106,6 +107,16 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     }
   }, [db, id, parentTweet])
 
+  useEffect(() => {
+    if (tweet.retweetedBy) {
+      const docRef = doc(db, "users", tweet.retweetedBy)
+      getDoc(docRef).then((snap) => {
+        setRetweetedBy(snap.data())
+        setLoading(false)
+      })
+    }
+  }, [tweet.retweetedBy])
+
 
 
   const likeTweet = async () => {
@@ -171,15 +182,15 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   return (
     !tweetPage ? (
       !loading && author ? (
-        <div className={`${theme} max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700' : ''}`}>
+        <div className={`${theme} max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
           <Link href={`/tweet/${tweetID}`}>
             <div>
-              <div className="text-gray-500 text-sm">{tweet.retweetedBy ? (
+              <div className="text-gray-500 text-sm">{retweetedBy ? (
                 <div className="font-semibold ml-[63px]">
-                  <Link href={`/profile/${tweet.retweetedBy.tag}`}>
+                  <Link href={`/profile/${retweetedBy.tag}`}>
                     <span className="flex hover:underline">
                       <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
-                      {tweet.retweetedBy.tag === session.user.tag ? 'You retweeted' : `${tweet.retweetedBy.name} retweeted`}
+                      {retweetedBy.tag === session.user.tag ? 'You retweeted' : `${retweetedBy.name} retweeted`}
                     </span>
                   </Link>
                 </div>
@@ -272,7 +283,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       ) : null
     ) : (
       !loading && author ? (
-        <div className="text-base p-3 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 w-full">
+        <div className="text-base p-3 border-b border-[#AAB8C2]  dark:border-gray-700 w-full">
           <div className="flex justify-between">
             <div className="flex">
               <Link href={`/profile/${author.tag}`}>
@@ -307,7 +318,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
             <div className="break-words max-w-[350px] lg:max-w-[700px] xl:max-w-[670px] 2xl:max-w-[850px]">{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700" />
+                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2]  dark:border-gray-700" />
               </div>
             )}
           </div>

@@ -126,8 +126,8 @@ const SettingsModal = () => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[50vw]">
-              <div className="bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
+            <div className="inline-block align-bottom bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
+              <div className="bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <XIcon className="h-6 w-6 cursor-pointer" onClick={(val) => {
@@ -178,7 +178,7 @@ const SettingsModal = () => {
                 </div>
 
                 <div className="p-3 space-y-4">
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 space-y-1 rounded">
+                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
                     <div className="text-sm text-gray-400 flex justify-between">
                       <div>Name</div>
                       <div>{name.length} / 50</div>
@@ -191,7 +191,7 @@ const SettingsModal = () => {
                     }></input>
                   </div>
 
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 space-y-1 rounded">
+                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
                     <div className="text-sm text-gray-400 flex justify-between">
                       <div>Bio</div>
                       <div>{bio.length} / 160</div>
@@ -204,7 +204,7 @@ const SettingsModal = () => {
                     }></textarea>
                   </div>
 
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 space-y-1 rounded">
+                  <div className="p-2 border border-[#AAB8C2]  dark:border-gray-700 space-y-1 rounded">
                     <div className="text-sm text-gray-400 flex justify-between">
                       <div>Location</div>
                       <div>{location.length} / 30</div>
@@ -217,7 +217,7 @@ const SettingsModal = () => {
                     }></input>
                   </div>
 
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 space-y-1 rounded">
+                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
                     <div className="text-sm text-gray-400 flex justify-between">
                       <div>Website</div>
                       <div>{website.length} / 100</div>

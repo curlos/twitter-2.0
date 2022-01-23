@@ -43,10 +43,10 @@ const Followers = () => {
 
       <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen lg:px-12 flex`}>
         <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
+        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
           {!loading ? (
             <div>
-              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0">
+              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0">
                 <div className="">
                   <div className="flex items-center mb-0 p-0">
                     <h2 className="font-bold text-xl">Bookmarks</h2>

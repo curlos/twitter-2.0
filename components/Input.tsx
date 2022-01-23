@@ -107,13 +107,13 @@ const Input = ({ replyModal, tweetId }: Props) => {
   }
 
   return (
-    <div className={`flex p-3 space-x-2 border-b z-10 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`flex p-3 space-x-2 border-b z-10 border-[#AAB8C2]  dark:border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
       <Link href={`/profile/${session.user.tag}`}>
         <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
       </Link>
 
       <div className="w-full">
-        <div className="border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 ">
+        <div className="border-b border-[#AAB8C2]  dark:border-gray-700 ">
           <TextareaAutosize
             value={input}
             onChange={handleTextChange}

@@ -30,6 +30,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [loading, setLoading] = useState(true)
+  const [tweetsLoading, setTweetsLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
   const [author, setAuthor] = useState(null)
   const [authorID, setAuthorID] = useState('')
@@ -54,27 +55,17 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
       setAuthor(userQuerySnapshot.docs[0].data())
       setAuthorID(userQuerySnapshot.docs[0].id)
-
-      const tweetsQuery = query(collection(db, "tweets"),
-        where('userID', '==', userQuerySnapshot.docs[0].id),
-        orderBy('timestamp', 'desc')
-      )
-      const tweetsQuerySnapshot = await getDocs(tweetsQuery)
-      console.log(tweetsQuerySnapshot)
-      setTweets(tweetsQuerySnapshot.docs)
-
-      const retweetsQuery = query(collection(db, 'users', userQuerySnapshot.docs[0].id, 'retweets'))
-      const retweetsQuerySnapshot = await getDocs(retweetsQuery)
-      setRetweets(retweetsQuerySnapshot.docs)
-
-      const likesQuery = query(collection(db, 'users', userQuerySnapshot.docs[0].id, 'likes'))
-      const likesQuerySnapshot = await getDocs(likesQuery)
-      setLikes(likesQuerySnapshot.docs)
-
       setLoading(false)
     }
     fetchFromDB()
   }, [db, id])
+
+  useEffect(() => {
+    if (!loading) {
+      setTweetsLoading(true)
+      fetchTweetsInfo(authorID).then(() => setTweetsLoading(false))
+    }
+  }, [db, id, loading, filter])
 
   useEffect(() => {
     if (!loading) {
@@ -89,10 +80,26 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   }, [db, id, loading])
 
   useEffect(() => {
-    console.log('searching...')
-    console.log(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
     setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
   }, [followers])
+
+  const fetchTweetsInfo = async (authorID) => {
+    const tweetsQuery = query(collection(db, "tweets"),
+      where('userID', '==', authorID),
+      orderBy('timestamp', 'desc')
+    )
+    const tweetsQuerySnapshot = await getDocs(tweetsQuery)
+    console.log(tweetsQuerySnapshot)
+    setTweets(tweetsQuerySnapshot.docs)
+
+    const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'))
+    const retweetsQuerySnapshot = await getDocs(retweetsQuery)
+    setRetweets(retweetsQuerySnapshot.docs)
+
+    const likesQuery = query(collection(db, 'users', authorID, 'likes'))
+    const likesQuerySnapshot = await getDocs(likesQuery)
+    setLikes(likesQuerySnapshot.docs)
+  }
 
   const handleFollow = async () => {
     console.log(followed)
@@ -137,8 +144,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <Spinner />
           </div>
         ) : (
-          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700">
-            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0">
+          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
+            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[100]">
               <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
                 <ArrowLeftIcon className="h-6 w-6" />
               </div>
@@ -160,11 +167,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
               <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
 
               <div className="flex items-center space-x-2">
-                <div className="flex justify-center items-center p-2 border-2 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 rounded-full w-10 h-10">
+                <div className="flex justify-center items-center p-2 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full w-10 h-10">
                   <DotsHorizontalIcon className="h-5 w-5" />
                 </div>
 
-                <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-400 dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
+                <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
                   {session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
@@ -278,7 +285,13 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
             <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
             />
 
-            <Tweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
+            {tweetsLoading ? (
+              <div className='flex justify-center items-center min-h-[70vh]'>
+                <Spinner />
+              </div>
+            ) : (
+              <Tweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
+            )}
           </div>
         )}
 
