@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom'
 import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
 import Sidebar from '../components/Sidebar'
@@ -18,9 +18,10 @@ import { db } from '../firebase'
 const Followers = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+  const [theme, setTheme] = useRecoilState(colorThemeState)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
   const [tweets, setTweets] = useState([])
   const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const router = useRouter()
 

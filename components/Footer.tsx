@@ -7,6 +7,7 @@ import { FaUser } from 'react-icons/fa'
 import { useRecoilState } from 'recoil'
 import { colorThemeState, searchModalState } from '../atoms/atom'
 import { useSession } from 'next-auth/react'
+import { SearchModal } from './SearchModal'
 
 const Footer = () => {
 
@@ -39,8 +40,6 @@ const Footer = () => {
       <Link href={`/profile/${session.user.tag}`}>
         <FaUser className="flex-1 h-7 w-7 cursor-pointer" />
       </Link>
-
-
     </div>
   )
 }

@@ -17,17 +17,19 @@ import {
 import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { colorThemeState, newTweetModalState } from "../atoms/atom";
+import { colorThemeState, newTweetModalState, searchModalState } from "../atoms/atom";
 import router, { useRouter } from "next/router";
 import Link from "next/link";
-import { FaFeatherAlt } from "react-icons/fa";
+import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs"
+import { SearchModal } from "./SearchModal";
 
 const Sidebar = () => {
 
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
+  const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState)
   const [activeLink, setActiveLink] = useState('home')
   const router = useRouter()
 
@@ -69,9 +71,7 @@ const Sidebar = () => {
           </div>
         )}
         <SidebarLink text="Home" Icon={HomeIcon} active={activeLink === 'home'} />
-        {/* <SidebarLink text="Explore" Icon={HashtagIcon} active={false} />
-        <SidebarLink text="Notifications" Icon={BellIcon} active={false} />
-        <SidebarLink text="Messages" Icon={BookmarkIcon} active={false} /> */}
+        <FaSearch className="h-6 w-6 cursor-pointer" onClick={() => setSearchModalOpen(true)} />
         <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
         {/* <SidebarLink text="Lists" Icon={UserIcon} active={false} /> */}
 
@@ -80,8 +80,8 @@ const Sidebar = () => {
         {/* <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} /> */}
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-          router.push('/auth')
           signOut()
+          router.push('/auth')
         }}>
           <LogoutIcon className="h-[30px] w-[30px]" />
           <div className="hidden xl:block">Logout</div>

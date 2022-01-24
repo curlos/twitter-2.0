@@ -6,20 +6,20 @@ interface Props {
 
 const SmallEvent = ({ image }: Props) => {
   return (
-    <div className="flex justify-between items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2">
+    <div className="grid grid-cols-smallEvent cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2">
       <div className="">
         <div className="text-gray-400">
-          <span>NBA</span>
+          <span>NFL</span>
           <span> · </span>
           <span>Trending</span>
         </div>
-        <div className="font-bold">The Los Angeles Lakers host the Brooklyn Nets for a Christmas Day showdown</div>
-        <div className="text-gray-400 text-sm">97.6K Tweets</div>
+        <div className="font-bold">Bills vs. Chiefs final score, results: KC wins OT thriller, reaches fourth consecutive AFC championship</div>
+        <div className="text-gray-400 text-sm">500.6K Tweets</div>
       </div>
 
       {image && (
-        <div className="">
-          <img src="/assets/bron&ad.jpeg" alt="" className="rounded-lg h-[68px] w-[68px] object-cover" />
+        <div className="flex justify-center items-center">
+          <img src="/assets/kc-chiefs.jpeg" alt="" className="rounded-lg" />
         </div>
       )}
     </div>

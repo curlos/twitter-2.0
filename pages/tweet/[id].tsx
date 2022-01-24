@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { newTweetModalState, colorThemeState } from '../../atoms/atom'
+import { newTweetModalState, colorThemeState, searchModalState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -14,6 +14,8 @@ import { collection, getDoc, orderBy, query, where } from 'firebase/firestore'
 import Widgets from '../../components/Widgets'
 import SettingsModal from '../../components/SettingsModal'
 import Footer from '../../components/Footer'
+import { SearchModal } from '../../components/SearchModal'
+import Spinner from '../../components/Spinner'
 
 interface Props {
   trendingResults: any,
@@ -27,6 +29,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
   const [tweet, setTweet] = useState<DocumentData>()
   const [tweetID, setTweetID] = useState('')
   const [author, setAuthor] = useState<DocumentData>()
@@ -74,6 +77,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
         console.log(snap.data())
         setAuthor(snap.data())
         setLoading(false)
+        setParentTweet(null)
       })
     }
 
@@ -104,6 +108,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   // console.log(parentTweet.data())
 
   console.log(tweet)
+  console.log(parentTweet)
 
 
   return (
@@ -119,7 +124,11 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
         <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex  `}>
           <Sidebar />
 
-          {loading ? <div>Loading...</div> : (
+          {loading ? (
+            <div className="min-h-screen flex justfiy-center items-center">
+              <Spinner />
+            </div>
+          ) : (
             <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-gray-400  dark:border-gray-700">
               <div className="flex justify-between items-center border-b border-[#AAB8C2]  dark:border-gray-700 p-3">
                 <h2 className="font-bold">Tweet</h2>
@@ -131,6 +140,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
               <Tweet id={String(id)} tweet={tweet} tweetID={tweetID} tweetPage={true} />
 
               {replies.map((tweetObj) => <Tweet id={tweetObj.id} tweet={tweetObj.data()} tweetID={tweetObj.id} />)}
+              <div className="h-[60px]" />
 
 
             </div>
@@ -140,6 +150,8 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
           <Widgets />
 
           {isOpen && <NewTweetModal />}
+          {isSearchModalOpen && <SearchModal />}
+
 
           <Footer />
         </main>

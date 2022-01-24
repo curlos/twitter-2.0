@@ -37,7 +37,11 @@ module.exports = {
       rose: colors.rose,
       
     },
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        'smallEvent': '2fr 1fr',
+      }
+    },
   },
   variants: {
     extend: {},

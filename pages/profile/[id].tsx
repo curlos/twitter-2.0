@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, settingsModalState } from '../../atoms/atom'
+import { colorThemeState, newTweetModalState, searchModalState, settingsModalState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -19,6 +19,7 @@ import SettingsModal from '../../components/SettingsModal'
 import Spinner from '../../components/Spinner'
 import Link from 'next/link'
 import Footer from '../../components/Footer'
+import { SearchModal } from '../../components/SearchModal'
 
 interface Props {
   trendingResults: any,
@@ -29,6 +30,7 @@ interface Props {
 const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
   const [loading, setLoading] = useState(true)
   const [tweetsLoading, setTweetsLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
@@ -334,6 +336,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         <Widgets />
         {isOpen && <NewTweetModal />}
         {isSettingsModalOpen && <SettingsModal />}
+        {isSearchModalOpen && <SearchModal />}
 
         <Footer />
       </main>

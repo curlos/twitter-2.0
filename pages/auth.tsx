@@ -24,12 +24,12 @@ const Auth = ({ providers }: Props) => {
   }
 
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex min-h-screen md:h-screen w-screen">
       <Head>
         <title>Login to Twitter 2.0</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex-1 bg-lightblue-500 flex flex-col justify-center items-center p-24">
+      <div className="hidden md:flex flex-col flex-1 bg-lightblue-500 justify-center items-center p-12 lg:p-24">
         <div className="space-y-5">
           <div className="flex space-x-3">
             <SearchIcon className="h-5 w-5" />
@@ -48,7 +48,7 @@ const Auth = ({ providers }: Props) => {
         </div>
       </div>
 
-      <div className="flex-1 flex justify-center items-center p-24">
+      <div className="flex-1 flex justify-center items-center p-4 sm:p-12 lg:p-24">
         <div>
           <Image src="https://rb.gy/ogau5a" alt="" height={30} width={30} className="text-lightblue-500" />
           <h2 className="text-2xl font-bold">See what's happening in the world right now</h2>
