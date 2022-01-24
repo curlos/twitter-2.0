@@ -30,12 +30,12 @@ const ParentTweet = ({ tweet, fromModal }: Props) => {
       <div className="flex p-3 space-x-2 pb-0 h-full">
         <div className="min-w-[55px] h-full">
           <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover" />
-          <span className="border-r-2 border-[#AAB8C2]  dark:border-gray-700 absolute ml-[27px] h-[100%]" />
+          {/* <span className="border-r-2 border-[#AAB8C2]  dark:border-gray-700 absolute ml-[27px] h-[100%]" /> */}
         </div>
 
         <div>
           <div className="text-gray-400 lg:flex">
-            <div className="text-white mr-[2px]">{author.name}</div>
+            <div className="text-black dark:text-white font-bold mr-[2px]">{author.name}</div>
             <div>@{author.tag}</div>
             <div className="text-gray-500 mx-1 font-bold hidden lg:block">·</div>
             {tweet.timestamp && tweet.timestamp.seconds && (
@@ -44,7 +44,7 @@ const ParentTweet = ({ tweet, fromModal }: Props) => {
           </div>
 
           <div>
-            <div className="break-words max-w-[420px]">{tweet.text}</div>
+            <div className="text-black dark:text-white break-words max-w-[420px]">{tweet.text}</div>
 
             {tweet.image && (
               <div className="pt-3">

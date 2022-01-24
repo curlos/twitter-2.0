@@ -10,6 +10,11 @@ export const settingsModalState = atom({
   default: false,
 })
 
+export const searchModalState = atom({
+  key: "searchModalState",
+  default: false,
+})
+
 export const tweetIdState = atom({
   key: "tweetIdState",
   default: '',

@@ -8,10 +8,11 @@ import React, { useEffect, useState } from 'react'
 import { FaBell, FaFeatherAlt, FaHome, FaSearch } from 'react-icons/fa'
 import { FiMail } from 'react-icons/fi'
 import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, settingsModalState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState, searchModalState, settingsModalState } from '../atoms/atom'
 import Feed from '../components/Feed'
 import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
+import { SearchModal } from '../components/SearchModal'
 import SettingsModal from '../components/SettingsModal'
 import Sidebar from '../components/Sidebar'
 import Widgets from '../components/Widgets'
@@ -22,7 +23,10 @@ export default function Home({ trendingResults, followResults, providers }) {
   const { data: session, status } = useSession()
   const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState)
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
+
+  console.log(isSearchModalOpen)
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -37,12 +41,11 @@ export default function Home({ trendingResults, followResults, providers }) {
         <Widgets />
 
         {isNewTweetModalOpen && <NewTweetModal />}
-        {/* {isSettingsModalOpen && <SettingsModal />} */}
-
         {isSettingsModalOpen && <SettingsModal />}
+        {isSearchModalOpen && <SearchModal />}
 
         <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
-          <FaFeatherAlt className="h-7 w-7 cursor-pointer" />
+          <FaFeatherAlt className="h-7 w-7 cursor-pointer text-white" />
         </div>
 
         <Footer />
