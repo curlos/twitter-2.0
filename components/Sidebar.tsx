@@ -80,8 +80,7 @@ const Sidebar = () => {
         {/* <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} /> */}
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-          signOut()
-          router.push('/auth')
+          signOut({ callbackUrl: 'http://localhost:3000/auth' })
         }}>
           <LogoutIcon className="h-[30px] w-[30px]" />
           <div className="hidden xl:block">Logout</div>

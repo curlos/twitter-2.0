@@ -6,6 +6,7 @@ import TwitterPorivder from "next-auth/providers/twitter"
 import FacebookProvider from "next-auth/providers/facebook"
 import AppleProvider from "next-auth/providers/apple"
 import { db } from "../../../firebase"
+import seed from 'seed-random'
 
 const addNewUser = async (session: Session) => {
   const docRef = await addDoc(collection(db, 'users'), {
@@ -38,6 +39,8 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
+
+      console.log(seed('new user'))
 
       session.user.tag = session.user.name
         .split(" ")

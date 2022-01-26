@@ -62,7 +62,6 @@ export const getServerSideProps = async (context) => {
 
   const providers = await getProviders()
   const session = await getSession(context)
-  console.log(session)
 
   if (!session) {
     return {

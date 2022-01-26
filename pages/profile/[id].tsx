@@ -49,8 +49,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const router = useRouter()
   const { id } = router.query
 
-  console.log(session.user.uid)
-
   useEffect(() => {
     setLoading(true)
 

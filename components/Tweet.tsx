@@ -109,7 +109,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   useEffect(() => {
     if (tweet.retweetedBy) {
-      console.log(tweet)
       const docRef = doc(db, "users", tweet.retweetedBy)
       getDoc(docRef).then((snap) => {
         setRetweetedBy(snap.data())
@@ -183,7 +182,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   return (
     !tweetPage ? (
       !loading && author ? (
-        <div className={`${theme} max-w-full lg:max-w-[750px] xl:max-w-[700px] 2xl:max-w-[900px] text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
+        <div className={`${theme} max-w-full text-base p-3 w-full cursor-pointer ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
           <Link href={`/tweet/${tweetID}`}>
             <div>
               <div className="text-gray-500 text-sm">{retweetedBy ? (
