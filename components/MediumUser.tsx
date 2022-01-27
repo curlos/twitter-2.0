@@ -39,7 +39,6 @@ const MediumUser = ({ userID }: Props) => {
 
   useEffect(() => {
     if (followers) {
-      console.log(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
       setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
     }
   }, [followers])
@@ -60,9 +59,6 @@ const MediumUser = ({ userID }: Props) => {
       })
     }
   }
-
-  console.log(followers)
-  console.log(followed)
 
   return (
     loading ? <Spinner /> : (

@@ -139,7 +139,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
               <Tweet id={String(id)} tweet={tweet} tweetID={tweetID} tweetPage={true} />
 
-              {replies.map((tweetObj) => <Tweet id={tweetObj.id} tweet={tweetObj.data()} tweetID={tweetObj.id} />)}
+              {replies.map((tweetObj) => <Tweet key={tweetObj.id} id={tweetObj.id} tweet={tweetObj.data()} tweetID={tweetObj.id} />)}
               <div className="h-[60px]" />
 
 

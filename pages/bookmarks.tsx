@@ -59,7 +59,7 @@ const Followers = () => {
 
               <div>
                 {tweets.map((tweet) => (
-                  <TweetWithID tweetID={tweet.data().tweetID} />
+                  <TweetWithID key={tweet.data().tweetID} tweetID={tweet.data().tweetID} />
                 ))}
               </div>
             </div>

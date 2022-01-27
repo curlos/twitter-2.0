@@ -105,7 +105,7 @@ const Following = () => {
                   console.log(user)
 
                   return (
-                    <MediumUser userID={String(user.followingID)} />
+                    <MediumUser key={String(user.followingID)} userID={String(user.followingID)} />
                   )
                 })}
               </div>

@@ -15,8 +15,6 @@ const Footer = () => {
   const [theme, setTheme] = useRecoilState(colorThemeState)
   const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState)
 
-  console.log(searchModalOpen)
-
   return (
     <div className="sm:hidden fixed bottom-0 w-full border-t-[1px] bg-white border-[#AAB8C2] dark:bg-black  dark:border-gray-700 p-4 px-6 flex justify-between items-center h-[60px]">
       <Link href={`/`}>

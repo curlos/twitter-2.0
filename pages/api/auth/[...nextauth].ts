@@ -6,14 +6,21 @@ import TwitterPorivder from "next-auth/providers/twitter"
 import FacebookProvider from "next-auth/providers/facebook"
 import AppleProvider from "next-auth/providers/apple"
 import { db } from "../../../firebase"
-import seed from 'seed-random'
+import cryptoRandomString from 'crypto-random-string';
 
 const addNewUser = async (session: Session) => {
+  const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag))
+  const qUserSnap = await getDocs(qUser)
+  console.log('CHECKING TAKEN')
+  console.log(qUserSnap.docs.length)
+
+  const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 })
+
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
     name: session.user.name,
     profilePic: session.user.image,
-    tag: session.user.tag,
+    tag: userTag,
     bio: null,
     location: null,
     website: null,
@@ -40,13 +47,14 @@ export default NextAuth({
   callbacks: {
     async session({ session, token }) {
 
-      console.log(seed('new user'))
-
       session.user.tag = session.user.name
         .split(" ")
         .join("")
         .toLocaleLowerCase();
       session.user.profilePic = session.user.image
+
+      // console.log('FUCK')
+      // console.log(session.user.tag + cryptoRandomString({ length: 10 }))
 
       const q = query(collection(db, "users"), where('email', '==', session.user.email))
       const querySnapshot = await getDocs(q)

@@ -87,21 +87,49 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
         let newFollowersYouFollow = []
         for (let user of snapshot.docs) {
-          console.log(user.data())
           const docRef = doc(db, "users", user.data().followingID)
           const snap = await getDoc(docRef)
           const follower = snap.data()
-          newFollowersYouFollow.push(follower)
+          newFollowersYouFollow.push({ ...follower, id: snap.id })
         }
 
-        setFollowersYouFollow(newFollowersYouFollow.filter((user) => user.tag !== author.tag))
+        const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)))
+
+        const sharedFollowers = newFollowersYouFollow.filter( (user, i) => user.tag !== author.tag && isUserFollowingPromises[i])
+
+        console.log(newFollowersYouFollow)
+        console.log(sharedFollowers)
+
+
+        setFollowersYouFollow(sharedFollowers)
       })
     }
   }, [db, id, loading])
 
+  const asyncFilter = async (arr, predicate) => {
+    const results = await Promise.all(arr.map(predicate));
+  
+    return arr.filter((_v, index) => results[index]);
+  }
+
   useEffect(() => {
     setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
   }, [followers])
+
+  const isUserFollowing = async (user, followers) => {
+    const result = followers.every((follower) => {
+      console.log(follower.data().followedBy)
+      console.log(user.id)
+      console.log(user.tag)
+      console.log(follower.data().followedBy !== user.id)
+      console.log('---------')
+      return follower.data().followedBy !== user.id
+    })
+
+    console.log(!result)
+
+    return !result
+  }
 
   const fetchTweetsInfo = async (authorID) => {
     const tweetsQuery = query(collection(db, "tweets"),
@@ -141,8 +169,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const handleEditOrFollow = () => {
     session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow()
   }
-
-  console.log(followersYouFollow)
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -264,7 +290,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                   </div>
                   <div>
                     Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
-                      <span>
+                      <span key={follower.tag}>
                         <Link href={`/profile/${follower.tag}`}>
                           <span className="cursor-pointer hover:underline">{follower.name}
                           </span>
