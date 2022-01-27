@@ -35,7 +35,7 @@ export default function Home({ trendingResults, followResults, providers }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen min-w-screen flex`}>
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen min-w-screen flex`}>
         <Sidebar />
         <Feed />
         <Widgets />

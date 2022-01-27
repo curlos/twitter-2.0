@@ -55,7 +55,7 @@ const Followers = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={`bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex  `}>
+      <main className={`bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex  `}>
         <Sidebar />
         <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2]  dark:border-gray-700">
           {!loading && author ? (

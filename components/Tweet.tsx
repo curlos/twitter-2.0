@@ -232,7 +232,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     <div className="break-words max-w-[300px] lg:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]">{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
-                        <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain" />
+                        <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-300" />
                       </div>
                     )}
                   </div>

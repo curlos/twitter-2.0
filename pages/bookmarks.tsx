@@ -42,7 +42,7 @@ const Followers = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen lg:px-12 flex`}>
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen px-0 lg:px-36 xl:px-48 2xl:px-12 flex`}>
         <Sidebar />
         <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
           {!loading ? (

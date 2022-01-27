@@ -95,7 +95,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
         const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)))
 
-        const sharedFollowers = newFollowersYouFollow.filter( (user, i) => user.tag !== author.tag && isUserFollowingPromises[i])
+        const sharedFollowers = newFollowersYouFollow.filter((user, i) => user.tag !== author.tag && isUserFollowingPromises[i])
 
         console.log(newFollowersYouFollow)
         console.log(sharedFollowers)
@@ -108,7 +108,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
   const asyncFilter = async (arr, predicate) => {
     const results = await Promise.all(arr.map(predicate));
-  
+
     return arr.filter((_v, index) => results[index]);
   }
 
@@ -181,7 +181,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-12 min-h-screen flex  `}>
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex  `}>
         <Sidebar />
 
         {loading ? (
