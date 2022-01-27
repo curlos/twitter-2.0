@@ -232,7 +232,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     <div className="break-words max-w-[300px] lg:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]">{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
-                        <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-300" />
+                        <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
                       </div>
                     )}
                   </div>
@@ -295,7 +295,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               <div className="">
                 <Link href={`/profile/${author.tag}`}>
                   <div className="flex">
-                    <div className="cursor-pointer hover:underline">{author.name}</div>
+                    <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
                     <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                   </div>
                 </Link>

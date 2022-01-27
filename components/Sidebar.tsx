@@ -2,13 +2,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { HomeIcon } from "@heroicons/react/solid";
 import {
-  HashtagIcon,
-  BellIcon,
-  InboxIcon,
   BookmarkIcon,
-  ClipboardListIcon,
   UserIcon,
-  DotsCircleHorizontalIcon,
   DotsHorizontalIcon,
   LogoutIcon,
   SunIcon,

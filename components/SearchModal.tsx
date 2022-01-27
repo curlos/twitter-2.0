@@ -55,7 +55,7 @@ export const SearchModal = () => {
                   router.push(`/?query=${searchQuery}`)
                 }} className="flex items-center gap-2" >
                   <SearchIcon className="h-5 w-5 text-gray-400 dark:text-white" />
-                  <input type="text" value={searchQuery} placeholder="Search Twitter" className="bg-white dark:bg-black text-black dark:text-white outline-none font-2xl" onChange={(e) => setSearchQuery(e.target.value)} />
+                  <input type="text" value={searchQuery} placeholder="Search Twitter" className="bg-white dark:bg-black text-black dark:text-white outline-none font-2xl w-full" onChange={(e) => setSearchQuery(e.target.value)} />
                 </form>
               </div>
             </div>

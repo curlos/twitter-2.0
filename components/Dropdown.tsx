@@ -13,7 +13,7 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
   const { data: session } = useSession()
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
       <div className="relative inline-block text-left">
         <Menu>
           {({ open }) => (
