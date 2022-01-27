@@ -44,7 +44,10 @@ const MediumUser = ({ userID }: Props) => {
   }, [followers])
 
   const handleFollow = async () => {
-    console.log(followed)
+    if (!session) {
+      return
+    }
+
     if (followed) {
       await deleteDoc(doc(db, "users", userID, "followers", String(session.user.uid)))
       await deleteDoc(doc(db, "users", String(session.user.uid), "following", userID))
@@ -82,7 +85,7 @@ const MediumUser = ({ userID }: Props) => {
             </div>
           </div>
 
-          {userID !== session.user.uid ? (
+          {!session || userID !== session.user.uid ? (
             <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={(e) => {
               e.stopPropagation()
               handleFollow()

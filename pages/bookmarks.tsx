@@ -91,6 +91,15 @@ export async function getServerSideProps(context) {
   const providers = await getProviders();
   const session = await getSession(context);
 
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/'
+      }
+    }
+  }
+
   return {
     props: {
       trendingResults,

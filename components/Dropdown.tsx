@@ -39,7 +39,7 @@ export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {
                 >
 
                   <div className="py-1 bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700" onClick={deleteTweet}>
-                    {author.tag === session.user.tag && (
+                    {session && session.user && author.tag === session.user.tag && (
                       <Menu.Item>
                         {({ active }) => (
                           <div

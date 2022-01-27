@@ -70,16 +70,20 @@ const Sidebar = () => {
         <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
         {/* <SidebarLink text="Lists" Icon={UserIcon} active={false} /> */}
 
-        <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
+        {session && session.user && (
+          <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
+        )}
 
         {/* <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} /> */}
 
-        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-          signOut({ callbackUrl: 'http://localhost:3000/auth' })
-        }}>
-          <LogoutIcon className="h-[30px] w-[30px]" />
-          <div className="hidden xl:block">Logout</div>
-        </div>
+        {session && session.user && (
+          <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
+            signOut({ callbackUrl: 'http://localhost:3000/auth' })
+          }}>
+            <LogoutIcon className="h-[30px] w-[30px]" />
+            <div className="hidden xl:block">Logout</div>
+          </div>
+        )}
 
         <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => setIsOpen(true)}>
           Tweet
@@ -90,25 +94,27 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="hidden xl:flex items-center justify-between mt-3 w-100">
-        <div className="flex items-center space-x-2 w-100">
-          <Link href={`/profile/${session.user.tag}`}>
-            <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] bg-red-500 object-cover cursor-pointer" />
-          </Link>
-
-          <div className="flex flex-col w-100">
+      {session && session.user && (
+        <div className="hidden xl:flex items-center justify-between mt-3 w-100">
+          <div className="flex items-center space-x-2 w-100">
             <Link href={`/profile/${session.user.tag}`}>
-              <div className="cursor-pointer hover:underline">{session.user.name}</div>
+              <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] bg-red-500 object-cover cursor-pointer" />
             </Link>
-            <div className="text-gray-500 break-word">{session.user.email}</div>
+
+            <div className="flex flex-col w-100">
+              <Link href={`/profile/${session.user.tag}`}>
+                <div className="cursor-pointer hover:underline">{session.user.name}</div>
+              </Link>
+              <div className="text-gray-500 break-word">{session.user.email}</div>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <DotsHorizontalIcon className="h-6 w-6" />
-        </div>
+          <div>
+            <DotsHorizontalIcon className="h-6 w-6" />
+          </div>
 
-      </div>
+        </div>
+      )}
     </div>
   )
 }

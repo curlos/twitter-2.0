@@ -120,6 +120,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
 
   const likeTweet = async () => {
+    if (!session) {
+      return
+    }
+
     if (liked) {
       await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid))
       await deleteDoc(doc(db, "users", session.user.uid, "likes", id))
@@ -138,6 +142,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   }
 
   const retweetTweet = async () => {
+    if (!session) {
+      return
+    }
+
     if (retweeted) {
       await deleteDoc(doc(db, "tweets", id, "retweets", session.user.uid))
       await deleteDoc(doc(db, "users", session.user.uid, "retweets", id))
@@ -156,7 +164,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   }
 
   const bookmarkTweet = async () => {
-    console.log('hello')
+    if (!session) {
+      return
+    }
 
     if (bookmarked) {
       console.log('bookmarked')
@@ -177,6 +187,15 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     e.stopPropagation()
     deleteDoc(doc(db, 'tweets', id))
     router.push('/')
+  }
+
+  const handleNewTweet = (e) => {
+    e.stopPropagation()
+    if (!session) {
+      return
+    }
+    setTweetId(id)
+    setIsOpen(true)
   }
 
   return (
@@ -237,11 +256,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     )}
                   </div>
 
-                  <div className="flex justify-start w-full text-gray-500" onClick={(e) => {
-                    e.stopPropagation()
-                    setTweetId(id)
-                    setIsOpen(true)
-                  }}>
+                  <div className="flex justify-start w-full text-gray-500" onClick={handleNewTweet}>
                     <div className="flex-1 items-center flex space-x-2">
                       <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
                       <div>{replies.length}</div>
@@ -349,11 +364,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               </div>
             </div>
 
-            <div className="flex justify-between w-full text-gray-500 py-2 px-12" onClick={(e) => {
-              e.stopPropagation()
-              setTweetId(id)
-              setIsOpen(true)
-            }}>
+            <div className="flex justify-between w-full text-gray-500 py-2 px-12" onClick={handleNewTweet}>
               <div className="flex space-x-2">
                 <FaRegComment className="h-6 w-6 cursor-pointer" />
               </div>

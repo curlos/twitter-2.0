@@ -20,6 +20,7 @@ import Spinner from '../../components/Spinner'
 import Link from 'next/link'
 import Footer from '../../components/Footer'
 import { SearchModal } from '../../components/SearchModal'
+import AuthReminder from '../../components/AuthReminder'
 
 interface Props {
   trendingResults: any,
@@ -83,7 +84,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   }, [db, id, loading])
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && session && session.user) {
       onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
         let newFollowersYouFollow = []
         for (let user of snapshot.docs) {
@@ -105,12 +106,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       })
     }
   }, [db, id, loading])
-
-  const asyncFilter = async (arr, predicate) => {
-    const results = await Promise.all(arr.map(predicate));
-
-    return arr.filter((_v, index) => results[index]);
-  }
 
   useEffect(() => {
     setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
@@ -150,7 +145,10 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   }
 
   const handleFollow = async () => {
-    console.log(followed)
+    if (!session) {
+      return
+    }
+
     if (followed) {
       await deleteDoc(doc(db, "users", authorID, "followers", String(session.user.uid)))
       await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorID))
@@ -167,6 +165,10 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   }
 
   const handleEditOrFollow = () => {
+    if (!session) {
+      return
+    }
+
     session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow()
   }
 
@@ -190,18 +192,22 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
           </div>
         ) : (
           author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
-            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[50]">
-              <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
-                <ArrowLeftIcon className="h-6 w-6" />
-              </div>
-              <div className="">
-                <div className="flex items-center mb-0 p-0">
-                  <h2 className="font-bold">{author.name}</h2>
-                  <BadgeCheckIcon className="h-6 w-6 text-lightblue-500" />
+            <div className="border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[50]">
+              <div className="flex items-center space-x-4">
+                <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
+                  <ArrowLeftIcon className="h-6 w-6" />
                 </div>
+                <div className="">
+                  <div className="flex items-center mb-0 p-0">
+                    <h2 className="font-bold">{author.name}</h2>
+                    <BadgeCheckIcon className="h-6 w-6 text-lightblue-500" />
+                  </div>
 
-                <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
+                  <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
+                </div>
               </div>
+
+              <AuthReminder />
             </div>
 
             <div>
@@ -217,7 +223,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                 </div>
 
                 <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
-                  {session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
+                  {session && session.user && session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
 

@@ -49,7 +49,7 @@ export default function Home({ trendingResults, followResults, providers }) {
 
         <SidenavDrawer />
 
-        <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => setIsNewTweetModalOpen(true)}>
+        <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16" onClick={() => session && setIsNewTweetModalOpen(true)}>
           <FaFeatherAlt className="h-7 w-7 cursor-pointer text-white" />
         </div>
 
@@ -68,14 +68,14 @@ export const getServerSideProps = async (context) => {
   const providers = await getProviders()
   const session = await getSession(context)
 
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/auth'
-      }
-    }
-  }
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: '/auth'
+  //     }
+  //   }
+  // }
 
   return {
     props: {

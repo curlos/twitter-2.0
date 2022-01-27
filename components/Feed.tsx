@@ -15,6 +15,7 @@ import { sortByNewest, sortByOldest } from '../utils/sortTweets'
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
 import { debounce } from 'lodash'
+import AuthReminder from './AuthReminder';
 
 const Feed = () => {
 
@@ -80,14 +81,20 @@ const Feed = () => {
       <Spinner />
     </div> : (
       <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
-        <div className={`flex justify-between items-center bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
-          <h2 className="font-bold">Home</h2>
-          <SparklesIcon className="h-5 w-5" />
+        <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold">Home</h2>
+            <SparklesIcon className="h-5 w-5" />
+          </div>
+
+          <AuthReminder />
         </div>
 
-        <div className="hidden lg:block">
-          <Input />
-        </div>
+        {session && session.user && (
+          <div className="hidden lg:block">
+            <Input />
+          </div>
+        )}
 
         <div>
           <SortDropdown sortType={sortType} setSortType={setSortType} />

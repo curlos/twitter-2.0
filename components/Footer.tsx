@@ -35,9 +35,11 @@ const Footer = () => {
         }} />
       )}
 
-      <Link href={`/profile/${session.user.tag}`}>
-        <FaUser className="flex-1 h-7 w-7 cursor-pointer" />
-      </Link>
+      {session && session.user && (
+        <Link href={`/profile/${session.user.tag}`}>
+          <FaUser className="flex-1 h-7 w-7 cursor-pointer" />
+        </Link>
+      )}
     </div>
   )
 }
