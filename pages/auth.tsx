@@ -23,8 +23,12 @@ const Auth = ({ providers }: Props) => {
     }
   }
 
+  console.log('bum')
+
+  console.log(providers)
+
   return (
-    <div className="flex min-h-screen md:h-screen w-screen">
+    <div className="flex min-h-screen w-screen max-w-full">
       <Head>
         <title>Login to Twitter 2.0</title>
         <link rel="icon" href="/favicon.ico" />
@@ -59,18 +63,19 @@ const Auth = ({ providers }: Props) => {
             <input className="w-full p-3 bg-black border border-[#AAB8C2]  dark:border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
           </form>
 
-          <AnimatedButton handleAuth={handleAuth} provider={{ id: 'email' }} authName={'email'} signUp={signUp} />
+          {Object.values(providers).map((provider: any) => {
 
-          {Object.values(providers).map((provider: any) => (
-            <div key={provider.name} className="py-3">
+            return (
+              <div key={provider.name} className="py-3">
 
-              <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
+                <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
+              </div>
+            )
+          })}
 
-              {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(true)}>Sign up</a></div>}
+          {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(true)}>Sign up</a></div>}
 
-              {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(false)}>Sign in</a></div>}
-            </div>
-          ))}
+          {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(false)}>Sign in</a></div>}
         </div>
       </div>
     </div>
