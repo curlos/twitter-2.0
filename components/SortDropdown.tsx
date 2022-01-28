@@ -4,8 +4,8 @@ import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
 
 interface Props {
-  sortType: any,
-  setSortType: any
+  sortType: string,
+  setSortType: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const SortDropdown = ({ sortType, setSortType }: Props) => {

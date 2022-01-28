@@ -13,16 +13,18 @@ import { FiShare } from 'react-icons/fi'
 import { HiBadgeCheck } from 'react-icons/hi'
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
 import Link from 'next/link';
+import { IAuthor, ITweet } from '../utils/types';
 
 interface Props {
   id: string,
-  tweet: any,
-  tweetID: any,
+  tweet: ITweet,
+  tweetID: string,
   tweetPage?: boolean
   topParentTweet?: boolean
 }
 
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
+
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
@@ -36,7 +38,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const [bookmarked, setBookmarked] = useState(false)
   const [parentTweet, setParentTweet] = useState<DocumentData>()
   const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
-  const [author, setAuthor] = useState<DocumentData>()
+  const [author, setAuthor] = useState<IAuthor>()
   const [retweetedBy, setRetweetedBy] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -80,7 +82,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   useEffect(() => {
     const docRef = doc(db, "users", tweet.userID)
     getDoc(docRef).then((snap) => {
-      setAuthor(snap.data())
+      setAuthor(snap.data() as IAuthor)
       setLoading(false)
     })
   }, [db, id])
@@ -183,7 +185,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     }
   }
 
-  const deleteTweet = async (e) => {
+  const deleteTweet = async (e: React.FormEvent) => {
     e.stopPropagation()
     deleteDoc(doc(db, 'tweets', id))
     router.push('/')

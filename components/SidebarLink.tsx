@@ -1,14 +1,20 @@
 import Link from 'next/link'
 import React, { useEffect } from 'react'
 
+interface ParentCompProps {
+  childComp?: React.ReactNode;
+}
+
 interface Props {
   text: string,
-  Icon: any,
+  Icon: React.FC<ParentCompProps>,
   active: boolean,
   tag?: string
 }
 
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
+
+  console.log(Icon)
 
   const getLinkHref = (text) => {
     switch (text) {

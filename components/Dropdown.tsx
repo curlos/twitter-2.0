@@ -2,11 +2,12 @@ import * as React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
+import { IAuthor, ITweet } from "../utils/types";
 
 interface Props {
-  tweet: any,
-  deleteTweet: any,
-  author: any
+  tweet: ITweet,
+  deleteTweet: (e: React.FormEvent) => Promise<void>,
+  author: IAuthor
 }
 
 export const Dropdown = ({ tweet, author, deleteTweet }: Props) => {

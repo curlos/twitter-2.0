@@ -1,33 +1,29 @@
 /* This example requires Tailwind CSS v2.0+ */
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationIcon } from '@heroicons/react/outline'
 import { useRecoilState } from 'recoil'
 import { colorThemeState, newTweetModalState, tweetIdState } from '../atoms/atom'
 import { XIcon } from '@heroicons/react/solid'
 import { useSession } from 'next-auth/react'
-import TextareaAutosize from 'react-textarea-autosize';
 import Input from './Input'
 import { DocumentData, onSnapshot } from '@firebase/firestore'
-import { useRouter } from 'next/router'
 import { doc } from 'firebase/firestore'
 import { db } from '../firebase'
-import Post from './Tweet'
-import TweetReplyContent from './TweetReplyContent'
 import ParentTweet from './ParentTweet'
+import { ITweet } from '../utils/types'
 
 export const NewTweetModal = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [tweet, setTweet] = useState<DocumentData>()
+  const [tweet, setTweet] = useState<ITweet>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (tweetId) {
       onSnapshot(doc(db, 'tweets', tweetId), (snapshot) => {
-        setTweet(snapshot.data())
+        setTweet(snapshot.data() as ITweet)
         setLoading(false)
       })
     }

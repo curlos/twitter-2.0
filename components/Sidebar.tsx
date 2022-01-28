@@ -65,6 +65,7 @@ const Sidebar = () => {
             <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
           </div>
         )}
+
         <SidebarLink text="Home" Icon={HomeIcon} active={activeLink === 'home'} />
         <FaSearch className="h-6 w-6 cursor-pointer" onClick={() => setSearchModalOpen(true)} />
         <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
@@ -105,7 +106,7 @@ const Sidebar = () => {
               <Link href={`/profile/${session.user.tag}`}>
                 <div className="cursor-pointer hover:underline">{session.user.name}</div>
               </Link>
-              <div className="text-gray-500 break-word">{session.user.email}</div>
+              <div className="text-gray-500 break-word">@{session.user.tag}</div>
             </div>
           </div>
 

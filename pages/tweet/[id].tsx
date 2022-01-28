@@ -105,11 +105,6 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
     }
   }, [db, id, parentTweet])
 
-  // console.log(parentTweet.data())
-
-  console.log(tweet)
-  console.log(parentTweet)
-
 
   return (
     !loading && tweet && author ? (

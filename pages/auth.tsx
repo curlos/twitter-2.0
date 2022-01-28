@@ -4,18 +4,21 @@ import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline'
 import { getProviders, getSession, signIn } from 'next-auth/react'
 import Head from 'next/head'
 import AnimatedButton from '../components/AnimatedButton'
+import { IProvider } from '../utils/types'
 
 interface Props {
-  providers: any
+  providers: [IProvider]
 }
 
 const Auth = ({ providers }: Props) => {
+
+  console.log(providers)
 
   const [signUp, setSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleAuth = (provider: any) => {
+  const handleAuth = (provider: IProvider) => {
     if (signUp) {
 
     } else {
@@ -63,7 +66,7 @@ const Auth = ({ providers }: Props) => {
             <input className="w-full p-3 bg-black border border-[#AAB8C2]  dark:border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
           </form>
 
-          {Object.values(providers).map((provider: any) => {
+          {Object.values(providers).map((provider: IProvider) => {
 
             return (
               <div key={provider.name} className="py-3">

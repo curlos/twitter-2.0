@@ -3,13 +3,16 @@ import moment from 'moment'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { db } from '../firebase'
+import { ITweet } from '../utils/types'
 
 interface Props {
-  tweet: any,
+  tweet: ITweet,
   fromModal: boolean
 }
 
 const ParentTweet = ({ tweet, fromModal }: Props) => {
+
+  console.log(tweet)
 
   const [author, setAuthor] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
@@ -66,7 +69,3 @@ const ParentTweet = ({ tweet, fromModal }: Props) => {
 }
 
 export default ParentTweet
-
-function tweet(tweet: any) {
-  throw new Error('Function not implemented.')
-}

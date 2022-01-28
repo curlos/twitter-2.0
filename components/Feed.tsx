@@ -47,7 +47,6 @@ const Feed = () => {
   }, [sortType, router.query.query])
 
   const getFilteredTweets = (searchQuery, tweets) => {
-    console.log(searchQuery)
     if (searchQuery === '' || !searchQuery || !tweets) {
       return tweets
     } else {
@@ -73,9 +72,6 @@ const Feed = () => {
     }
   }
 
-  console.log(filteredTweets)
-  console.log(router.query)
-
   return (
     loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
       <Spinner />
@@ -91,7 +87,7 @@ const Feed = () => {
         </div>
 
         {session && session.user && (
-          <div className="hidden lg:block">
+          <div className="hidden md:block">
             <Input />
           </div>
         )}

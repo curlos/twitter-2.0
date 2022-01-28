@@ -1,5 +1,9 @@
-export const sortByNewest = (tweetsToSort: any) => {
+import { DocumentData } from 'firebase/firestore';
+
+export const sortByNewest = (tweetsToSort: [DocumentData]) => {
   const tweetsToSortClone = [...tweetsToSort]
+
+  console.log(tweetsToSort)
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
 
@@ -11,7 +15,7 @@ export const sortByNewest = (tweetsToSort: any) => {
   })
 }
 
-export const sortByOldest = (tweetsToSort: any) => {
+export const sortByOldest = (tweetsToSort: [DocumentData]) => {
   const tweetsToSortClone = [...tweetsToSort]
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {

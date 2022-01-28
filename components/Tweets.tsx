@@ -1,12 +1,14 @@
+import { DocumentData } from '@firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { sortByNewest, sortByOldest } from '../utils/sortTweets'
+import { IAuthor } from '../utils/types'
 import Tweet from './Tweet'
 
 interface Props {
-  author: any,
-  tweets: any,
-  retweets: any,
-  likes: any,
+  author: IAuthor,
+  tweets: [DocumentData],
+  retweets: [DocumentData],
+  likes: [DocumentData],
   filter?: string
 }
 
@@ -15,6 +17,7 @@ const getSortedTweets = (tweets) => {
 }
 
 const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
+
   const [allTweets, setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]))
   const [filteredTweets, setFilteredTweets] = useState([])
 

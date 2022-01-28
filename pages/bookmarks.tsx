@@ -9,6 +9,7 @@ import { useRecoilState } from 'recoil'
 import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom'
 import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
+import { SearchModal } from '../components/SearchModal'
 import Sidebar from '../components/Sidebar'
 import Spinner from '../components/Spinner'
 import TweetWithID from '../components/TweetWithID'
@@ -71,6 +72,7 @@ const Followers = () => {
 
         <Widgets />
         {isOpen && <NewTweetModal />}
+        {isSearchModalOpen && <SearchModal />}
 
         <Footer />
 
