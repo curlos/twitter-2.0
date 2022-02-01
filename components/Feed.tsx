@@ -32,7 +32,6 @@ const Feed = () => {
   useEffect(() => onSnapshot(
     query(collection(db, "tweets"), orderBy("timestamp", "desc")),
     (snapshot) => {
-      console.log(router.query.query)
       setTweets(snapshot.docs)
       setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs))
       setLoading(false)

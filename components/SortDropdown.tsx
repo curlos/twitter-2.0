@@ -37,14 +37,14 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-gray-400 dark:divide-gray-700 rounded-md outline-none border border-[#AAB8C2]  dark:border-gray-700 z-[100] mr-3"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
                 >
 
-                  <div className="bg-white dark:bg-black rounded-md" onClick={() => setSortType('Newest')}>
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-b-none" onClick={() => setSortType('Newest')}>
                     <Menu.Item>
                       {({ active }) => (
                         <div
-                          className={`bg-gray-100 dark:bg-black w-full rounded-md rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer`}
+                          className={`w-full rounded-md rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
                         >
                           Newest
                         </div>
@@ -52,11 +52,11 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                     </Menu.Item>
                   </div>
 
-                  <div className="bg-white dark:bg-black rounded-md rounded-t-none" onClick={() => setSortType('Oldest')}>
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none" onClick={() => setSortType('Oldest')}>
                     <Menu.Item>
                       {({ active }) => (
                         <div
-                          className={`bg-gray-100 dark:bg-black w-full rounded-md rounded-t-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer`}
+                          className={`w-full rounded-md rounded-t-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
                         >
                           Oldest
                         </div>

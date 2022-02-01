@@ -38,6 +38,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   const [bookmarked, setBookmarked] = useState(false)
   const [parentTweet, setParentTweet] = useState<DocumentData>()
   const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
+  const [authorId, setAuthorId] = useState<string>()
   const [author, setAuthor] = useState<IAuthor>()
   const [retweetedBy, setRetweetedBy] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
@@ -82,6 +83,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
   useEffect(() => {
     const docRef = doc(db, "users", tweet.userID)
     getDoc(docRef).then((snap) => {
+      setAuthorId(snap.id)
       setAuthor(snap.data() as IAuthor)
       setLoading(false)
     })
@@ -238,7 +240,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                       )}
                     </div>
 
-                    <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
+                    <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
                   </div>
 
                   <div className="pb-3">
@@ -320,7 +322,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               </div>
             </div>
 
-            <Dropdown tweet={tweet} author={author} deleteTweet={deleteTweet} />
+            <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
           </div>
 
           <div className="text-xl py-3">

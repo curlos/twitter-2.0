@@ -14,8 +14,6 @@ interface Props {
 
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
 
-  console.log(Icon)
-
   const getLinkHref = (text) => {
     switch (text) {
       case 'Profile':
