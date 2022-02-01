@@ -90,7 +90,7 @@ const Sidebar = () => {
           Tweet
         </button>
 
-        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden" onClick={() => setIsOpen(true)}>
+        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden" onClick={() => session && setIsOpen(true)}>
           <FaFeatherAlt className="h-5 w-5 cursor-pointer" />
         </div>
       </div>

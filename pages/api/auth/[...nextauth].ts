@@ -3,6 +3,7 @@ import NextAuth from "next-auth"
 import { Session } from "next-auth/core/types"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
+import GithubProvider from "next-auth/providers/github"
 import TwitterPorivder from "next-auth/providers/twitter"
 import FacebookProvider from "next-auth/providers/facebook"
 import AppleProvider from "next-auth/providers/apple"
@@ -48,13 +49,23 @@ export default NextAuth({
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        const user = { id: 1, name: "J Smith", email: "jsmith@example.com" }
 
-        console.log(user)
+        const session = {
+          user: {
+            name: credentials.username,
+            email: '',
+            profilePic: '/assets/default_profile_pic.png',
+            banner: null,
+            tag: credentials.username
+          }
+        }
 
-        if (user) {
+        console.log(credentials)
+        console.log(session)
+
+        if (session) {
           // Any object returned will be saved in `user` property of the JWT
-          return user
+          return session
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null
@@ -67,6 +78,10 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET
+    }),
     AppleProvider({
       clientId: process.env.APPLE_ID,
       clientSecret: process.env.APPLE_SECRET
@@ -75,6 +90,10 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
+      console.log('-------------FUCK-------------')
+      console.log(session)
+      console.log(token)
+      console.log('-------------FUCK-------------')
 
       session.user.tag = session.user.name
         .split(" ")
@@ -99,6 +118,8 @@ export default NextAuth({
         session.user.dateJoined = dateJoined
         session.user.profilePic = profilePic
         session.user.banner = banner
+
+        console.log(session)
       } else {
         // If user is signing up with a new account
         const docRef = await addNewUser(session)
@@ -112,6 +133,8 @@ export default NextAuth({
         session.user.location = location
         session.user.website = website
         session.user.dateJoined = dateJoined
+
+        console.log(session)
       }
 
       return session;
