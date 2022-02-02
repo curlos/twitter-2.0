@@ -6,11 +6,12 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom'
+import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom'
 import Footer from '../components/Footer'
 import { NewTweetModal } from '../components/NewTweetModal'
 import { SearchModal } from '../components/SearchModal'
 import Sidebar from '../components/Sidebar'
+import SidenavDrawer from '../components/SidenavDrawer'
 import Spinner from '../components/Spinner'
 import TweetWithID from '../components/TweetWithID'
 import Widgets from '../components/Widgets'
@@ -21,6 +22,7 @@ const Followers = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
   const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
   const [tweets, setTweets] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -73,6 +75,7 @@ const Followers = () => {
         <Widgets />
         {isOpen && <NewTweetModal />}
         {isSearchModalOpen && <SearchModal />}
+        {isSidenavOpen && <SidenavDrawer />}
 
         <Footer />
 

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, searchModalState, settingsModalState } from '../../atoms/atom'
+import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -21,6 +21,7 @@ import Link from 'next/link'
 import Footer from '../../components/Footer'
 import { SearchModal } from '../../components/SearchModal'
 import AuthReminder from '../../components/AuthReminder'
+import SidenavDrawer from '../../components/SidenavDrawer'
 
 interface Props {
   trendingResults: any,
@@ -32,6 +33,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
+  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
   const [loading, setLoading] = useState(true)
   const [tweetsLoading, setTweetsLoading] = useState(true)
   const [filter, setFilter] = useState('Tweets')
@@ -43,7 +46,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [followers, setFollowers] = useState([])
   const [following, setFollowing] = useState([])
   const [followersYouFollow, setFollowersYouFollow] = useState([])
-  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
 
   const [followed, setFollowed] = useState(false)
@@ -183,7 +185,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex  `}>
+      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex`}>
         <Sidebar />
 
         {loading ? (
@@ -367,6 +369,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         {isOpen && <NewTweetModal />}
         {isSettingsModalOpen && <SettingsModal />}
         {isSearchModalOpen && <SearchModal />}
+        {isSidenavOpen && <SidenavDrawer />}
 
         <Footer />
       </main>

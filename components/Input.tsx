@@ -17,6 +17,7 @@ import {
   EmojiHappyIcon,
   PhotographIcon,
   XIcon,
+  ExclamationCircleIcon
 } from "@heroicons/react/outline";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
@@ -170,14 +171,27 @@ const Input = ({ replyModal, tweetId }: Props) => {
                 )}
               </div>
 
-              <div className="flex items-center space-x-4">
-                <div>{input.length}/400</div>
+              <div className="hidden lg:flex items-center space-x-4">
+                <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/400</div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
                   onClick={sendTweet}>
                   {!replyModal ? 'Tweet' : 'Reply'}
                 </button>
               </div>
+            </div>
+
+            <div className="flex lg:hidden items-center space-x-4">
+              <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'} flex gap-2`}>
+                {input.length >= 400 && (
+                  <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />
+                )}
+                {input.length}/400</div>
+              <button
+                className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
+                onClick={sendTweet}>
+                {!replyModal ? 'Tweet' : 'Reply'}
+              </button>
             </div>
           </div>
         )}

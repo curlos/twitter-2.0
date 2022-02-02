@@ -33,12 +33,13 @@ const Widgets = () => {
         <input placeholder="Search Twitter" value={searchQuery} className="bg-gray-100 dark:bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
       </form>
 
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 space-y-4 w-[350[x]">
-        <h2 className="text-xl font-bold mb-4">Who to follow</h2>
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4 w-[350[x]">
+        <h2 className="text-xl font-bold mb-4 p-3">Who to follow</h2>
 
         <SmallUser />
         <SmallUser />
         <SmallUser />
+        <div className="p-1 w-full" />
       </div>
 
       <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">

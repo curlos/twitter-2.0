@@ -6,13 +6,14 @@ import {
   UserIcon,
   DotsHorizontalIcon,
   LogoutIcon,
+  CogIcon,
   SunIcon,
   MoonIcon
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { colorThemeState, newTweetModalState, searchModalState } from "../atoms/atom";
+import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from "../atoms/atom";
 import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
@@ -25,6 +26,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
   const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState)
+  const [sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState)
   const [activeLink, setActiveLink] = useState('home')
   const router = useRouter()
 
@@ -67,15 +69,22 @@ const Sidebar = () => {
         )}
 
         <SidebarLink text="Home" Icon={HomeIcon} active={activeLink === 'home'} />
-        <FaSearch className="h-6 w-6 cursor-pointer" onClick={() => setSearchModalOpen(true)} />
+
+        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => setSearchModalOpen(true)}>
+          <FaSearch className="h-7 w-7 cursor-pointer" />
+          <div className="hidden xl:block">Search</div>
+        </div>
+
         <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
-        {/* <SidebarLink text="Lists" Icon={UserIcon} active={false} /> */}
 
         {session && session.user && (
           <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
-        {/* <SidebarLink text="More" Icon={DotsHorizontalIcon} active={false} /> */}
+        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => setSidenavOpen(true)}>
+          <CogIcon className="h-[30px] w-[30px]" />
+          <div className="hidden xl:block">Settings</div>
+        </div>
 
         {session && session.user && (
           <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
@@ -90,8 +99,8 @@ const Sidebar = () => {
           Tweet
         </button>
 
-        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden" onClick={() => session && setIsOpen(true)}>
-          <FaFeatherAlt className="h-5 w-5 cursor-pointer" />
+        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => session && setIsOpen(true)}>
+          <FaFeatherAlt className="h-5 w-5" />
         </div>
       </div>
 

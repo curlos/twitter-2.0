@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
-import { newTweetModalState, colorThemeState, searchModalState } from '../../atoms/atom'
+import { newTweetModalState, colorThemeState, searchModalState, sidenavState } from '../../atoms/atom'
 import Head from 'next/head'
 import Sidebar from '../../components/Sidebar'
 import { NewTweetModal } from '../../components/NewTweetModal'
@@ -16,6 +16,7 @@ import SettingsModal from '../../components/SettingsModal'
 import Footer from '../../components/Footer'
 import { SearchModal } from '../../components/SearchModal'
 import Spinner from '../../components/Spinner'
+import SidenavDrawer from '../../components/SidenavDrawer'
 
 interface Props {
   trendingResults: any,
@@ -30,6 +31,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
   const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
   const [tweet, setTweet] = useState<DocumentData>()
   const [tweetID, setTweetID] = useState('')
   const [author, setAuthor] = useState<DocumentData>()
@@ -39,8 +41,6 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { id } = router.query
-
-  console.log(id)
 
   useEffect(
     () =>
@@ -146,6 +146,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
           {isOpen && <NewTweetModal />}
           {isSearchModalOpen && <SearchModal />}
+          {isSidenavOpen && <SidenavDrawer />}
 
 
           <Footer />
