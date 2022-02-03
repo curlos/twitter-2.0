@@ -90,27 +90,21 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      console.log('-------------FUCK-------------')
-      console.log(session)
-      console.log(token)
-      console.log('-------------FUCK-------------')
-
       session.user.tag = session.user.name
         .split(" ")
         .join("")
         .toLocaleLowerCase();
       session.user.profilePic = session.user.image
 
-      // console.log('FUCK')
-      // console.log(session.user.tag + cryptoRandomString({ length: 10 }))
-
       const q = query(collection(db, "users"), where('email', '==', session.user.email))
       const querySnapshot = await getDocs(q)
 
       if (querySnapshot.docs.length > 0) {
         // If user is signing in with an exisitng account
-        const { bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data()
+        const { name, tag, bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data()
 
+        session.user.name = name
+        session.user.tag = tag
         session.user.uid = querySnapshot.docs[0].id
         session.user.bio = bio
         session.user.location = location

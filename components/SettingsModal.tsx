@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { PhotographIcon, XIcon } from '@heroicons/react/solid'
-import { doc, onSnapshot, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState, Fragment, useRef } from 'react'
 import { useRecoilState } from 'recoil'
@@ -8,12 +8,16 @@ import { colorThemeState, settingsModalState } from '../atoms/atom'
 import { FiCamera } from 'react-icons/fi'
 import { db, storage } from '../firebase'
 import { getDownloadURL, ref, uploadString } from 'firebase/storage'
+import { useRouter } from 'next/router'
 
 const SettingsModal = () => {
   const { data: session } = useSession()
+  const router = useRouter()
   const [isOpen, setIsOpen] = useRecoilState(settingsModalState)
   const [name, setName] = useState(session.user.name || '')
+  const [tag, setTag] = useState(session.user.tag || '')
   const [bio, setBio] = useState(session.user.bio || '')
+  const [usernameTakenError, setUsernameTakenError] = useState(false)
   const [location, setLocation] = useState(session.user.location || '')
   const [website, setWebsite] = useState(session.user.website || '')
   const [banner, setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg')
@@ -34,35 +38,66 @@ const SettingsModal = () => {
       website,
       banner,
       profilePic,
+      tag,
       updatedAt: serverTimestamp()
     }
 
-    const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`)
+    if (await checkIfUsernameTaken()) {
+      setUsernameTakenError(true)
+    } else {
+      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`)
 
-    const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`)
+      const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`)
 
-    if (selectedFileProfilePic) {
-      await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(profilePicRef)
-        updatedUserData.profilePic = downloadURL
+      if (selectedFileProfilePic) {
+        await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
+          const downloadURL = await getDownloadURL(profilePicRef)
+          updatedUserData.profilePic = downloadURL
+        })
+      }
+
+      if (selectedFileBanner) {
+        await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
+          const downloadURL = await getDownloadURL(bannerRef)
+          updatedUserData.banner = downloadURL
+        })
+      }
+
+      console.log(updatedUserData)
+
+      await updateDoc(doc(db, "users", session.user.uid), {
+        ...updatedUserData,
       })
+
+      session.user.name = name
+      session.user.tag = tag
+      session.user.bio = bio
+      session.user.location = location
+      session.user.website = website
+      session.user.profilePic = profilePic
+      session.user.banner = banner
+
+      setIsOpen(false)
+      router.push(`/profile/${tag}`).then(() => (
+        window.location.reload()
+      ))
     }
+  }
 
-    if (selectedFileBanner) {
-      await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(bannerRef)
-        updatedUserData.banner = downloadURL
-      })
+  const checkIfUsernameTaken = async () => {
+    if (session.user.tag === tag) {
+      return false
+    } else {
+      const qUser = query(collection(db, "users"), where('tag', '==', tag))
+      const qUserSnap = await getDocs(qUser)
+      console.log('CHECKING TAKEN')
+      console.log(qUserSnap.docs.length)
+      const usernameTaken = qUserSnap.docs.length > 0
+
+      console.log(usernameTaken)
+
+      return usernameTaken
     }
-
-    console.log(updatedUserData)
-
-    await updateDoc(doc(db, "users", session.user.uid), {
-      ...updatedUserData,
-    })
-
-    setIsOpen(false)
-    window.location.reload()
   }
 
   const changeProfilePic = (e) => {
@@ -86,16 +121,6 @@ const SettingsModal = () => {
       setSelectedFileBanner(readerEvent.target.result)
     ]
   }
-
-  console.log({
-    name,
-    bio,
-    location,
-    website,
-    banner,
-    profilePic,
-    updatedAt: serverTimestamp()
-  })
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -188,6 +213,19 @@ const SettingsModal = () => {
                     <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
                       if (e.target.value.length <= 50) {
                         setName(e.target.value)
+                      }
+                    }
+                    }></input>
+                  </div>
+
+                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
+                    <div className="text-sm text-gray-400 flex justify-between">
+                      <div>Username</div>
+                      <div>{tag.length} / 15</div>
+                    </div>
+                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={tag} onChange={(e) => {
+                      if (e.target.value.length <= 15) {
+                        setTag(e.target.value)
                       }
                     }
                     }></input>

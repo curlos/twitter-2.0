@@ -52,6 +52,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const router = useRouter()
   const { id } = router.query
 
+  console.log(session.user)
+
   useEffect(() => {
     setLoading(true)
 
@@ -253,7 +255,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
                 {author.website ? (
                   <div className="flex space-x-1">
                     <LinkIcon className="h-5 w-5" />
-                    <a href="http://lakers.com/" target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
+                    <a href={`${!author.website.includes('https://') ?
+                      `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
                   </div>
                 ) : null}
 
