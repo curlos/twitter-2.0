@@ -37,10 +37,10 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
+                  className="absolute right-0 w-56 mt-2 origin-top-right rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
                 >
 
-                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-b-none" onClick={() => setSortType('Newest')}>
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400  dark:divide-gray-700 rounded-b-none" onClick={() => setSortType('Newest')}>
                     <Menu.Item>
                       {({ active }) => (
                         <div

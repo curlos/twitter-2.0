@@ -109,6 +109,8 @@ const Followers = () => {
                     <MediumUser key={String(follower.followedBy)} userID={String(follower.followedBy)} />
                   )
                 })}
+
+                <div className="h-[60px]" />
               </div>
             </div>
           ) : <Spinner />

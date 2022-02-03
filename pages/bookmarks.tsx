@@ -65,6 +65,8 @@ const Followers = () => {
                   <TweetWithID key={tweet.data().tweetID} tweetID={tweet.data().tweetID} />
                 ))}
               </div>
+
+              <div className="h-[60px]" />
             </div>
           ) : <Spinner />
           }

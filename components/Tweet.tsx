@@ -252,7 +252,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         </Link>
                       </div>
                     ) : null}
-                    <div className="break-words max-w-[300px] lg:max-w-[500px] xl:max-w-[600px] 2xl:max-w-[800px]">{tweet.text}</div>
+                    <div className="break-all">{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
                         <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
@@ -325,7 +325,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
             <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
           </div>
 
-          <div className="text-xl py-3">
+          <div className="text-xl py-3 w-full">
             {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
                 <span>Replying to</span>
@@ -334,7 +334,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                 </Link>
               </div>
             ) : null}
-            <div className="break-words max-w-[350px] lg:max-w-[700px] xl:max-w-[670px] 2xl:max-w-[850px]">{tweet.text}</div>
+            <div className="break-all">{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
                 <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2]  dark:border-gray-700" />

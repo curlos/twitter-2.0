@@ -50,7 +50,7 @@ const SidenavDrawer = () => {
   }, [router.pathname])
 
   return (
-    <div className={`${theme} ${!isOpen ? 'hidden' : ''} fixed z-50 w-screen max-w-full h-screen bg-gray-500 bg-opacity-40`} onClick={() => setIsOpen(false)}>
+    <div className={`${theme} ${!isOpen ? 'hidden' : ''} sm:hidden fixed z-50 w-screen max-w-full h-screen bg-gray-500 bg-opacity-40`} onClick={() => setIsOpen(false)}>
       <aside className={`transform z-50 top-0 right-0 bg-white text-black dark:bg-black dark:text-white fixed h-full ease-in-out transition-all duration-1000 ${isOpen ? 'translate-x-0' : 'translate-x-full'} w-10/12 xl:w-10/12`} onClick={(e) => e.stopPropagation()}>
         <div className="p-10 text-2xl font-medium flex flex-col justify-between h-screen">
           <div className="space-y-2">

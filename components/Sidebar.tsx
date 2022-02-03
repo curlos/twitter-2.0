@@ -81,11 +81,6 @@ const Sidebar = () => {
           <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
-        <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => setSidenavOpen(true)}>
-          <CogIcon className="h-[30px] w-[30px]" />
-          <div className="hidden xl:block">Settings</div>
-        </div>
-
         {session && session.user && (
           <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
             signOut({ callbackUrl: 'http://localhost:3000/auth' })

@@ -57,7 +57,7 @@ const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
           <Tweet key={tweet.id} id={tweet.id} tweet={tweetData} tweetID={tweet.id} />
         )
       })}
-      <div className="h-[60px] sm:hidden" />
+      <div className="h-[60px]" />
     </div>
   )
 }
