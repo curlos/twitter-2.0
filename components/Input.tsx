@@ -28,16 +28,18 @@ import Link from 'next/link';
 
 interface Props {
   replyModal?: boolean
-  tweetId?: string
+  tweetId?: string,
+  showEmojiState?: boolean,
+  setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Input = ({ replyModal, tweetId }: Props) => {
+const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props) => {
   const { data: session } = useSession()
 
   const [input, setInput] = useState('')
   const [selectedFile, setSelectedFile] = useState(null)
   const filePickerRef = useRef(null)
-  const [showEmojis, setShowEmojis] = useState(false)
+  const [showEmojis, setShowEmojis] = useState(showEmojiState || false)
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
@@ -144,23 +146,20 @@ const Input = ({ replyModal, tweetId }: Props) => {
                   />
                 </div>
 
-                <div className="icon">
-                  <ChartBarIcon className="h-7 w-7 hoverAnimation" />
-                </div>
-
-                <div className="icon" onClick={() => setShowEmojis(!showEmojis)}>
+                <div className="icon" onClick={() => {
+                  setShowEmojis(!showEmojis)
+                  if (setShowEmojiState) {
+                    setShowEmojiState(!showEmojis)
+                  }
+                }}>
                   <EmojiHappyIcon className="h-7 w-7 hoverAnimation" />
-                </div>
-
-                <div className="icon">
-                  <CalendarIcon className="h-7 w-7 hoverAnimation" />
                 </div>
 
                 {showEmojis && (
                   <Picker
                     onSelect={addEmoji}
                     style={{
-                      position: "absolute",
+                      position: "fixed",
                       marginTop: "40px",
                       marginLeft: -40,
                       maxWidth: "320px",
@@ -171,7 +170,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
                 )}
               </div>
 
-              <div className="hidden lg:flex items-center space-x-4">
+              <div className="hidden md:flex items-center space-x-4">
                 <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/400</div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
@@ -181,7 +180,7 @@ const Input = ({ replyModal, tweetId }: Props) => {
               </div>
             </div>
 
-            <div className="flex lg:hidden items-center space-x-4">
+            <div className="flex md:hidden items-center space-x-4">
               <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'} flex gap-2`}>
                 {input.length >= 400 && (
                   <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />

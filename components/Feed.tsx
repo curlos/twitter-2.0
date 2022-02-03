@@ -102,6 +102,8 @@ const Feed = () => {
           <Spinner />
         )}
 
+        <div className="h-[60px]" />
+
       </div>
     )
   )

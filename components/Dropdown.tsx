@@ -21,13 +21,9 @@ export const Dropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-
     const docRef = doc(db, "users", authorId)
-    console.log(authorId)
-    console.log(docRef)
 
     getDoc(docRef).then((snap) => {
-      console.log(snap.data())
       setUser(snap.data())
       setLoading(false)
     })
@@ -63,11 +59,6 @@ export const Dropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
         followedBy: session.user.uid
       })
     }
-  }
-
-  if (!loading) {
-    console.log(author)
-    console.log(followed)
   }
 
   return (

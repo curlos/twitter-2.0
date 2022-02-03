@@ -15,6 +15,7 @@ import { ITweet } from '../utils/types'
 export const NewTweetModal = () => {
   const { data: session } = useSession()
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+  const [showEmojiState, setShowEmojiState] = useState(false)
   const [tweetId, setTweetId] = useRecoilState(tweetIdState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
   const [tweet, setTweet] = useState<ITweet>()
@@ -73,7 +74,11 @@ export const NewTweetModal = () => {
 
               {!loading && <ParentTweet tweet={tweet} fromModal={true} />}
 
-              <Input replyModal={String(tweetId) !== ''} tweetId={tweetId} />
+              <Input replyModal={String(tweetId) !== ''} tweetId={tweetId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
+
+              {showEmojiState && (
+                <div className="h-[430px] w-full p-2" />
+              )}
             </div>
           </Transition.Child>
         </div>
