@@ -63,8 +63,6 @@ const SettingsModal = () => {
         })
       }
 
-      console.log(updatedUserData)
-
       await updateDoc(doc(db, "users", session.user.uid), {
         ...updatedUserData,
       })
@@ -90,11 +88,7 @@ const SettingsModal = () => {
     } else {
       const qUser = query(collection(db, "users"), where('tag', '==', tag))
       const qUserSnap = await getDocs(qUser)
-      console.log('CHECKING TAKEN')
-      console.log(qUserSnap.docs.length)
       const usernameTaken = qUserSnap.docs.length > 0
-
-      console.log(usernameTaken)
 
       return usernameTaken
     }

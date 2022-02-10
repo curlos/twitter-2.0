@@ -45,7 +45,6 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
   useEffect(
     () =>
       onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
-        console.log(snapshot.data())
         setTweet(snapshot.data())
         setTweetID(snapshot.id)
       }),
@@ -61,7 +60,6 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
           orderBy("timestamp", "desc"),
         ),
         (snapshot) => {
-          console.log(snapshot)
           setReplies(snapshot.docs)
           setLoading(false)
         }
@@ -74,7 +72,6 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
       setLoading(true)
       const docRef = doc(db, "users", tweet.userID)
       getDoc(docRef).then((snap) => {
-        console.log(snap.data())
         setAuthor(snap.data())
         setLoading(false)
         setParentTweet(null)

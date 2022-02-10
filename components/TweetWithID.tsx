@@ -17,7 +17,6 @@ const TweetWithID = ({ tweetID }: Props) => {
   useEffect(
     () =>
       onSnapshot(doc(db, "tweets", tweetID), (snapshot) => {
-        console.log(snapshot.data())
         setTweet(snapshot.data())
         setLoading(false)
       }),

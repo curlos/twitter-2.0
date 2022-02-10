@@ -28,8 +28,6 @@ export default function Home({ trendingResults, followResults, providers }) {
   const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
   const [theme, setTheme] = useRecoilState(colorThemeState)
 
-  console.log(isSearchModalOpen)
-
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>

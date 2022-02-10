@@ -173,11 +173,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     }
 
     if (bookmarked) {
-      console.log('bookmarked')
       await deleteDoc(doc(db, "tweets", id, "bookmarks", session.user.uid))
       await deleteDoc(doc(db, "users", session.user.uid, "bookmarks", id))
     } else {
-      console.log('not')
       await setDoc(doc(db, "tweets", id, "bookmarks", session.user.uid), {
         userID: session.user.uid
       })
@@ -200,6 +198,14 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     }
     setTweetId(id)
     setIsOpen(true)
+  }
+
+  const getLongestWord = () => {
+    if (!tweet.text) {
+      return ''
+    } else {
+      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b)
+    }
   }
 
   return (
@@ -252,7 +258,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         </Link>
                       </div>
                     ) : null}
-                    <div className="break-all">{tweet.text}</div>
+                    <div className={`${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`}>{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
                         <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />

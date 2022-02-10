@@ -3,8 +3,6 @@ import { DocumentData } from 'firebase/firestore';
 export const sortByNewest = (tweetsToSort: [DocumentData]) => {
   const tweetsToSortClone = [...tweetsToSort]
 
-  console.log(tweetsToSort)
-
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
 
     let timestampOne = tweetOne.data().retweetedAt ? tweetOne.data().retweetedAt.seconds : tweetOne.data().timestamp.seconds

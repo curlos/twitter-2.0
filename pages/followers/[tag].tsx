@@ -33,7 +33,6 @@ const Followers = () => {
     const getFollowers = async () => {
       const q = query(collection(db, "users"), where('tag', '==', String(tag)))
       const querySnapshot = await getDocs(q)
-      console.log(querySnapshot.docs)
       const userID = querySnapshot.docs[0].id
 
       setAuthor(querySnapshot.docs[0].data())
@@ -102,8 +101,6 @@ const Followers = () => {
               <div>
                 {followers.map((f) => {
                   const follower = f.data()
-
-                  console.log(follower)
 
                   return (
                     <MediumUser key={String(follower.followedBy)} userID={String(follower.followedBy)} />

@@ -12,16 +12,12 @@ interface Props {
 
 const ParentTweet = ({ tweet, fromModal }: Props) => {
 
-  console.log(tweet)
-
   const [author, setAuthor] = useState<DocumentData>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log(tweet)
     const docRef = doc(db, "users", tweet.userID)
     getDoc(docRef).then((snap) => {
-      console.log(snap.data())
       setAuthor(snap.data())
       setLoading(false)
     })

@@ -35,7 +35,6 @@ const SidenavDrawer = () => {
   const router = useRouter()
 
   useEffect(() => {
-    console.log(localStorage.getItem('theme'))
     setTheme(localStorage.getItem('theme'))
   }, [])
 

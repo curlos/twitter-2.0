@@ -13,8 +13,6 @@ import cryptoRandomString from 'crypto-random-string';
 const addNewUser = async (session: Session) => {
   const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag))
   const qUserSnap = await getDocs(qUser)
-  console.log('CHECKING TAKEN')
-  console.log(qUserSnap.docs.length)
 
   const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 })
 
@@ -59,9 +57,6 @@ export default NextAuth({
             tag: credentials.username
           }
         }
-
-        console.log(credentials)
-        console.log(session)
 
         if (session) {
           // Any object returned will be saved in `user` property of the JWT
@@ -113,7 +108,6 @@ export default NextAuth({
         session.user.profilePic = profilePic
         session.user.banner = banner
 
-        console.log(session)
       } else {
         // If user is signing up with a new account
         const docRef = await addNewUser(session)
@@ -127,8 +121,6 @@ export default NextAuth({
         session.user.location = location
         session.user.website = website
         session.user.dateJoined = dateJoined
-
-        console.log(session)
       }
 
       return session;

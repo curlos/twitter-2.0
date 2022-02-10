@@ -23,11 +23,8 @@ const MediumUser = ({ userID }: Props) => {
   useEffect(() => {
 
     const docRef = doc(db, "users", userID)
-    console.log(userID)
-    console.log(docRef)
 
     getDoc(docRef).then((snap) => {
-      console.log(snap.data())
       setUser(snap.data())
       setLoading(false)
     })

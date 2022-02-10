@@ -50,7 +50,6 @@ const Feed = () => {
       return tweets
     } else {
       const filteredTweets = tweets.filter((tweet) => {
-        console.log(searchQuery)
         if (searchQuery && typeof searchQuery === 'string') {
           return tweet.data().text.toLowerCase().includes(searchQuery.toLowerCase())
         }

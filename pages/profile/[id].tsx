@@ -52,8 +52,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const router = useRouter()
   const { id } = router.query
 
-  console.log(session.user)
-
   useEffect(() => {
     setLoading(true)
 
@@ -102,10 +100,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
         const sharedFollowers = newFollowersYouFollow.filter((user, i) => user.tag !== author.tag && isUserFollowingPromises[i])
 
-        console.log(newFollowersYouFollow)
-        console.log(sharedFollowers)
-
-
         setFollowersYouFollow(sharedFollowers)
       })
     }
@@ -117,15 +111,8 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
   const isUserFollowing = async (user, followers) => {
     const result = followers.every((follower) => {
-      console.log(follower.data().followedBy)
-      console.log(user.id)
-      console.log(user.tag)
-      console.log(follower.data().followedBy !== user.id)
-      console.log('---------')
       return follower.data().followedBy !== user.id
     })
-
-    console.log(!result)
 
     return !result
   }
@@ -136,7 +123,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
       orderBy('timestamp', 'desc')
     )
     const tweetsQuerySnapshot = await getDocs(tweetsQuery)
-    console.log(tweetsQuerySnapshot)
     setTweets(tweetsQuerySnapshot.docs)
 
     const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'))

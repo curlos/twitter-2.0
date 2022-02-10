@@ -12,8 +12,6 @@ interface Props {
 
 const Auth = ({ providers }: Props) => {
 
-  console.log(providers)
-
   const [signUp, setSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,10 +23,6 @@ const Auth = ({ providers }: Props) => {
       signIn(provider.id, { callbackUrl: "/" })
     }
   }
-
-  console.log('bum')
-
-  console.log(providers)
 
   return (
     <div className="flex min-h-screen w-screen max-w-full">
