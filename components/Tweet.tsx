@@ -313,7 +313,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
             <div className="flex">
               <Link href={`/profile/${author.tag}`}>
                 <div className="mr-2">
-                  <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] max-w-none cursor-pointer" />
+                  <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
                 </div>
               </Link>
 

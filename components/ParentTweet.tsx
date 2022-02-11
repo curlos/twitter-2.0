@@ -28,7 +28,7 @@ const ParentTweet = ({ tweet, fromModal }: Props) => {
     !loading ? (
       <div className="flex p-3 space-x-2 pb-0 h-full">
         <div className="min-w-[55px] h-full">
-          <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover" />
+          <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
           {/* <span className="border-r-2 border-[#AAB8C2]  dark:border-gray-700 absolute ml-[27px] h-[100%]" /> */}
         </div>
 

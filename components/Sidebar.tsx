@@ -102,7 +102,7 @@ const Sidebar = () => {
         <div className="hidden xl:flex items-center justify-between mt-3 w-100">
           <div className="flex items-center space-x-2 w-100">
             <Link href={`/profile/${session.user.tag}`}>
-              <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] bg-red-500 object-cover cursor-pointer" />
+              <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] object-cover cursor-pointer" />
             </Link>
 
             <div className="flex flex-col w-100">
