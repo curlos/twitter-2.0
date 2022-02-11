@@ -6,9 +6,9 @@ import Tweet from './Tweet'
 
 interface Props {
   author: IAuthor,
-  tweets: [DocumentData],
-  retweets: [DocumentData],
-  likes: [DocumentData],
+  tweets: any[],
+  retweets: any[],
+  likes: any,
   filter?: string
 }
 

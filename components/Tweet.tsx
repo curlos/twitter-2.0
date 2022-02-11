@@ -13,11 +13,11 @@ import { FiShare } from 'react-icons/fi'
 import { HiBadgeCheck } from 'react-icons/hi'
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
 import Link from 'next/link';
-import { IAuthor, ITweet } from '../utils/types';
+import { IAuthor } from '../utils/types';
 
 interface Props {
   id: string,
-  tweet: ITweet,
+  tweet: any,
   tweetID: string,
   tweetPage?: boolean
   topParentTweet?: boolean
@@ -100,7 +100,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     }, [db, id])
 
   useEffect(() => {
-    if (parentTweet) {
+    console.log(parentTweet)
+    if (parentTweet && parentTweet.data()) {
       const docRef = doc(db, "users", String(parentTweet.data().userID))
       getDoc(docRef).then((snap) => {
         setParentTweetAuthor(snap.data())
@@ -187,8 +188,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   const deleteTweet = async (e: React.FormEvent) => {
     e.stopPropagation()
-    deleteDoc(doc(db, 'tweets', id))
-    router.push('/')
+    deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'))
   }
 
   const handleNewTweet = (e) => {
@@ -331,7 +331,16 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
             <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
           </div>
 
-          <div className="text-xl py-3 w-full">
+          {parentTweet && !parentTweet.data() && (
+            <div className="text-xl w-full">
+              <div className="text-[15px] text-gray-500">
+                <span>Replying to</span>
+                <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@deleted</span>
+              </div>
+            </div>
+          )}
+
+          <div className="text-xl pt-3 w-full">
             {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
                 <span>Replying to</span>

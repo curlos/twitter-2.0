@@ -17,6 +17,7 @@ import Footer from '../../components/Footer'
 import { SearchModal } from '../../components/SearchModal'
 import Spinner from '../../components/Spinner'
 import SidenavDrawer from '../../components/SidenavDrawer'
+import DeletedTweet from '../../components/DeletedTweet'
 
 interface Props {
   trendingResults: any,
@@ -91,7 +92,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
     }, [db, id, tweet])
 
   useEffect(() => {
-    if (parentTweet) {
+    if (parentTweet && parentTweet.data()) {
       const docRef = doc(db, "users", String(parentTweet.data().userID))
       getDoc(docRef).then((snap) => {
         setParentTweetAuthor(snap.data())
@@ -127,7 +128,11 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
                 <SparklesIcon className="h-5 w-5" />
               </div>
 
-              {parentTweet && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
+              {parentTweet && parentTweet.data() && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
+
+              {parentTweet && !parentTweet.data() && (
+                <DeletedTweet />
+              )}
 
               <Tweet id={String(id)} tweet={tweet} tweetID={tweetID} tweetPage={true} />
 

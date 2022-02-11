@@ -44,7 +44,7 @@ const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
 
   const sendTweet = async () => {
-    if (loading) return
+    if (loading || !input) return
     setLoading(true)
 
     const docRef = await addDoc(collection(db, 'tweets'), {

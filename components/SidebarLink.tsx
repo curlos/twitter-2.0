@@ -7,7 +7,7 @@ interface ParentCompProps {
 
 interface Props {
   text: string,
-  Icon: React.FC<ParentCompProps>,
+  Icon: any,
   active: boolean,
   tag?: string
 }
