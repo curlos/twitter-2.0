@@ -219,7 +219,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                   <Link href={`/profile/${retweetedBy.tag}`}>
                     <span className="flex hover:underline">
                       <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
-                      {retweetedBy.tag === session.user.tag ? 'You retweeted' : `${retweetedBy.name} retweeted`}
+                      {session && session.user && retweetedBy.tag === session.user.tag ? 'You retweeted' : `${retweetedBy.name} retweeted`}
                     </span>
                   </Link>
                 </div>

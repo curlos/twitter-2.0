@@ -3,7 +3,7 @@ import React from 'react'
 const Spinner = () => {
   return (
     <div className="flex items-center justify-center space-x-2">
-      <div className="w-16 h-16 inline-block border-b-4 border-l-4 border-lightblue-400 rounded-full animate-spin"></div>
+      <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
     </div>
   )
 }

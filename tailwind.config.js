@@ -1,7 +1,7 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  mode: "jit",
+  mode: "",
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -47,5 +47,4 @@ module.exports = {
     extend: {},
   },
   plugins: [require("tailwind-scrollbar-hide"), require("tailwind-scrollbar")],
-
 }
