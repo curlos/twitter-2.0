@@ -42,7 +42,12 @@ const MediumUser = ({ userID }: Props) => {
 
   const handleFollow = async () => {
     if (!session) {
-      return
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/auth'
+        }
+      }
     }
 
     if (followed) {

@@ -20,7 +20,7 @@ const AnimatedButton = ({ handleAuth, provider, authName, signUp }: Props) => {
         <span className="relative w-full text-left text-black transition-colors duration-300 ease-in-out group-hover:text-white">
           <div className="flex justify-center items-center space-x-2">
             {provider.name !== 'Credentials' && (
-              <img src={`/assets/${provider.name}.png`} alt="Google Logo" className="h-5 w-5" />
+              <img src={`/assets/${provider.name.toLowerCase()}.png`} alt="Google Logo" className="h-5 w-5" />
             )}
             {!signUp && <div>Sign in with {authName}</div>}
             {signUp && <div>Sign up with {authName}</div>}

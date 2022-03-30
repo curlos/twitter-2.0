@@ -3,7 +3,7 @@ import { serverTimestamp } from 'firebase/firestore'
 import { Session } from 'next-auth/core/types'
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { FaBell, FaFeatherAlt, FaHome, FaSearch } from 'react-icons/fa'
 import { FiMail } from 'react-icons/fi'
@@ -45,7 +45,13 @@ export default function Home({ trendingResults, followResults, providers }) {
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
 
-        <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16 cursor-pointer" onClick={() => session && setIsNewTweetModalOpen(true)}>
+        <div className="sm:hidden text-black dark:text-white  bg-lightblue-400 flex justify-center items-center rounded-full p-4 fixed bottom-0 right-0 mr-4 mb-16 cursor-pointer" onClick={() => {
+          if (!session) {
+            Router.push('/auth')
+            return
+          }
+          setIsNewTweetModalOpen(true)
+        }}>
           <FaFeatherAlt className="h-7 w-7 text-white" />
         </div>
 
@@ -63,15 +69,6 @@ export const getServerSideProps = async (context) => {
 
   const providers = await getProviders()
   const session = await getSession(context)
-
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: '/auth'
-  //     }
-  //   }
-  // }
 
   return {
     props: {

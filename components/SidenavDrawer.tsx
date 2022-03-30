@@ -78,12 +78,14 @@ const SidenavDrawer = () => {
               </div>
             )}
 
-            <Link href="/bookmarks">
-              <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
-                <FiBookmark className="h-7 w-7" />
-                Bookmarks
-              </div>
-            </Link>
+            {session && session.user && (
+              <Link href="/bookmarks">
+                <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
+                  <FiBookmark className="h-7 w-7" />
+                  Bookmarks
+                </div>
+              </Link>
+            )}
 
 
 

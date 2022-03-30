@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { newTweetModalState, tweetIdState, colorThemeState } from '../atoms/atom';
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, setDoc, where } from '@firebase/firestore';
 import { db } from '../firebase';
@@ -126,6 +126,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   const likeTweet = async () => {
     if (!session) {
+      Router.push('/auth')
       return
     }
 
@@ -148,6 +149,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   const retweetTweet = async () => {
     if (!session) {
+      Router.push('/auth')
       return
     }
 
@@ -170,6 +172,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   const bookmarkTweet = async () => {
     if (!session) {
+      Router.push('/auth')
       return
     }
 
@@ -193,9 +196,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
   const handleNewTweet = (e) => {
     e.stopPropagation()
+
     if (!session) {
+      Router.push('/auth')
       return
     }
+
     setTweetId(id)
     setIsOpen(true)
   }

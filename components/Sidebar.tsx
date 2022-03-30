@@ -14,7 +14,7 @@ import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from "../atoms/atom";
-import router, { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs"
@@ -89,11 +89,23 @@ const Sidebar = () => {
           </div>
         )}
 
-        <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => setIsOpen(true)}>
+        <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => {
+          if (!session) {
+            Router.push('/auth')
+            return
+          }
+          setIsOpen(true)
+        }}>
           Tweet
         </button>
 
-        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => session && setIsOpen(true)}>
+        <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => {
+          if (!session) {
+            Router.push('/auth')
+            return
+          }
+          setIsOpen(true)
+        }}>
           <FaFeatherAlt className="h-5 w-5" />
         </div>
       </div>

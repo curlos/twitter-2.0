@@ -3,7 +3,7 @@ import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, query, wher
 import { getProviders, getSession, useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom'
@@ -99,12 +99,8 @@ export async function getServerSideProps(context) {
   const session = await getSession(context);
 
   if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/'
-      }
-    }
+    Router.push('/auth')
+    return
   }
 
   return {

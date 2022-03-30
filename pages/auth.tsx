@@ -55,11 +55,6 @@ const Auth = ({ providers }: Props) => {
           <h2 className="text-2xl font-bold">See what's happening in the world right now</h2>
           <h6 className="font-bold">Join Twitter 2.0 today</h6>
 
-          {/* <form className="my-4">
-            <input className="w-full p-3 bg-black border border-[#AAB8C2]  dark:border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Username"></input>
-            <input className="w-full p-3 bg-black border border-[#AAB8C2]  dark:border-gray-700 rounded-lg focus:outline-none mb-3" placeholder="Password"></input>
-          </form> */}
-
           {Object.values(providers).map((provider: IProvider) => {
 
             return (

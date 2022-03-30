@@ -1,6 +1,6 @@
 import { deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { getProviders, getSession, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { db } from "../../firebase"
 import { useRecoilState } from 'recoil'
@@ -136,6 +136,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
   const handleFollow = async () => {
     if (!session) {
+      Router.push('/auth')
       return
     }
 
@@ -156,6 +157,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
   const handleEditOrFollow = () => {
     if (!session) {
+      Router.push('/auth')
       return
     }
 

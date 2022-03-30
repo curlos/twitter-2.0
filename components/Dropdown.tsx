@@ -43,7 +43,12 @@ export const Dropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
 
   const handleFollow = async () => {
     if (!session) {
-      return
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/'
+        }
+      }
     }
 
     if (followed) {
