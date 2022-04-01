@@ -45,6 +45,7 @@ Twitter 2.0 is a clone of the social media app, Twitter. Users can perform the c
 ### Built With
 
 * Next.js (React Framework)
+* NextAuth
 * TypeScript
 * TailwindCSS
 * Recoil (Redux-like React State Management Library)
