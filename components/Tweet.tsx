@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
@@ -8,10 +8,10 @@ import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, 
 import { db } from '../firebase';
 import { getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import { Dropdown } from './Dropdown';
-import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa'
-import { FiShare } from 'react-icons/fi'
-import { HiBadgeCheck } from 'react-icons/hi'
-import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
+import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FiShare } from 'react-icons/fi';
+import { HiBadgeCheck } from 'react-icons/hi';
+import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
 import Link from 'next/link';
 import { IAuthor } from '../utils/types';
 
@@ -19,200 +19,205 @@ interface Props {
   id: string,
   tweet: any,
   tweetID: string,
-  tweetPage?: boolean
-  topParentTweet?: boolean
+  tweetPage?: boolean;
+  topParentTweet?: boolean;
 }
 
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [tweetId, setTweetId] = useRecoilState(tweetIdState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [likes, setLikes] = useState([])
-  const [retweets, setRetweets] = useState([])
-  const [bookmarks, setBookmarks] = useState([])
-  const [replies, setReplies] = useState([])
-  const [liked, setLiked] = useState(false)
-  const [retweeted, setRetweeted] = useState(false)
-  const [bookmarked, setBookmarked] = useState(false)
-  const [parentTweet, setParentTweet] = useState<DocumentData>()
-  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
-  const [authorId, setAuthorId] = useState<string>()
-  const [author, setAuthor] = useState<IAuthor>()
-  const [retweetedBy, setRetweetedBy] = useState<DocumentData>()
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [tweetId, setTweetId] = useRecoilState(tweetIdState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [likes, setLikes] = useState([]);
+  const [retweets, setRetweets] = useState([]);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [replies, setReplies] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [retweeted, setRetweeted] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [parentTweet, setParentTweet] = useState<DocumentData>();
+  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
+  const [authorId, setAuthorId] = useState<string>();
+  const [author, setAuthor] = useState<IAuthor>();
+  const [retweetedBy, setRetweetedBy] = useState<DocumentData>();
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     onSnapshot(query(
       collection(db, 'tweets', String(tweetID), 'replies'),
       orderBy('timestamp', 'desc')
     ),
-      (snapshot) => setReplies(snapshot.docs))
-  }, [db, id, tweetID])
+      (snapshot) => setReplies(snapshot.docs));
+  }, [db, id, tweetID]);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs))
-  }, [db, id, tweetID])
+    onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
+  }, [db, id, tweetID]);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs))
-  }, [db, id, tweetID])
+    onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
+  }, [db, id, tweetID]);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'replies'), (snapshot) => setReplies(snapshot.docs))
-  }, [db, id, tweetID])
+    onSnapshot(collection(db, 'tweets', tweetID, 'replies'), (snapshot) => setReplies(snapshot.docs));
+  }, [db, id, tweetID]);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs))
-  }, [db, id, tweetID])
+    onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
+  }, [db, id, tweetID]);
 
   useEffect(() => {
-    setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1)
-  }, [likes])
+    setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1);
+  }, [likes]);
 
   useEffect(() => {
-    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1)
-  }, [retweets])
+    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1);
+  }, [retweets]);
 
   useEffect(() => {
-    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1)
-  }, [bookmarks])
+    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1);
+  }, [bookmarks]);
 
   useEffect(() => {
-    const docRef = doc(db, "users", tweet.userID)
+    const docRef = doc(db, "users", tweet.userID);
     getDoc(docRef).then((snap) => {
-      setAuthorId(snap.id)
-      setAuthor(snap.data() as IAuthor)
-      setLoading(false)
-    })
-  }, [db, id])
+      setAuthorId(snap.id);
+      setAuthor(snap.data() as IAuthor);
+      setLoading(false);
+    });
+  }, [db, id]);
 
   useEffect(
     () => {
       if (tweet.parentTweet && tweet.parentTweet !== "") {
-        const docRef = doc(db, "tweets", String(tweet.parentTweet))
+        const docRef = doc(db, "tweets", String(tweet.parentTweet));
         getDoc(docRef).then((snap) => {
-          setParentTweet(snap)
-        })
+          setParentTweet(snap);
+        });
       }
-    }, [db, id])
+    }, [db, id]);
 
   useEffect(() => {
-    console.log(parentTweet)
+    console.log(parentTweet);
     if (parentTweet && parentTweet.data()) {
-      const docRef = doc(db, "users", String(parentTweet.data().userID))
+      const docRef = doc(db, "users", String(parentTweet.data().userID));
       getDoc(docRef).then((snap) => {
-        setParentTweetAuthor(snap.data())
-        setLoading(false)
-      })
+        setParentTweetAuthor(snap.data());
+        setLoading(false);
+      });
     } else {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [db, id, parentTweet])
+  }, [db, id, parentTweet]);
 
   useEffect(() => {
     if (tweet.retweetedBy) {
-      const docRef = doc(db, "users", tweet.retweetedBy)
+      const docRef = doc(db, "users", tweet.retweetedBy);
       getDoc(docRef).then((snap) => {
-        setRetweetedBy(snap.data())
-        setLoading(false)
-      })
+        setRetweetedBy(snap.data());
+        setLoading(false);
+      });
     }
-  }, [tweet.retweetedBy])
+  }, [tweet.retweetedBy]);
 
 
 
   const likeTweet = async () => {
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
     if (liked) {
-      await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid))
-      await deleteDoc(doc(db, "users", session.user.uid, "likes", id))
+      await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid));
+      await deleteDoc(doc(db, "users", session.user.uid, "likes", id));
     } else {
       await setDoc(doc(db, "tweets", id, "likes", session.user.uid), {
         name: session.user.name,
         likedAt: serverTimestamp(),
         likedBy: session.user.uid
-      })
+      });
       await setDoc(doc(db, "users", session.user.uid, "likes", id), {
         ...tweet,
         likedAt: serverTimestamp(),
         likedBy: session.user.uid
-      })
+      });
     }
-  }
+  };
 
   const retweetTweet = async () => {
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
     if (retweeted) {
-      await deleteDoc(doc(db, "tweets", id, "retweets", session.user.uid))
-      await deleteDoc(doc(db, "users", session.user.uid, "retweets", id))
+      await deleteDoc(doc(db, "tweets", id, "retweets", session.user.uid));
+      await deleteDoc(doc(db, "users", session.user.uid, "retweets", id));
     } else {
       await setDoc(doc(db, "tweets", id, "retweets", session.user.uid), {
         name: session.user.name,
         retweetedAt: serverTimestamp(),
         retweetedBy: session.user.uid
-      })
+      });
       await setDoc(doc(db, "users", session.user.uid, "retweets", id), {
         ...tweet,
         retweetedAt: serverTimestamp(),
         retweetedBy: session.user.uid
-      })
+      });
     }
-  }
+  };
 
   const bookmarkTweet = async () => {
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
     if (bookmarked) {
-      await deleteDoc(doc(db, "tweets", id, "bookmarks", session.user.uid))
-      await deleteDoc(doc(db, "users", session.user.uid, "bookmarks", id))
+      await deleteDoc(doc(db, "tweets", id, "bookmarks", session.user.uid));
+      await deleteDoc(doc(db, "users", session.user.uid, "bookmarks", id));
     } else {
       await setDoc(doc(db, "tweets", id, "bookmarks", session.user.uid), {
         userID: session.user.uid
-      })
+      });
       await setDoc(doc(db, "users", session.user.uid, "bookmarks", id), {
         tweetID: id
-      })
+      });
     }
-  }
+  };
 
   const deleteTweet = async (e: React.FormEvent) => {
-    e.stopPropagation()
-    deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'))
-  }
+    e.stopPropagation();
+    deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'));
+  };
+
+  const editTweet = async (e: React.FormEvent) => {
+    e.stopPropagation();
+    deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'));
+  };
 
   const handleNewTweet = (e) => {
-    e.stopPropagation()
+    e.stopPropagation();
 
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
-    setTweetId(id)
-    setIsOpen(true)
-  }
+    setTweetId(id);
+    setIsOpen(true);
+  };
 
   const getLongestWord = () => {
     if (!tweet.text) {
-      return ''
+      return '';
     } else {
-      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b)
+      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
     }
-  }
+  };
 
   return (
     !tweetPage ? (
@@ -252,7 +257,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                       )}
                     </div>
 
-                    <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
+                    <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} editTweet={editTweet} />
                   </div>
 
                   <div className="pb-3">
@@ -279,8 +284,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                     </div>
 
                     <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                      e.stopPropagation()
-                      retweetTweet()
+                      e.stopPropagation();
+                      retweetTweet();
                     }}>
                       {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
                       <div className="text-green-400">{retweets.length}</div>
@@ -288,16 +293,16 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
 
 
                     <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                      e.stopPropagation()
-                      likeTweet()
+                      e.stopPropagation();
+                      likeTweet();
                     }}>
                       {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
                       <div className="text-red-500">{likes.length}</div>
                     </div>
 
                     <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                      e.stopPropagation()
-                      bookmarkTweet()
+                      e.stopPropagation();
+                      bookmarkTweet();
                     }}>
                       {bookmarked ? (
                         <FaBookmark className={`h-[18px] w-[18px] cursor-pointer text-yellow-500`} />
@@ -334,7 +339,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               </div>
             </div>
 
-            <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} />
+            <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} editTweet={editTweet} />
           </div>
 
           {parentTweet && !parentTweet.data() && (
@@ -395,23 +400,23 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               </div>
 
               <div className="flex space-x-2" onClick={(e) => {
-                e.stopPropagation()
-                retweetTweet()
+                e.stopPropagation();
+                retweetTweet();
               }}>
                 {!retweeted ? <FaRetweet className={`h-6 w-6 cursor-pointer`} /> : <FaRetweet className={`h-6 w-6 cursor-pointer text-green-400`} />}
               </div>
 
 
               <div className="flex space-x-2" onClick={(e) => {
-                e.stopPropagation()
-                likeTweet()
+                e.stopPropagation();
+                likeTweet();
               }}>
                 {!liked ? <RiHeart3Line className={`h-6 w-6 cursor-pointer`} /> : <RiHeart3Fill className={`h-6 w-6 cursor-pointer text-red-500`} />}
               </div>
 
               <div className="flex space-x-2" onClick={(e) => {
-                e.stopPropagation()
-                bookmarkTweet()
+                e.stopPropagation();
+                bookmarkTweet();
               }}>
                 {bookmarked ? (
                   <FaBookmark className={`h-6 w-6 cursor-pointer text-yellow-500`} />
@@ -424,7 +429,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
         </div>
       ) : null
     )
-  )
-}
+  );
+};
 
-export default Tweet
+export default Tweet;

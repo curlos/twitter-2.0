@@ -1,40 +1,41 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, tweetIdState } from '../atoms/atom'
-import { XIcon } from '@heroicons/react/solid'
-import { useSession } from 'next-auth/react'
-import Input from './Input'
-import { DocumentData, onSnapshot } from '@firebase/firestore'
-import { doc } from 'firebase/firestore'
-import { db } from '../firebase'
-import ParentTweet from './ParentTweet'
-import { ITweet } from '../utils/types'
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { useRecoilState } from 'recoil';
+import { colorThemeState, newTweetModalState, tweetIdState, editTweetState } from '../atoms/atom';
+import { XIcon } from '@heroicons/react/solid';
+import { useSession } from 'next-auth/react';
+import Input from './Input';
+import { DocumentData, onSnapshot } from '@firebase/firestore';
+import { doc } from 'firebase/firestore';
+import { db } from '../firebase';
+import ParentTweet from './ParentTweet';
+import { ITweet } from '../utils/types';
 
 export const NewTweetModal = () => {
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [showEmojiState, setShowEmojiState] = useState(false)
-  const [tweetId, setTweetId] = useRecoilState(tweetIdState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [tweet, setTweet] = useState<ITweet>()
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [showEmojiState, setShowEmojiState] = useState(false);
+  const [tweetId, setTweetId] = useRecoilState(tweetIdState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [tweet, setTweet] = useState<ITweet>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (tweetId) {
       onSnapshot(doc(db, 'tweets', tweetId), (snapshot) => {
-        setTweet(snapshot.data() as ITweet)
-        setLoading(false)
-      })
+        setTweet(snapshot.data() as ITweet);
+        setLoading(false);
+      });
     }
-  }, [db])
+  }, [db]);
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
-        setIsOpen(val)
-        setTweetId('')
+        setIsOpen(val);
+        setTweetId('');
       }}>
         <div className={`${theme} flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
@@ -66,15 +67,19 @@ export const NewTweetModal = () => {
               <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div>
                   <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={(val) => {
-                    setIsOpen(false)
-                    setTweetId('')
+                    setIsOpen(false);
+                    setTweetId('');
+                    setEditTweetInfo({
+                      text: '',
+                      imageSrc: ''
+                    });
                   }} />
                 </div>
               </div>
 
               {!loading && <ParentTweet tweet={tweet} fromModal={true} />}
 
-              <Input replyModal={String(tweetId) !== ''} tweetId={tweetId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
+              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetId) !== ''} tweetId={tweetId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
 
               {showEmojiState && (
                 <div className="h-[430px] w-full p-2" />
@@ -84,5 +89,5 @@ export const NewTweetModal = () => {
         </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};

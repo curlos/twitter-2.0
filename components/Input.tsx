@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import Image from "next/image";
-import { db, storage } from '../firebase'
+import { db, storage } from '../firebase';
 import {
   addDoc,
   collection,
@@ -8,8 +8,8 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
-} from '@firebase/firestore'
-import { getDownloadURL, ref, uploadString } from '@firebase/storage'
+} from '@firebase/firestore';
+import { getDownloadURL, ref, uploadString } from '@firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   CalendarIcon,
@@ -23,87 +23,123 @@ import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, tweetIdState } from '../atoms/atom';
+import { colorThemeState, editTweetState, newTweetModalState, tweetIdState } from '../atoms/atom';
 import Link from 'next/link';
 
-interface Props {
-  replyModal?: boolean
-  tweetId?: string,
-  showEmojiState?: boolean,
-  setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>
+interface EditTweetInfo {
+  text: string,
+  imageSrc: string;
 }
 
-const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props) => {
-  const { data: session } = useSession()
+interface Props {
+  editTweetInfo?: EditTweetInfo,
+  replyModal?: boolean;
+  tweetId?: string,
+  showEmojiState?: boolean,
+  setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  const [input, setInput] = useState('')
-  const [selectedFile, setSelectedFile] = useState(null)
-  const filePickerRef = useRef(null)
-  const [showEmojis, setShowEmojis] = useState(showEmojiState || false)
-  const [loading, setLoading] = useState(false)
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
+const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmojiState }: Props) => {
+  const { data: session } = useSession();
+
+  const [input, setInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const filePickerRef = useRef(null);
+  const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.imageSrc?.length > 0));
+
+  useEffect(() => {
+    if (isEditingTweet) {
+      if (editTweetInfo?.text) {
+        setInput(editTweetInfo.text);
+      }
+
+      if (editTweetInfo?.imageSrc) {
+        setSelectedFile(editTweetInfo?.imageSrc);
+      }
+
+    }
+  }, [editTweetInfo]);
 
   const sendTweet = async () => {
-    if (loading || !input) return
-    setLoading(true)
+    if (loading || !input) return;
+    setLoading(true);
 
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
       text: input,
       parentTweet: replyModal ? tweetId : '',
       timestamp: serverTimestamp()
-    })
+    });
 
     if (replyModal) {
       await setDoc(doc(db, "tweets", tweetId, "replies", docRef.id), {
         name: session.user.name,
-      })
+      });
     }
 
-    const imageRef = ref(storage, `tweets/${docRef.id}/image`)
+    const imageRef = ref(storage, `tweets/${docRef.id}/image`);
 
     if (selectedFile) {
       await uploadString(imageRef, selectedFile, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef)
+        const downloadURL = await getDownloadURL(imageRef);
         await updateDoc(doc(db, "tweets", docRef.id), {
           image: downloadURL
-        })
-      })
+        });
+      });
     }
 
-    setLoading(false)
-    setInput('')
-    setSelectedFile(null)
-    setShowEmojis(false)
-    setIsOpen(false)
-  }
+    setLoading(false);
+    setInput('');
+    setSelectedFile(null);
+    setShowEmojis(false);
+    setIsOpen(false);
+  };
+
+  const editTweet = () => {
+
+  };
 
   const addImageToPost = (e) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0])
+      reader.readAsDataURL(e.target.files[0]);
     }
 
     reader.onload = (readerEvent) => [
       setSelectedFile(readerEvent.target.result)
-    ]
-  }
+    ];
+  };
 
   const addEmoji = (e) => {
-    let sym = e.unified.split('-')
-    let codesArray = []
-    sym.forEach((el) => codesArray.push('0x' + el))
-    let emoji = String.fromCodePoint(...codesArray)
-    setInput(input + emoji)
-  }
+    let sym = e.unified.split('-');
+    let codesArray = [];
+    sym.forEach((el) => codesArray.push('0x' + el));
+    let emoji = String.fromCodePoint(...codesArray);
+    setInput(input + emoji);
+  };
 
   const handleTextChange = (e) => {
     if (e.target.value.length <= 400) {
-      setInput(e.target.value)
+      setInput(e.target.value);
     } else {
-      setInput(e.target.value.slice(0, 400))
+      setInput(e.target.value.slice(0, 400));
     }
-  }
+  };
+
+  const getButtonText = () => {
+    { !replyModal ? 'Tweet' : 'Reply'; }
+
+    if (replyModal) {
+      return 'Reply';
+    } else if (isEditingTweet) {
+      return 'Update';
+    } else {
+      return 'Tweet';
+    }
+  };
 
   return (
     <div className={`flex p-3 space-x-2 border-b z-10 border-[#AAB8C2]  dark:border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
@@ -147,9 +183,9 @@ const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props
                 </div>
 
                 <div className="icon" onClick={() => {
-                  setShowEmojis(!showEmojis)
+                  setShowEmojis(!showEmojis);
                   if (setShowEmojiState) {
-                    setShowEmojiState(!showEmojis)
+                    setShowEmojiState(!showEmojis);
                   }
                 }}>
                   <EmojiHappyIcon className="h-7 w-7 hoverAnimation" />
@@ -175,7 +211,7 @@ const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
                   onClick={sendTweet}>
-                  {!replyModal ? 'Tweet' : 'Reply'}
+                  {getButtonText()}
                 </button>
               </div>
             </div>
@@ -189,14 +225,14 @@ const Input = ({ replyModal, tweetId, showEmojiState, setShowEmojiState }: Props
               <button
                 className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
                 onClick={sendTweet}>
-                {!replyModal ? 'Tweet' : 'Reply'}
+                {getButtonText()}
               </button>
             </div>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;
