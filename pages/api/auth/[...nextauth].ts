@@ -1,20 +1,20 @@
-import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore"
-import NextAuth from "next-auth"
-import { Session } from "next-auth/core/types"
-import CredentialsProvider from "next-auth/providers/credentials"
-import GoogleProvider from "next-auth/providers/google"
-import GithubProvider from "next-auth/providers/github"
-import TwitterPorivder from "next-auth/providers/twitter"
-import FacebookProvider from "next-auth/providers/facebook"
-import AppleProvider from "next-auth/providers/apple"
-import { db } from "../../../firebase"
+import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore";
+import NextAuth from "next-auth";
+import { Session } from "next-auth/core/types";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import TwitterPorivder from "next-auth/providers/twitter";
+import FacebookProvider from "next-auth/providers/facebook";
+import AppleProvider from "next-auth/providers/apple";
+import { db } from "../../../firebase";
 import cryptoRandomString from 'crypto-random-string';
 
 const addNewUser = async (session: Session) => {
-  const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag))
-  const qUserSnap = await getDocs(qUser)
+  const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag));
+  const qUserSnap = await getDocs(qUser);
 
-  const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 })
+  const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 });
 
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
@@ -26,10 +26,10 @@ const addNewUser = async (session: Session) => {
     website: null,
     banner: null,
     dateJoined: serverTimestamp()
-  })
+  });
 
-  return docRef
-}
+  return docRef;
+};
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -89,39 +89,44 @@ export default NextAuth({
         .split(" ")
         .join("")
         .toLocaleLowerCase();
-      session.user.profilePic = session.user.image
+      session.user.profilePic = session.user.image;
 
-      const q = query(collection(db, "users"), where('email', '==', session.user.email))
-      const querySnapshot = await getDocs(q)
+      const q = query(collection(db, "users"), where('email', '==', session.user.email));
+      const querySnapshot = await getDocs(q);
 
       if (querySnapshot.docs.length > 0) {
         // If user is signing in with an exisitng account
-        const { name, tag, bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data()
+        const { name, tag, bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data();
 
-        session.user.name = name
-        session.user.tag = tag
-        session.user.uid = querySnapshot.docs[0].id
-        session.user.bio = bio
-        session.user.location = location
-        session.user.website = website
-        session.user.dateJoined = dateJoined
-        session.user.profilePic = profilePic
-        session.user.banner = banner
+        session.user.name = name;
+        session.user.tag = tag;
+        session.user.uid = querySnapshot.docs[0].id;
+        session.user.bio = bio;
+        session.user.location = location;
+        session.user.website = website;
+        session.user.dateJoined = dateJoined;
+        session.user.profilePic = profilePic;
+        session.user.banner = banner;
 
       } else {
         // If user is signing up with a new account
-        const docRef = await addNewUser(session)
-        session.user.uid = docRef.id
+        const docRef = await addNewUser(session);
+        session.user.uid = docRef.id;
 
-        const userDoc = await getDoc(docRef)
+        const userDoc = await getDoc(docRef);
 
-        const { bio, location, website, dateJoined } = userDoc.data()
+        const { bio, location, website, dateJoined } = userDoc.data();
 
-        session.user.bio = bio
-        session.user.location = location
-        session.user.website = website
-        session.user.dateJoined = dateJoined
+        session.user.bio = bio;
+        session.user.location = location;
+        session.user.website = website;
+        session.user.dateJoined = dateJoined;
       }
+
+      console.log({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      });
 
       return session;
     },

@@ -1,28 +1,28 @@
-import React, { useState } from 'react'
-import Image from 'next/image'
-import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline'
-import { getProviders, getSession, signIn } from 'next-auth/react'
-import Head from 'next/head'
-import AnimatedButton from '../components/AnimatedButton'
-import { IProvider } from '../utils/types'
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
+import { getProviders, getSession, signIn } from 'next-auth/react';
+import Head from 'next/head';
+import AnimatedButton from '../components/AnimatedButton';
+import { IProvider } from '../utils/types';
 
 interface Props {
-  providers: [IProvider]
+  providers: [IProvider];
 }
 
 const Auth = ({ providers }: Props) => {
 
-  const [signUp, setSignUp] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [signUp, setSignUp] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleAuth = (provider: IProvider) => {
     if (signUp) {
 
     } else {
-      signIn(provider.id, { callbackUrl: "/" })
+      signIn(provider.id, { callbackUrl: "/" });
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen w-screen max-w-full">
@@ -62,7 +62,7 @@ const Auth = ({ providers }: Props) => {
 
                 <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
               </div>
-            )
+            );
           })}
 
           {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => setSignUp(true)}>Sign up</a></div>}
@@ -71,19 +71,19 @@ const Auth = ({ providers }: Props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Auth
+export default Auth;
 
 
 export const getServerSideProps = async (context) => {
-  const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then((res) => res.json())
+  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then((res) => res.json());
 
-  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then((res) => res.json());
+  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then((res) => res.json());
 
-  const providers = await getProviders()
-  const session = await getSession(context)
+  const providers = await getProviders();
+  const session = await getSession(context);
 
   return {
     props: {
@@ -92,5 +92,5 @@ export const getServerSideProps = async (context) => {
       providers,
       session
     }
-  }
-}
+  };
+};

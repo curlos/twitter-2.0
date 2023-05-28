@@ -1,49 +1,49 @@
-import { ArrowLeftIcon, BadgeCheckIcon } from '@heroicons/react/solid'
-import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore'
-import { getProviders, getSession, useSession } from 'next-auth/react'
-import Head from 'next/head'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../../atoms/atom'
-import Footer from '../../components/Footer'
-import MediumUser from '../../components/MediumUser'
-import { NewTweetModal } from '../../components/NewTweetModal'
-import { SearchModal } from '../../components/SearchModal'
-import Sidebar from '../../components/Sidebar'
-import Spinner from '../../components/Spinner'
-import Widgets from '../../components/Widgets'
-import { db } from '../../firebase'
+import { ArrowLeftIcon, BadgeCheckIcon } from '@heroicons/react/solid';
+import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { getProviders, getSession, useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../../atoms/atom';
+import Footer from '../../components/Footer';
+import MediumUser from '../../components/MediumUser';
+import { NewTweetModal } from '../../components/NewTweetModal';
+import { SearchModal } from '../../components/SearchModal';
+import Sidebar from '../../components/Sidebar';
+import Spinner from '../../components/Spinner';
+import Widgets from '../../components/Widgets';
+import { db } from '../../firebase';
 
 const Following = () => {
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
-  const [author, setAuthor] = useState<DocumentData>()
-  const [following, setFollowing] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [author, setAuthor] = useState<DocumentData>();
+  const [following, setFollowing] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const router = useRouter()
-  const { tag } = router.query
+  const router = useRouter();
+  const { tag } = router.query;
 
   useEffect(() => {
     const getFollowing = async () => {
-      const q = query(collection(db, "users"), where('tag', '==', String(tag)))
-      const querySnapshot = await getDocs(q)
-      const userID = querySnapshot.docs[0].id
+      const q = query(collection(db, "users"), where('tag', '==', String(tag)));
+      const querySnapshot = await getDocs(q);
+      const userID = querySnapshot.docs[0].id;
 
-      setAuthor(querySnapshot.docs[0].data())
+      setAuthor(querySnapshot.docs[0].data());
 
-      const f = query(collection(db, "users", userID, "following"))
-      const queryFollowersSnapshot = await getDocs(f)
-      setFollowing(queryFollowersSnapshot.docs)
-      setLoading(false)
-    }
-    getFollowing()
-  }, [db, tag, loading])
+      const f = query(collection(db, "users", userID, "following"));
+      const queryFollowersSnapshot = await getDocs(f);
+      setFollowing(queryFollowersSnapshot.docs);
+      setLoading(false);
+    };
+    getFollowing();
+  }, [db, tag, loading]);
 
 
   return (
@@ -100,11 +100,11 @@ const Following = () => {
 
               <div>
                 {following.map((f) => {
-                  const user = f.data()
+                  const user = f.data();
 
                   return (
                     <MediumUser key={String(user.followingID)} userID={String(user.followingID)} />
-                  )
+                  );
                 })}
                 <div className="h-[60px]" />
               </div>
@@ -124,16 +124,16 @@ const Following = () => {
 
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Following
+export default Following;
 
 export async function getServerSideProps(context) {
-  const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then(
+  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
     (res) => res.json()
   );
-  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then(
+  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
     (res) => res.json()
   );
   const providers = await getProviders();

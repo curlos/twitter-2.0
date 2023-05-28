@@ -1,168 +1,168 @@
-import { deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore'
-import { getProviders, getSession, useSession } from 'next-auth/react'
-import Router, { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { db } from "../../firebase"
-import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../../atoms/atom'
-import Head from 'next/head'
-import Sidebar from '../../components/Sidebar'
-import { NewTweetModal } from '../../components/NewTweetModal'
-import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid'
-import Tweet from '../../components/Tweet'
-import { collection, orderBy, query, setDoc, where } from 'firebase/firestore'
-import Widgets from '../../components/Widgets'
-import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline'
-import Tweets from '../../components/Tweets'
-import moment from 'moment'
-import SettingsModal from '../../components/SettingsModal'
-import Spinner from '../../components/Spinner'
-import Link from 'next/link'
-import Footer from '../../components/Footer'
-import { SearchModal } from '../../components/SearchModal'
-import AuthReminder from '../../components/AuthReminder'
-import SidenavDrawer from '../../components/SidenavDrawer'
+import { deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore';
+import { getProviders, getSession, useSession } from 'next-auth/react';
+import Router, { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { db } from "../../firebase";
+import { useRecoilState } from 'recoil';
+import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../../atoms/atom';
+import Head from 'next/head';
+import Sidebar from '../../components/Sidebar';
+import { NewTweetModal } from '../../components/NewTweetModal';
+import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid';
+import Tweet from '../../components/Tweet';
+import { collection, orderBy, query, setDoc, where } from 'firebase/firestore';
+import Widgets from '../../components/Widgets';
+import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
+import Tweets from '../../components/Tweets';
+import moment from 'moment';
+import SettingsModal from '../../components/SettingsModal';
+import Spinner from '../../components/Spinner';
+import Link from 'next/link';
+import Footer from '../../components/Footer';
+import { SearchModal } from '../../components/SearchModal';
+import AuthReminder from '../../components/AuthReminder';
+import SidenavDrawer from '../../components/SidenavDrawer';
 
 interface Props {
   trendingResults: any,
   followResults: any,
-  providers: any
+  providers: any;
 }
 
 const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
-  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState)
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
-  const [loading, setLoading] = useState(true)
-  const [tweetsLoading, setTweetsLoading] = useState(true)
-  const [filter, setFilter] = useState('Tweets')
-  const [author, setAuthor] = useState(null)
-  const [authorID, setAuthorID] = useState('')
-  const [tweets, setTweets] = useState([])
-  const [retweets, setRetweets] = useState([])
-  const [likes, setLikes] = useState([])
-  const [followers, setFollowers] = useState([])
-  const [following, setFollowing] = useState([])
-  const [followersYouFollow, setFollowersYouFollow] = useState([])
-  const [theme, setTheme] = useRecoilState(colorThemeState)
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState);
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [loading, setLoading] = useState(true);
+  const [tweetsLoading, setTweetsLoading] = useState(true);
+  const [filter, setFilter] = useState('Tweets');
+  const [author, setAuthor] = useState(null);
+  const [authorID, setAuthorID] = useState('');
+  const [tweets, setTweets] = useState([]);
+  const [retweets, setRetweets] = useState([]);
+  const [likes, setLikes] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [followersYouFollow, setFollowersYouFollow] = useState([]);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
 
-  const [followed, setFollowed] = useState(false)
-  const router = useRouter()
-  const { id } = router.query
+  const [followed, setFollowed] = useState(false);
+  const router = useRouter();
+  const { id } = router.query;
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
 
     const fetchFromDB = async () => {
-      const userQuery = query(collection(db, "users"), where('tag', '==', id))
-      const userQuerySnapshot = await getDocs(userQuery)
+      const userQuery = query(collection(db, "users"), where('tag', '==', id));
+      const userQuerySnapshot = await getDocs(userQuery);
 
-      setAuthor(userQuerySnapshot.docs[0].data())
-      setAuthorID(userQuerySnapshot.docs[0].id)
-      setLoading(false)
-    }
-    fetchFromDB()
-  }, [db, id])
-
-  useEffect(() => {
-    if (!loading) {
-      setTweetsLoading(true)
-      fetchTweetsInfo(authorID).then(() => setTweetsLoading(false))
-    }
-  }, [db, id, loading, filter])
+      setAuthor(userQuerySnapshot.docs[0].data());
+      setAuthorID(userQuerySnapshot.docs[0].id);
+      setLoading(false);
+    };
+    fetchFromDB();
+  }, [db, id]);
 
   useEffect(() => {
     if (!loading) {
-      onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs))
+      setTweetsLoading(true);
+      fetchTweetsInfo(authorID).then(() => setTweetsLoading(false));
     }
-  }, [db, id, loading])
+  }, [db, id, loading, filter]);
 
   useEffect(() => {
     if (!loading) {
-      onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs))
+      onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
     }
-  }, [db, id, loading])
+  }, [db, id, loading]);
+
+  useEffect(() => {
+    if (!loading) {
+      onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs));
+    }
+  }, [db, id, loading]);
 
   useEffect(() => {
     if (!loading && session && session.user) {
       onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
-        let newFollowersYouFollow = []
+        let newFollowersYouFollow = [];
         for (let user of snapshot.docs) {
-          const docRef = doc(db, "users", user.data().followingID)
-          const snap = await getDoc(docRef)
-          const follower = snap.data()
-          newFollowersYouFollow.push({ ...follower, id: snap.id })
+          const docRef = doc(db, "users", user.data().followingID);
+          const snap = await getDoc(docRef);
+          const follower = snap.data();
+          newFollowersYouFollow.push({ ...follower, id: snap.id });
         }
 
-        const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)))
+        const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)));
 
-        const sharedFollowers = newFollowersYouFollow.filter((user, i) => user.tag !== author.tag && isUserFollowingPromises[i])
+        const sharedFollowers = newFollowersYouFollow.filter((user, i) => user.tag !== author.tag && isUserFollowingPromises[i]);
 
-        setFollowersYouFollow(sharedFollowers)
-      })
+        setFollowersYouFollow(sharedFollowers);
+      });
     }
-  }, [db, id, loading])
+  }, [db, id, loading]);
 
   useEffect(() => {
-    setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
-  }, [followers])
+    setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
+  }, [followers]);
 
   const isUserFollowing = async (user, followers) => {
     const result = followers.every((follower) => {
-      return follower.data().followedBy !== user.id
-    })
+      return follower.data().followedBy !== user.id;
+    });
 
-    return !result
-  }
+    return !result;
+  };
 
   const fetchTweetsInfo = async (authorID) => {
     const tweetsQuery = query(collection(db, "tweets"),
       where('userID', '==', authorID),
       orderBy('timestamp', 'desc')
-    )
-    const tweetsQuerySnapshot = await getDocs(tweetsQuery)
-    setTweets(tweetsQuerySnapshot.docs)
+    );
+    const tweetsQuerySnapshot = await getDocs(tweetsQuery);
+    setTweets(tweetsQuerySnapshot.docs);
 
-    const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'))
-    const retweetsQuerySnapshot = await getDocs(retweetsQuery)
-    setRetweets(retweetsQuerySnapshot.docs)
+    const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
+    const retweetsQuerySnapshot = await getDocs(retweetsQuery);
+    setRetweets(retweetsQuerySnapshot.docs);
 
-    const likesQuery = query(collection(db, 'users', authorID, 'likes'))
-    const likesQuerySnapshot = await getDocs(likesQuery)
-    setLikes(likesQuerySnapshot.docs)
-  }
+    const likesQuery = query(collection(db, 'users', authorID, 'likes'));
+    const likesQuerySnapshot = await getDocs(likesQuery);
+    setLikes(likesQuerySnapshot.docs);
+  };
 
   const handleFollow = async () => {
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
     if (followed) {
-      await deleteDoc(doc(db, "users", authorID, "followers", String(session.user.uid)))
-      await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorID))
+      await deleteDoc(doc(db, "users", authorID, "followers", String(session.user.uid)));
+      await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorID));
     } else {
       await setDoc(doc(db, "users", authorID, "followers", String(session.user.uid)), {
         followedAt: serverTimestamp(),
         followedBy: session.user.uid
-      })
+      });
       await setDoc(doc(db, "users", String(session.user.uid), "following", authorID), {
         followedAt: serverTimestamp(),
         followingID: authorID
-      })
+      });
     }
-  }
+  };
 
   const handleEditOrFollow = () => {
     if (!session) {
-      Router.push('/auth')
-      return
+      Router.push('/auth');
+      return;
     }
 
-    session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow()
-  }
+    session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow();
+  };
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -367,16 +367,16 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
 
 
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;
 
 export async function getServerSideProps(context) {
-  const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then(
+  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
     (res) => res.json()
   );
-  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then(
+  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
     (res) => res.json()
   );
   const providers = await getProviders();

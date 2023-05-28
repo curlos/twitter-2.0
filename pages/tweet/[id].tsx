@@ -1,56 +1,56 @@
-import { doc, DocumentData, onSnapshot } from '@firebase/firestore'
-import { getProviders, getSession, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { db } from "../../firebase"
-import { useRecoilState } from 'recoil'
-import { newTweetModalState, colorThemeState, searchModalState, sidenavState } from '../../atoms/atom'
-import Head from 'next/head'
-import Sidebar from '../../components/Sidebar'
-import { NewTweetModal } from '../../components/NewTweetModal'
-import { SparklesIcon } from '@heroicons/react/outline'
-import Tweet from '../../components/Tweet'
-import { collection, getDoc, orderBy, query, where } from 'firebase/firestore'
-import Widgets from '../../components/Widgets'
-import SettingsModal from '../../components/SettingsModal'
-import Footer from '../../components/Footer'
-import { SearchModal } from '../../components/SearchModal'
-import Spinner from '../../components/Spinner'
-import SidenavDrawer from '../../components/SidenavDrawer'
-import DeletedTweet from '../../components/DeletedTweet'
+import { doc, DocumentData, onSnapshot } from '@firebase/firestore';
+import { getProviders, getSession, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { db } from "../../firebase";
+import { useRecoilState } from 'recoil';
+import { newTweetModalState, colorThemeState, searchModalState, sidenavState } from '../../atoms/atom';
+import Head from 'next/head';
+import Sidebar from '../../components/Sidebar';
+import { NewTweetModal } from '../../components/NewTweetModal';
+import { SparklesIcon } from '@heroicons/react/outline';
+import Tweet from '../../components/Tweet';
+import { collection, getDoc, orderBy, query, where } from 'firebase/firestore';
+import Widgets from '../../components/Widgets';
+import SettingsModal from '../../components/SettingsModal';
+import Footer from '../../components/Footer';
+import { SearchModal } from '../../components/SearchModal';
+import Spinner from '../../components/Spinner';
+import SidenavDrawer from '../../components/SidenavDrawer';
+import DeletedTweet from '../../components/DeletedTweet';
 
 interface Props {
   trendingResults: any,
   followResults: any,
-  providers: any
+  providers: any;
 }
 
 const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
 
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState)
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState)
-  const [tweet, setTweet] = useState<DocumentData>()
-  const [tweetID, setTweetID] = useState('')
-  const [author, setAuthor] = useState<DocumentData>()
-  const [replies, setReplies] = useState([])
-  const [parentTweet, setParentTweet] = useState<DocumentData>()
-  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>()
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-  const { id } = router.query
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [tweet, setTweet] = useState<DocumentData>();
+  const [tweetID, setTweetID] = useState('');
+  const [author, setAuthor] = useState<DocumentData>();
+  const [replies, setReplies] = useState([]);
+  const [parentTweet, setParentTweet] = useState<DocumentData>();
+  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { id } = router.query;
 
   useEffect(
     () =>
       onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
-        setTweet(snapshot.data())
-        setTweetID(snapshot.id)
+        setTweet(snapshot.data());
+        setTweetID(snapshot.id);
       }),
     [db, id]
-  )
+  );
 
   useEffect(
     () =>
@@ -61,47 +61,47 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
           orderBy("timestamp", "desc"),
         ),
         (snapshot) => {
-          setReplies(snapshot.docs)
-          setLoading(false)
+          setReplies(snapshot.docs);
+          setLoading(false);
         }
       ),
     [db, id]
-  )
+  );
 
   useEffect(() => {
     if (tweet) {
-      setLoading(true)
-      const docRef = doc(db, "users", tweet.userID)
+      setLoading(true);
+      const docRef = doc(db, "users", tweet.userID);
       getDoc(docRef).then((snap) => {
-        setAuthor(snap.data())
-        setLoading(false)
-        setParentTweet(null)
-      })
+        setAuthor(snap.data());
+        setLoading(false);
+        setParentTweet(null);
+      });
     }
 
-  }, [db, id, tweet])
+  }, [db, id, tweet]);
 
   useEffect(
     () => {
       if (tweet && tweet.parentTweet && tweet.parentTweet !== "") {
-        const docRef = doc(db, "tweets", String(tweet.parentTweet))
+        const docRef = doc(db, "tweets", String(tweet.parentTweet));
         getDoc(docRef).then((snap) => {
-          setParentTweet(snap)
-        })
+          setParentTweet(snap);
+        });
       }
-    }, [db, id, tweet])
+    }, [db, id, tweet]);
 
   useEffect(() => {
     if (parentTweet && parentTweet.data()) {
-      const docRef = doc(db, "users", String(parentTweet.data().userID))
+      const docRef = doc(db, "users", String(parentTweet.data().userID));
       getDoc(docRef).then((snap) => {
-        setParentTweetAuthor(snap.data())
-        setLoading(false)
-      })
+        setParentTweetAuthor(snap.data());
+        setLoading(false);
+      });
     } else {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [db, id, parentTweet])
+  }, [db, id, parentTweet]);
 
 
   return (
@@ -156,16 +156,16 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
 
       </div>
     ) : null
-  )
-}
+  );
+};
 
-export default TweetPage
+export default TweetPage;
 
 export async function getServerSideProps(context) {
-  const trendingResults = await fetch("https://jsonkeeper.com/b/NKEV").then(
+  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
     (res) => res.json()
   );
-  const followResults = await fetch("https://jsonkeeper.com/b/WWMJ").then(
+  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
     (res) => res.json()
   );
   const providers = await getProviders();
