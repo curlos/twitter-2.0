@@ -11,6 +11,7 @@ import { Dropdown } from './Dropdown';
 import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import { FiShare } from 'react-icons/fi';
 import { HiBadgeCheck } from 'react-icons/hi';
+import { BsPencilFill } from 'react-icons/bs';
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
 import Link from 'next/link';
 import { IAuthor } from '../utils/types';
@@ -21,9 +22,10 @@ interface Props {
   tweetID: string,
   tweetPage?: boolean;
   topParentTweet?: boolean;
+  pastTweet?: boolean;
 }
 
-const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
+const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
 
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
@@ -194,16 +196,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
     deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'));
   };
 
-  const editTweet = async (e: React.FormEvent) => {
-    e.stopPropagation();
-    deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'));
-  };
-
   const handleNewTweet = (e) => {
     e.stopPropagation();
 
     if (!session) {
-      Router.push('/auth');
+      router.push('/auth');
       return;
     }
 
@@ -218,6 +215,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
     }
   };
+
+  const editedTweet = tweet?.versionHistory && tweet.versionHistory.length > 0;
 
   return (
     !tweetPage ? (
@@ -255,9 +254,17 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                       {tweet.timestamp && tweet.timestamp.seconds && (
                         <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
                       )}
+                      {editedTweet && <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>}
+                      {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500" />}
+
                     </div>
 
-                    <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} editTweet={editTweet} />
+                    <Dropdown tweet={
+                      {
+                        ...tweet,
+                        tweetId: id
+                      }
+                    } author={author} authorId={authorId} deleteTweet={deleteTweet} />
                   </div>
 
                   <div className="pb-3">
@@ -269,7 +276,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
                         </Link>
                       </div>
                     ) : null}
-                    <div className={`${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`}>{tweet.text}</div>
+                    <div className={`${pastTweet ? 'text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`}>{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
                         <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
@@ -319,7 +326,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
       ) : null
     ) : (
       !loading && author ? (
-        <div className="text-base p-3 border-b border-[#AAB8C2]  dark:border-gray-700 w-full">
+        <div className="text-base p-5 border-b border-[#AAB8C2] dark:border-gray-700 w-full">
           <div className="flex justify-between">
             <div className="flex">
               <Link href={`/profile/${author.tag}`}>
@@ -339,7 +346,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
               </div>
             </div>
 
-            <Dropdown tweet={tweet} author={author} authorId={authorId} deleteTweet={deleteTweet} editTweet={editTweet} />
+            <Dropdown tweet={{
+              ...tweet,
+              tweetId: id
+            }} author={author} authorId={authorId} deleteTweet={deleteTweet} />
           </div>
 
           {parentTweet && !parentTweet.data() && (
@@ -369,15 +379,23 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet }: Props) => {
           </div>
 
           <div className="divide-y divide-gray-500">
-            <div className="flex py-2">
-              <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('LT')}</div>
-              <div className="text-gray-500 mx-1 font-bold">·</div>
-              <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('ll')}</div>
-              <div className="text-gray-500 mx-1 font-bold">·</div>
-              <div className="text-gray-500">Twitter for Web</div>
+            <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {
+              if (editedTweet) {
+                router.push(`/tweet/${id}/history`);
+              }
+            }}>
+              {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
+              <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
+                {editedTweet && <div className="text-gray-500">Last edited</div>}
+                <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('LT')}</div>
+                <div className="text-gray-500 font-bold">·</div>
+                <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('ll')}</div>
+                <div className="text-gray-500 font-bold">·</div>
+                <div className="text-gray-500">Twitter for Web</div>
+              </span>
             </div>
 
-            <div className="flex space-x-4 py-2">
+            <div className="flex space-x-4 py-4">
               <div className="space-x-1">
                 <span className="font-bold">{replies.length}</span>
                 <span className="text-gray-500">Replies</span>

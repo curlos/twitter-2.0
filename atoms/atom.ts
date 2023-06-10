@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { ITweet } from '../utils/types';
 
 export const newTweetModalState = atom({
   key: "newTweetModalState",
@@ -33,7 +34,15 @@ export const colorThemeState = atom({
 export const editTweetState = atom({
   key: "editTweetState",
   default: {
+    image: '',
+    parentTweet: '',
     text: '',
-    imageSrc: ''
+    timestamp: {
+      seconds: 0,
+      nanoseconds: 0,
+    },
+    userID: '',
+    retweetedBy: '',
+    tweetId: ''
   }
 });

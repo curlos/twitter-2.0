@@ -11,12 +11,11 @@ import { db } from "../firebase";
 interface Props {
   tweet: ITweet,
   deleteTweet: (e: React.FormEvent) => Promise<void>,
-  editTweet: (e: React.FormEvent) => Promise<void>,
   author: IAuthor,
   authorId: string;
 }
 
-export const Dropdown = ({ tweet, author, authorId, deleteTweet, editTweet }: Props) => {
+export const Dropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
   const { data: session } = useSession();
   const [user, setUser] = useState<DocumentData>();
   const [followers, setFollowers] = useState<DocumentData>();
@@ -111,10 +110,12 @@ export const Dropdown = ({ tweet, author, authorId, deleteTweet, editTweet }: Pr
                     ) : null}
                     {session && session.user && author.tag === session.user.tag && (
                       <Menu.Item onClick={() => {
+                        console.log(tweet);
+                        debugger;
                         setIsOpen(true);
                         setEditTweetInfo({
-                          text: tweet?.text,
-                          imageSrc: tweet?.image
+                          image: tweet?.image,
+                          ...tweet
                         });
                       }}>
                         {({ active }) => (

@@ -70,8 +70,16 @@ export const NewTweetModal = () => {
                     setIsOpen(false);
                     setTweetId('');
                     setEditTweetInfo({
+                      image: '',
+                      parentTweet: '',
                       text: '',
-                      imageSrc: ''
+                      timestamp: {
+                        seconds: 0,
+                        nanoseconds: 0,
+                      },
+                      userID: '',
+                      retweetedBy: '',
+                      tweetId: ''
                     });
                   }} />
                 </div>

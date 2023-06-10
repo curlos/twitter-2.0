@@ -1,25 +1,25 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { useRecoilState } from 'recoil'
-import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom'
-import { SearchIcon, XIcon } from '@heroicons/react/solid'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import Input from './Input'
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { useRecoilState } from 'recoil';
+import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom';
+import { SearchIcon, XIcon } from '@heroicons/react/solid';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import Input from './Input';
 
 export const SearchModal = () => {
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(searchModalState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [searchQuery, setSearchQuery] = useState('')
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(searchModalState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
-        setIsOpen(val)
+        setIsOpen(val);
       }}>
         <div className={`${theme} flex items-start justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
@@ -50,9 +50,9 @@ export const SearchModal = () => {
             <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]">
               <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <form onSubmit={(e) => {
-                  e.preventDefault()
-                  setIsOpen(false)
-                  router.push(`/?query=${searchQuery}`)
+                  e.preventDefault();
+                  setIsOpen(false);
+                  router.push(`/?query=${searchQuery}`);
                 }} className="flex items-center gap-2" >
                   <SearchIcon className="h-5 w-5 text-gray-400 dark:text-white" />
                   <input type="text" value={searchQuery} placeholder="Search Twitter" className="bg-white dark:bg-black text-black dark:text-white outline-none font-2xl w-full" onChange={(e) => setSearchQuery(e.target.value)} />
@@ -63,5 +63,5 @@ export const SearchModal = () => {
         </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};

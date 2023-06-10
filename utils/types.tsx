@@ -3,7 +3,7 @@ export interface IProvider {
   id: string,
   name: string,
   signInUrl: string,
-  type: string
+  type: string;
 }
 
 export interface ITweet {
@@ -12,10 +12,12 @@ export interface ITweet {
   text: string,
   timestamp: {
     seconds: number,
-    nanoseconds: number
+    nanoseconds: number;
   },
   userID: string,
-  retweetedBy: string
+  retweetedBy: string,
+  tweetId: string;
+  versionHistory?: Array<ITweet>;
 }
 
 export interface IAuthor {
@@ -23,7 +25,7 @@ export interface IAuthor {
   bio: string | null,
   dateJoined: {
     seconds: number,
-    nanoseconds: number
+    nanoseconds: number;
   },
   email: string,
   location: string | null,
@@ -32,7 +34,7 @@ export interface IAuthor {
   tag: string,
   updatedAt: {
     seconds: number,
-    nanoseconds: number
+    nanoseconds: number;
   },
   website: string | null,
 }

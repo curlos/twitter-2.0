@@ -6,8 +6,8 @@ const getRecent = async () => {
             {
                 method: 'GET',
                 headers: {
-                    'X-RapidAPI-Key': '7b5c381447mshbd5800218d682e4p13654ejsnb9e8c218cf2f',
-                    'X-RapidAPI-Host': 'videogames-news2.p.rapidapi.com'
+                    'X-RapidAPI-Key': process.env.NEXT_PUBLIC_VIDEO_GAME_NEWS_RAPID_API_KEY,
+                    'X-RapidAPI-Host': process.env.NEXT_PUBLIC_VIDEO_GAME_NEWS_RAPID_API_HOST
                 }
             }
         );

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { SparklesIcon } from '@heroicons/react/outline'
+import React, { useCallback, useEffect, useState } from 'react';
+import { SparklesIcon } from '@heroicons/react/outline';
 import { db } from "../firebase";
-import Input from './Input'
+import Input from './Input';
 import { useSession } from 'next-auth/react';
 import { onSnapshot, query } from '@firebase/firestore';
 import { collection, orderBy } from 'firebase/firestore';
@@ -11,64 +11,64 @@ import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
 import { FaFeatherAlt } from 'react-icons/fa';
 import Spinner from './Spinner';
-import { sortByNewest, sortByOldest } from '../utils/sortTweets'
+import { sortByNewest, sortByOldest } from '../utils/sortTweets';
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
-import { debounce } from 'lodash'
+import { debounce } from 'lodash';
 import AuthReminder from './AuthReminder';
 
 const Feed = () => {
 
-  const { data: session } = useSession()
-  const [tweets, setTweets] = useState([])
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [loading, setLoading] = useState(true)
-  const [sortType, setSortType] = useState('Newest')
-  const [filteredTweets, setFilteredTweets] = useState([])
+  const { data: session } = useSession();
+  const [tweets, setTweets] = useState([]);
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [loading, setLoading] = useState(true);
+  const [sortType, setSortType] = useState('Newest');
+  const [filteredTweets, setFilteredTweets] = useState([]);
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => onSnapshot(
     query(collection(db, "tweets"), orderBy("timestamp", "desc")),
     (snapshot) => {
-      setTweets(snapshot.docs)
-      setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs))
-      setLoading(false)
+      setTweets(snapshot.docs);
+      setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs));
+      setLoading(false);
     }
-  ), [db])
+  ), [db]);
 
   useEffect(() => {
-    setLoading(true)
-    const filteredTweets = getFilteredTweets(router.query.query, tweets)
-    setFilteredTweets(getSortedTweets(filteredTweets))
-    setLoading(false)
-  }, [sortType, router.query.query])
+    setLoading(true);
+    const filteredTweets = getFilteredTweets(router.query.query, tweets);
+    setFilteredTweets(getSortedTweets(filteredTweets));
+    setLoading(false);
+  }, [sortType, router.query.query]);
 
   const getFilteredTweets = (searchQuery, tweets) => {
     if (searchQuery === '' || !searchQuery || !tweets) {
-      return tweets
+      return tweets;
     } else {
       const filteredTweets = tweets.filter((tweet) => {
         if (searchQuery && typeof searchQuery === 'string') {
-          return tweet.data().text.toLowerCase().includes(searchQuery.toLowerCase())
+          return tweet.data().text.toLowerCase().includes(searchQuery.toLowerCase());
         }
-        return tweet
-      })
-      return filteredTweets
+        return tweet;
+      });
+      return filteredTweets;
     }
-  }
+  };
 
   const getSortedTweets = (tweets) => {
     switch (sortType) {
       case 'Newest':
-        return sortByNewest(tweets)
+        return sortByNewest(tweets);
       case 'Oldest':
-        return sortByOldest(tweets)
+        return sortByOldest(tweets);
       default:
-        return sortByNewest(tweets)
+        return sortByNewest(tweets);
     }
-  }
+  };
 
   return (
     loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
@@ -95,8 +95,11 @@ const Feed = () => {
         </div>
         {!loading ? filteredTweets.map((tweet) => {
           return (
-            <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={tweet.data()} />
-          )
+            <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={{
+              ...tweet.data(),
+              tweetId: tweet.id
+            }} />
+          );
         }) : (
           <Spinner />
         )}
@@ -105,7 +108,7 @@ const Feed = () => {
 
       </div>
     )
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;

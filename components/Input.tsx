@@ -25,14 +25,10 @@ import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, editTweetState, newTweetModalState, tweetIdState } from '../atoms/atom';
 import Link from 'next/link';
-
-interface EditTweetInfo {
-  text: string,
-  imageSrc: string;
-}
+import { ITweet } from '../utils/types';
 
 interface Props {
-  editTweetInfo?: EditTweetInfo,
+  editTweetInfo?: ITweet,
   replyModal?: boolean;
   tweetId?: string,
   showEmojiState?: boolean,
@@ -48,7 +44,7 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
   const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.imageSrc?.length > 0));
+  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0));
 
   useEffect(() => {
     if (isEditingTweet) {
@@ -56,22 +52,24 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
         setInput(editTweetInfo.text);
       }
 
-      if (editTweetInfo?.imageSrc) {
-        setSelectedFile(editTweetInfo?.imageSrc);
+      if (editTweetInfo?.image) {
+        setSelectedFile(editTweetInfo?.image);
       }
 
     }
   }, [editTweetInfo]);
 
   const sendTweet = async () => {
-    if (loading || !input) return;
+    // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
+    if (loading || (!input && !selectedFile)) return;
     setLoading(true);
 
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
       text: input,
       parentTweet: replyModal ? tweetId : '',
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
+      versionHistory: []
     });
 
     if (replyModal) {
@@ -80,16 +78,17 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
       });
     }
 
-    const imageRef = ref(storage, `tweets/${docRef.id}/image`);
+    const downloadURL = await uploadImageAndGetURL(docRef.id);
+    console.log(downloadURL);
+    debugger;
 
     if (selectedFile) {
-      await uploadString(imageRef, selectedFile, "data_url").then(async () => {
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "tweets", docRef.id), {
-          image: downloadURL
-        });
+      await updateDoc(doc(db, "tweets", docRef.id), {
+        image: downloadURL
       });
     }
+
+    debugger;
 
     setLoading(false);
     setInput('');
@@ -98,8 +97,76 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
     setIsOpen(false);
   };
 
-  const editTweet = () => {
+  const editTweet = async () => {
+    const currentTweet = editTweetInfo;
+    console.log(currentTweet);
+    debugger;
+    // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
+    if (loading || (!input && !selectedFile)) return;
+    setLoading(true);
 
+    // If the image has already been uploaded (meaning it has not been changed since the past version and has a URL as the string)
+    const imageAlreadyUploaded = selectedFile && selectedFile.startsWith('http');
+    const updatedObject: any = {
+      timestamp: serverTimestamp(),
+    };
+
+    // If there's text in the tweet
+    if (input) {
+      updatedObject.text = input;
+    }
+
+    if (imageAlreadyUploaded) {
+      updatedObject.image = selectedFile;
+    }
+
+    if (currentTweet?.versionHistory) {
+      updatedObject.versionHistory = [...currentTweet.versionHistory, { ...currentTweet }];
+    } else {
+      updatedObject.versionHistory = [{ ...currentTweet }];
+    }
+
+    console.log(updatedObject);
+    debugger;
+
+
+    try {
+      // If this is a new image that the user just uploaded
+      if (!imageAlreadyUploaded) {
+        const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
+        updatedObject.image = downloadURL;
+        debugger;
+      }
+
+      debugger;
+
+      console.log();
+      debugger;
+
+      await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
+
+      debugger;
+
+      // Once we're finished, reset everything back to the defaults and close the modal.
+      setLoading(false);
+      setInput('');
+      setSelectedFile(null);
+      setShowEmojis(false);
+      setIsOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
+
+  const uploadImageAndGetURL = async (docRefId: string) => {
+    const imageRef = ref(storage, `tweets/${docRefId}/image`);
+
+    if (selectedFile) {
+      await uploadString(imageRef, selectedFile, "data_url");
+      const downloadURL = await getDownloadURL(imageRef);
+      return downloadURL;
+    }
   };
 
   const addImageToPost = (e) => {
@@ -129,15 +196,24 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
     }
   };
 
-  const getButtonText = () => {
+  const getButtonObject = () => {
     { !replyModal ? 'Tweet' : 'Reply'; }
 
     if (replyModal) {
-      return 'Reply';
+      return {
+        text: 'Reply',
+        function: sendTweet
+      };
     } else if (isEditingTweet) {
-      return 'Update';
+      return {
+        text: 'Update',
+        function: editTweet
+      };
     } else {
-      return 'Tweet';
+      return {
+        text: 'Tweet',
+        function: sendTweet
+      };
     }
   };
 
@@ -210,8 +286,8 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
                 <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/400</div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
-                  onClick={sendTweet}>
-                  {getButtonText()}
+                  onClick={getButtonObject().function}>
+                  {getButtonObject().text}
                 </button>
               </div>
             </div>
@@ -224,8 +300,8 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
                 {input.length}/400</div>
               <button
                 className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
-                onClick={sendTweet}>
-                {getButtonText()}
+                onClick={getButtonObject().function}>
+                {getButtonObject().text}
               </button>
             </div>
           </div>
