@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 
 declare module "next-auth" {
   /**
@@ -17,6 +17,6 @@ declare module "next-auth" {
       location?: string;
       website?: string;
       dateJoined?: object;
-    }
+    };
   }
 }

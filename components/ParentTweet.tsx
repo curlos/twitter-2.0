@@ -1,28 +1,28 @@
-import { doc, DocumentData, getDoc } from 'firebase/firestore'
-import moment from 'moment'
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { db } from '../firebase'
-import { ITweet } from '../utils/types'
+import { doc, DocumentData, getDoc } from 'firebase/firestore';
+import moment from 'moment';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { db } from '../firebase';
+import { ITweet } from '../utils/types';
 
 interface Props {
   tweet: ITweet,
-  fromModal: boolean
+  fromModal: boolean;
 }
 
 const ParentTweet = ({ tweet, fromModal }: Props) => {
 
-  const [author, setAuthor] = useState<DocumentData>()
-  const [loading, setLoading] = useState(true)
+  const [author, setAuthor] = useState<DocumentData>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const docRef = doc(db, "users", tweet.userID)
+    const docRef = doc(db, "users", tweet.userID);
     getDoc(docRef).then((snap) => {
-      setAuthor(snap.data())
-      setLoading(false)
-    })
+      setAuthor(snap.data());
+      setLoading(false);
+    });
 
-  }, [db])
+  }, [db]);
 
   return (
     !loading ? (
@@ -61,7 +61,7 @@ const ParentTweet = ({ tweet, fromModal }: Props) => {
         </div>
       </div>
     ) : null
-  )
-}
+  );
+};
 
-export default ParentTweet
+export default ParentTweet;

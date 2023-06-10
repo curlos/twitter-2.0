@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import React, { useEffect } from 'react'
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 
 interface ParentCompProps {
   childComp?: React.ReactNode;
@@ -9,7 +9,7 @@ interface Props {
   text: string,
   Icon: any,
   active: boolean,
-  tag?: string
+  tag?: string;
 }
 
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
@@ -17,15 +17,15 @@ const SidebarLink = ({ text, Icon, active, tag }: Props) => {
   const getLinkHref = (text) => {
     switch (text) {
       case 'Profile':
-        return `/profile/${tag}`
+        return `/profile/${tag}`;
       case 'Messages':
-        return `/messages`
+        return `/messages`;
       case 'Bookmarks':
-        return `/bookmarks`
+        return `/bookmarks`;
       default:
-        return '/'
+        return '/';
     }
-  }
+  };
 
   return (
     <Link href={getLinkHref(text)}>
@@ -34,7 +34,7 @@ const SidebarLink = ({ text, Icon, active, tag }: Props) => {
         <div className="hidden xl:block">{text}</div>
       </div>
     </Link>
-  )
-}
+  );
+};
 
-export default SidebarLink
+export default SidebarLink;

@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors')
+const colors = require('tailwindcss/colors');
 
 module.exports = {
   mode: "",
@@ -35,7 +35,7 @@ module.exports = {
       fuchsia: colors.fuchsia,
       pink: colors.pink,
       rose: colors.rose,
-      
+
     },
     extend: {
       gridTemplateColumns: {
@@ -47,4 +47,4 @@ module.exports = {
     extend: {},
   },
   plugins: [require("tailwind-scrollbar-hide"), require("tailwind-scrollbar")],
-}
+};

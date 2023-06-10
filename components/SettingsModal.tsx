@@ -1,34 +1,34 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { PhotographIcon, XIcon } from '@heroicons/react/solid'
-import { collection, doc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore'
-import { useSession } from 'next-auth/react'
-import React, { useEffect, useState, Fragment, useRef } from 'react'
-import { useRecoilState } from 'recoil'
-import { colorThemeState, settingsModalState } from '../atoms/atom'
-import { FiCamera } from 'react-icons/fi'
-import { db, storage } from '../firebase'
-import { getDownloadURL, ref, uploadString } from 'firebase/storage'
-import { useRouter } from 'next/router'
+import { Dialog, Transition } from '@headlessui/react';
+import { PhotographIcon, XIcon } from '@heroicons/react/solid';
+import { collection, doc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useState, Fragment, useRef } from 'react';
+import { useRecoilState } from 'recoil';
+import { colorThemeState, settingsModalState } from '../atoms/atom';
+import { FiCamera } from 'react-icons/fi';
+import { db, storage } from '../firebase';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { useRouter } from 'next/router';
 
 const SettingsModal = () => {
-  const { data: session } = useSession()
-  const router = useRouter()
-  const [isOpen, setIsOpen] = useRecoilState(settingsModalState)
-  const [name, setName] = useState(session.user.name || '')
-  const [tag, setTag] = useState(session.user.tag || '')
-  const [bio, setBio] = useState(session.user.bio || '')
-  const [usernameTakenError, setUsernameTakenError] = useState(false)
-  const [location, setLocation] = useState(session.user.location || '')
-  const [website, setWebsite] = useState(session.user.website || '')
-  const [banner, setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg')
-  const [profilePic, setProfilePic] = useState(session.user.profilePic || '/assets/default_profile_pic.jpg')
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useRecoilState(settingsModalState);
+  const [name, setName] = useState(session.user.name || '');
+  const [tag, setTag] = useState(session.user.tag || '');
+  const [bio, setBio] = useState(session.user.bio || '');
+  const [usernameTakenError, setUsernameTakenError] = useState(false);
+  const [location, setLocation] = useState(session.user.location || '');
+  const [website, setWebsite] = useState(session.user.website || '');
+  const [banner, setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg');
+  const [profilePic, setProfilePic] = useState(session.user.profilePic || '/assets/default_profile_pic.jpg');
 
-  const profilePicFilePickerRef = useRef(null)
-  const bannerFilePickerRef = useRef(null)
+  const profilePicFilePickerRef = useRef(null);
+  const bannerFilePickerRef = useRef(null);
 
-  const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null)
-  const [selectedFileBanner, setSelectedFileBanner] = useState(null)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
+  const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null);
+  const [selectedFileBanner, setSelectedFileBanner] = useState(null);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
 
   const updateUserProfile = async () => {
     const updatedUserData = {
@@ -40,86 +40,86 @@ const SettingsModal = () => {
       profilePic,
       tag,
       updatedAt: serverTimestamp()
-    }
+    };
 
     if (await checkIfUsernameTaken()) {
-      setUsernameTakenError(true)
+      setUsernameTakenError(true);
     } else {
-      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`)
+      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
 
-      const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`)
+      const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`);
 
       if (selectedFileProfilePic) {
         await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(profilePicRef)
-          updatedUserData.profilePic = downloadURL
-        })
+          const downloadURL = await getDownloadURL(profilePicRef);
+          updatedUserData.profilePic = downloadURL;
+        });
       }
 
       if (selectedFileBanner) {
         await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(bannerRef)
-          updatedUserData.banner = downloadURL
-        })
+          const downloadURL = await getDownloadURL(bannerRef);
+          updatedUserData.banner = downloadURL;
+        });
       }
 
       await updateDoc(doc(db, "users", session.user.uid), {
         ...updatedUserData,
-      })
+      });
 
-      session.user.name = name
-      session.user.tag = tag
-      session.user.bio = bio
-      session.user.location = location
-      session.user.website = website
-      session.user.profilePic = profilePic
-      session.user.banner = banner
+      session.user.name = name;
+      session.user.tag = tag;
+      session.user.bio = bio;
+      session.user.location = location;
+      session.user.website = website;
+      session.user.profilePic = profilePic;
+      session.user.banner = banner;
 
-      setIsOpen(false)
+      setIsOpen(false);
       router.push(`/profile/${tag}`).then(() => (
         window.location.reload()
-      ))
+      ));
     }
-  }
+  };
 
   const checkIfUsernameTaken = async () => {
     if (session.user.tag === tag) {
-      return false
+      return false;
     } else {
-      const qUser = query(collection(db, "users"), where('tag', '==', tag))
-      const qUserSnap = await getDocs(qUser)
-      const usernameTaken = qUserSnap.docs.length > 0
+      const qUser = query(collection(db, "users"), where('tag', '==', tag));
+      const qUserSnap = await getDocs(qUser);
+      const usernameTaken = qUserSnap.docs.length > 0;
 
-      return usernameTaken
+      return usernameTaken;
     }
-  }
+  };
 
   const changeProfilePic = (e) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0])
+      reader.readAsDataURL(e.target.files[0]);
     }
 
     reader.onload = (readerEvent) => [
       setSelectedFileProfilePic(readerEvent.target.result)
-    ]
-  }
+    ];
+  };
 
   const changeBannerPic = (e) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0])
+      reader.readAsDataURL(e.target.files[0]);
     }
 
     reader.onload = (readerEvent) => [
       setSelectedFileBanner(readerEvent.target.result)
-    ]
-  }
+    ];
+  };
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
-        setIsOpen(val)
+        setIsOpen(val);
       }}>
         <div className={`${theme} flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
@@ -152,7 +152,7 @@ const SettingsModal = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <XIcon className="h-6 w-6 cursor-pointer text-gray-400 dark:text-white" onClick={(val) => {
-                      setIsOpen(false)
+                      setIsOpen(false);
                     }} />
 
                     <div className="ml-4 text-xl font-bold">Edit Profile</div>
@@ -206,7 +206,7 @@ const SettingsModal = () => {
                     </div>
                     <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
                       if (e.target.value.length <= 50) {
-                        setName(e.target.value)
+                        setName(e.target.value);
                       }
                     }
                     }></input>
@@ -219,7 +219,7 @@ const SettingsModal = () => {
                     </div>
                     <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={tag} onChange={(e) => {
                       if (e.target.value.length <= 15) {
-                        setTag(e.target.value)
+                        setTag(e.target.value);
                       }
                     }
                     }></input>
@@ -232,7 +232,7 @@ const SettingsModal = () => {
                     </div>
                     <textarea className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
                       if (e.target.value.length <= 160) {
-                        setBio(e.target.value)
+                        setBio(e.target.value);
                       }
                     }
                     }></textarea>
@@ -245,7 +245,7 @@ const SettingsModal = () => {
                     </div>
                     <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
                       if (e.target.value.length <= 30) {
-                        setLocation(e.target.value)
+                        setLocation(e.target.value);
                       }
                     }
                     }></input>
@@ -258,7 +258,7 @@ const SettingsModal = () => {
                     </div>
                     <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
                       if (e.target.value.length <= 100) {
-                        setWebsite(e.target.value)
+                        setWebsite(e.target.value);
                       }
                     }}></input>
                   </div>
@@ -272,7 +272,7 @@ const SettingsModal = () => {
         </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};
 
-export default SettingsModal
+export default SettingsModal;

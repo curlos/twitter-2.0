@@ -17,32 +17,32 @@ import { colorThemeState, newTweetModalState, searchModalState, sidenavState } f
 import Router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
-import { BsTwitter } from "react-icons/bs"
+import { BsTwitter } from "react-icons/bs";
 import { SearchModal } from "./SearchModal";
 
 const Sidebar = () => {
 
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState)
-  const [sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState)
-  const [activeLink, setActiveLink] = useState('home')
-  const router = useRouter()
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
+  const [sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState);
+  const [activeLink, setActiveLink] = useState('home');
+  const router = useRouter();
 
   useEffect(() => {
-    setTheme(localStorage.getItem('theme'))
-  }, [])
+    setTheme(localStorage.getItem('theme'));
+  }, []);
 
   useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {
-      setActiveLink('bookmarks')
+      setActiveLink('bookmarks');
     } else if (router.pathname.startsWith('/profile')) {
-      setActiveLink('profile')
+      setActiveLink('profile');
     } else {
-      setActiveLink('home')
+      setActiveLink('home');
     }
-  }, [router.pathname])
+  }, [router.pathname]);
 
   return (
     <div className={`${theme} hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
@@ -53,15 +53,15 @@ const Sidebar = () => {
 
         {theme === 'dark' ? (
           <div className="cursor-pointer" onClick={() => {
-            setTheme('light')
-            localStorage.theme = 'light'
+            setTheme('light');
+            localStorage.theme = 'light';
           }}>
             <SunIcon className="h-[30px] w-[30px] dark:text-white" />
           </div>
         ) : (
           <div className="cursor-pointer" onClick={() => {
-            setTheme('dark')
-            localStorage.theme = 'dark'
+            setTheme('dark');
+            localStorage.theme = 'dark';
           }}>
             <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
           </div>
@@ -82,7 +82,7 @@ const Sidebar = () => {
 
         {session && session.user && (
           <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-            signOut({ callbackUrl: 'http://localhost:3000/auth' })
+            signOut({ callbackUrl: 'http://localhost:3000/auth' });
           }}>
             <LogoutIcon className="h-[30px] w-[30px]" />
             <div className="hidden xl:block">Logout</div>
@@ -91,20 +91,20 @@ const Sidebar = () => {
 
         <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => {
           if (!session) {
-            Router.push('/auth')
-            return
+            Router.push('/auth');
+            return;
           }
-          setIsOpen(true)
+          setIsOpen(true);
         }}>
           Tweet
         </button>
 
         <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => {
           if (!session) {
-            Router.push('/auth')
-            return
+            Router.push('/auth');
+            return;
           }
-          setIsOpen(true)
+          setIsOpen(true);
         }}>
           <FaFeatherAlt className="h-5 w-5" />
         </div>
@@ -132,7 +132,7 @@ const Sidebar = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

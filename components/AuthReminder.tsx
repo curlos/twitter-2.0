@@ -3,10 +3,10 @@ import Link from 'next/link';
 import React from 'react';
 
 const AuthReminder = () => {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
 
   if (session) {
-    return null
+    return null;
   }
 
   return (
@@ -19,7 +19,7 @@ const AuthReminder = () => {
         <div className="flex-1 text-center border border-gray-700 rounded-full p-1 cursor-pointer text-black dark:text-white">Sign up</div>
       </Link>
     </div>
-  )
+  );
 };
 
 export default AuthReminder;

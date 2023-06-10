@@ -1,5 +1,5 @@
-import { BadgeCheckIcon } from '@heroicons/react/solid'
-import React from 'react'
+import { BadgeCheckIcon } from '@heroicons/react/solid';
+import React from 'react';
 
 const SmallUser = () => {
   return (
@@ -23,7 +23,7 @@ const SmallUser = () => {
         <button className="py-2 px-3 bg-white text-sm text-black font-bold rounded-full">Follow</button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SmallUser
+export default SmallUser;

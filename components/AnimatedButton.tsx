@@ -1,11 +1,11 @@
-import React from 'react'
-import { IProvider } from '../utils/types'
+import React from 'react';
+import { IProvider } from '../utils/types';
 
 interface Props {
   handleAuth: (provider: IProvider) => void,
   provider: IProvider,
   authName: string,
-  signUp: boolean
+  signUp: boolean;
 }
 
 const AnimatedButton = ({ handleAuth, provider, authName, signUp }: Props) => {
@@ -28,7 +28,7 @@ const AnimatedButton = ({ handleAuth, provider, authName, signUp }: Props) => {
         </span>
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default AnimatedButton
+export default AnimatedButton;

@@ -1,11 +1,11 @@
-import { BadgeCheckIcon } from '@heroicons/react/solid'
-import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { db } from '../firebase'
-import Spinner from './Spinner'
+import { BadgeCheckIcon } from '@heroicons/react/solid';
+import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { db } from '../firebase';
+import Spinner from './Spinner';
 
 interface Props {
   userID: string,
@@ -14,31 +14,31 @@ interface Props {
 
 const MediumUser = ({ userID }: Props) => {
 
-  const { data: session } = useSession()
-  const [user, setUser] = useState<DocumentData>()
-  const [followers, setFollowers] = useState<DocumentData>()
-  const [followed, setFollowed] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession();
+  const [user, setUser] = useState<DocumentData>();
+  const [followers, setFollowers] = useState<DocumentData>();
+  const [followed, setFollowed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
-    const docRef = doc(db, "users", userID)
+    const docRef = doc(db, "users", userID);
 
     getDoc(docRef).then((snap) => {
-      setUser(snap.data())
-      setLoading(false)
-    })
-  }, [userID])
+      setUser(snap.data());
+      setLoading(false);
+    });
+  }, [userID]);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'users', userID, 'followers'), (snapshot) => setFollowers(snapshot.docs))
-  }, [db, userID, loading])
+    onSnapshot(collection(db, 'users', userID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
+  }, [db, userID, loading]);
 
   useEffect(() => {
     if (followers) {
-      setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1)
+      setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
     }
-  }, [followers])
+  }, [followers]);
 
   const handleFollow = async () => {
     if (!session) {
@@ -47,23 +47,23 @@ const MediumUser = ({ userID }: Props) => {
           permanent: false,
           destination: '/auth'
         }
-      }
+      };
     }
 
     if (followed) {
-      await deleteDoc(doc(db, "users", userID, "followers", String(session.user.uid)))
-      await deleteDoc(doc(db, "users", String(session.user.uid), "following", userID))
+      await deleteDoc(doc(db, "users", userID, "followers", String(session.user.uid)));
+      await deleteDoc(doc(db, "users", String(session.user.uid), "following", userID));
     } else {
       await setDoc(doc(db, "users", userID, "followers", String(session.user.uid)), {
         followedAt: serverTimestamp(),
         followedBy: session.user.uid
-      })
+      });
       await setDoc(doc(db, "users", String(session.user.uid), "following", userID), {
         followedAt: serverTimestamp(),
         followedBy: session.user.uid
-      })
+      });
     }
-  }
+  };
 
   return (
     loading ? <Spinner /> : (
@@ -89,8 +89,8 @@ const MediumUser = ({ userID }: Props) => {
 
           {!session || userID !== session.user.uid ? (
             <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={(e) => {
-              e.stopPropagation()
-              handleFollow()
+              e.stopPropagation();
+              handleFollow();
             }}>{followed ? 'Following' : 'Follow'}</div>
           ) : null}
 
@@ -98,7 +98,7 @@ const MediumUser = ({ userID }: Props) => {
         </div>
       </Link>
     )
-  )
-}
+  );
+};
 
-export default MediumUser
+export default MediumUser;

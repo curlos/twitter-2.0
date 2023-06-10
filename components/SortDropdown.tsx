@@ -5,11 +5,11 @@ import { useSession } from "next-auth/react";
 
 interface Props {
   sortType: string,
-  setSortType: React.Dispatch<React.SetStateAction<string>>
+  setSortType: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
 
   return (
     <div className="flex items-center justify-end">
@@ -71,4 +71,4 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
       </div>
     </div>
   );
-}
+};

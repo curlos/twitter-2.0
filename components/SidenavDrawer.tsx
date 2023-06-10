@@ -22,31 +22,31 @@ import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt, FaSearch, FaHome } from "react-icons/fa";
 
-import { FiBookmark } from 'react-icons/fi'
-import { BsTwitter } from "react-icons/bs"
+import { FiBookmark } from 'react-icons/fi';
+import { BsTwitter } from "react-icons/bs";
 import { SearchModal } from "./SearchModal";
 
 const SidenavDrawer = () => {
 
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useRecoilState(sidenavState)
-  const [theme, setTheme] = useRecoilState(colorThemeState)
-  const [activeLink, setActiveLink] = useState('home')
-  const router = useRouter()
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(sidenavState);
+  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [activeLink, setActiveLink] = useState('home');
+  const router = useRouter();
 
   useEffect(() => {
-    setTheme(localStorage.getItem('theme'))
-  }, [])
+    setTheme(localStorage.getItem('theme'));
+  }, []);
 
   useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {
-      setActiveLink('bookmarks')
+      setActiveLink('bookmarks');
     } else if (router.pathname.startsWith('/profile')) {
-      setActiveLink('profile')
+      setActiveLink('profile');
     } else {
-      setActiveLink('home')
+      setActiveLink('home');
     }
-  }, [router.pathname])
+  }, [router.pathname]);
 
   return (
     <div className={`${theme} ${!isOpen ? 'hidden' : ''} sm:hidden fixed z-50 w-screen max-w-full h-screen bg-gray-500 bg-opacity-40`} onClick={() => setIsOpen(false)}>
@@ -62,16 +62,16 @@ const SidenavDrawer = () => {
 
             {theme === 'dark' ? (
               <div className="cursor-pointer flex gap-4" onClick={() => {
-                setTheme('light')
-                localStorage.theme = 'light'
+                setTheme('light');
+                localStorage.theme = 'light';
               }}>
                 <SunIcon className="h-7 w-7 dark:text-white" />
                 <div>Light Mode</div>
               </div>
             ) : (
               <div className="cursor-pointer flex gap-4" onClick={() => {
-                setTheme('dark')
-                localStorage.theme = 'dark'
+                setTheme('dark');
+                localStorage.theme = 'dark';
               }}>
                 <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
                 <div>Dark Mode</div>
@@ -100,8 +100,8 @@ const SidenavDrawer = () => {
 
             {session && session.user && (
               <div className={`flex items-center gap-4 cursor-pointer`} onClick={() => {
-                signOut({ callbackUrl: 'http://localhost:3000/auth' })
-                setIsOpen(false)
+                signOut({ callbackUrl: 'http://localhost:3000/auth' });
+                setIsOpen(false);
               }}>
                 <LogoutIcon className="h-[30px] w-[30px]" />
                 <div className="text-black dark:text-white">Logout</div>
@@ -135,7 +135,7 @@ const SidenavDrawer = () => {
 
       </aside>
     </div>
-  )
-}
+  );
+};
 
 export default SidenavDrawer;
