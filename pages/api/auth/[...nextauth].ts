@@ -1,7 +1,6 @@
 import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore";
 import NextAuth from "next-auth";
 import { Session } from "next-auth/core/types";
-import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import TwitterPorivder from "next-auth/providers/twitter";

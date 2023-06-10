@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { HomeIcon } from "@heroicons/react/solid";
 import {
   BookmarkIcon,
   UserIcon,
   DotsHorizontalIcon,
   LogoutIcon,
-  CogIcon,
   SunIcon,
   MoonIcon
 } from "@heroicons/react/outline";
@@ -18,7 +16,6 @@ import Router, { useRouter } from "next/router";
 import Link from "next/link";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs";
-import { SearchModal } from "./SearchModal";
 
 const Sidebar = () => {
 

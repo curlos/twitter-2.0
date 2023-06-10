@@ -12,9 +12,7 @@ interface Props {
 }
 
 const SmallEvent = ({ news }: Props) => {
-  const { title, image, link, description } = news;
-
-
+  const { title, image, link } = news;
 
   return (
     <div className="grid grid-cols-smallEvent cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-4 gap-2" onClick={() => window.location.href = link}>

@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { HomeIcon } from "@heroicons/react/solid";
 import {
-  HashtagIcon,
-  BellIcon,
-  InboxIcon,
-  BookmarkIcon,
-  ClipboardListIcon,
   UserIcon,
-  DotsCircleHorizontalIcon,
   DotsHorizontalIcon,
   LogoutIcon,
   SunIcon,
   MoonIcon
 } from "@heroicons/react/outline";
-import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { sidenavState, colorThemeState } from "../atoms/atom";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { FaFeatherAlt, FaSearch, FaHome } from "react-icons/fa";
-
+import { FaHome } from "react-icons/fa";
 import { FiBookmark } from 'react-icons/fi';
-import { BsTwitter } from "react-icons/bs";
-import { SearchModal } from "./SearchModal";
 
 const SidenavDrawer = () => {
 

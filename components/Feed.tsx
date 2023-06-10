@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SparklesIcon } from '@heroicons/react/outline';
 import { db } from "../firebase";
 import Input from './Input';
@@ -6,15 +6,12 @@ import { useSession } from 'next-auth/react';
 import { onSnapshot, query } from '@firebase/firestore';
 import { collection, orderBy } from 'firebase/firestore';
 import Tweet from './Tweet';
-import Widgets from './Widgets';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
-import { FaFeatherAlt } from 'react-icons/fa';
 import Spinner from './Spinner';
 import { sortByNewest, sortByOldest } from '../utils/sortTweets';
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
-import { debounce } from 'lodash';
 import AuthReminder from './AuthReminder';
 
 const Feed = () => {

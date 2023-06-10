@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { getProviders, getSession, useSession } from 'next-auth/react';
+import { collection, DocumentData, getDocs, query, where } from 'firebase/firestore';
+import { getProviders, getSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -17,7 +17,6 @@ import Widgets from '../../components/Widgets';
 import { db } from '../../firebase';
 
 const Followers = () => {
-  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
   const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);

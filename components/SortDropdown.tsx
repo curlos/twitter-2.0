@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
-import { useSession } from "next-auth/react";
 
 interface Props {
   sortType: string,
@@ -9,7 +8,6 @@ interface Props {
 }
 
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
-  const { data: session } = useSession();
 
   return (
     <div className="flex items-center justify-end">

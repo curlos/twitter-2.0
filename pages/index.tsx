@@ -1,12 +1,7 @@
-import { addDoc, collection, DocumentData, onSnapshot, query } from '@firebase/firestore';
-import { serverTimestamp } from 'firebase/firestore';
-import { Session } from 'next-auth/core/types';
 import { getProviders, getSession, useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Router, { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { FaBell, FaFeatherAlt, FaHome, FaSearch } from 'react-icons/fa';
-import { FiMail } from 'react-icons/fi';
+import Router from 'next/router';
+import { FaFeatherAlt } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../atoms/atom';
 import Feed from '../components/Feed';
@@ -17,7 +12,6 @@ import SettingsModal from '../components/SettingsModal';
 import Sidebar from '../components/Sidebar';
 import SidenavDrawer from '../components/SidenavDrawer';
 import Widgets from '../components/Widgets';
-import { db } from "../firebase";
 
 
 export default function Home({ trendingResults, followResults, providers }) {

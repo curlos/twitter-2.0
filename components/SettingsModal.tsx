@@ -1,8 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { PhotographIcon, XIcon } from '@heroicons/react/solid';
-import { collection, doc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { XIcon } from '@heroicons/react/solid';
+import { collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState, Fragment, useRef } from 'react';
+import React, { useState, Fragment, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, settingsModalState } from '../atoms/atom';
 import { FiCamera } from 'react-icons/fi';

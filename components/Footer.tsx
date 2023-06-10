@@ -1,15 +1,16 @@
 import { CogIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import React from 'react';
-import { FaBell, FaHome, FaSearch } from 'react-icons/fa';
-import { FiMail } from 'react-icons/fi';
-import { FaUser } from 'react-icons/fa';
+import { FaHome, FaSearch } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, searchModalState, sidenavState } from '../atoms/atom';
 import { useSession } from 'next-auth/react';
-import { SearchModal } from './SearchModal';
 
-const Footer = () => {
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
+const Footer: React.FC = () => {
 
   const { data: session } = useSession();
   const [theme, setTheme] = useRecoilState(colorThemeState);

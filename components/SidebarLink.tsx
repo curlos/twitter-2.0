@@ -1,9 +1,4 @@
 import Link from 'next/link';
-import React, { useEffect } from 'react';
-
-interface ParentCompProps {
-  childComp?: React.ReactNode;
-}
 
 interface Props {
   text: string,

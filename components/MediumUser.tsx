@@ -1,8 +1,7 @@
 import { BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, getDoc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import Spinner from './Spinner';

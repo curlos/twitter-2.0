@@ -1,4 +1,4 @@
-import { deleteDoc, doc, DocumentData, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore';
+import { deleteDoc, doc, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore';
 import { getProviders, getSession, useSession } from 'next-auth/react';
 import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +9,6 @@ import Head from 'next/head';
 import Sidebar from '../../components/Sidebar';
 import { NewTweetModal } from '../../components/NewTweetModal';
 import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid';
-import Tweet from '../../components/Tweet';
 import { collection, orderBy, query, setDoc, where } from 'firebase/firestore';
 import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';

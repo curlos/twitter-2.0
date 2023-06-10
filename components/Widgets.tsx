@@ -1,5 +1,4 @@
 import { SearchIcon } from '@heroicons/react/outline';
-import { BadgeCheckIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import SmallEvent from './SmallEvent';

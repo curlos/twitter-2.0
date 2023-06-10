@@ -12,8 +12,6 @@ import {
 import { getDownloadURL, ref, uploadString } from '@firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
-  CalendarIcon,
-  ChartBarIcon,
   EmojiHappyIcon,
   PhotographIcon,
   XIcon,
@@ -23,7 +21,7 @@ import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, editTweetState, newTweetModalState, tweetIdState } from '../atoms/atom';
+import { newTweetModalState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 

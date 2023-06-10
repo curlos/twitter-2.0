@@ -1,6 +1,5 @@
-import { DocumentData } from '@firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { sortByNewest, sortByOldest } from '../utils/sortTweets';
+import { sortByNewest } from '../utils/sortTweets';
 import { IAuthor } from '../utils/types';
 import Tweet from './Tweet';
 

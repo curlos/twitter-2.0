@@ -1,4 +1,3 @@
-import { ArrowLeftIcon, BadgeCheckIcon } from '@heroicons/react/solid';
 import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { getProviders, getSession, useSession } from 'next-auth/react';
 import Head from 'next/head';

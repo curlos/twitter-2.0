@@ -1,19 +1,16 @@
-/* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, tweetIdState, editTweetState } from '../atoms/atom';
 import { XIcon } from '@heroicons/react/solid';
-import { useSession } from 'next-auth/react';
 import Input from './Input';
-import { DocumentData, onSnapshot } from '@firebase/firestore';
+import { onSnapshot } from '@firebase/firestore';
 import { doc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ParentTweet from './ParentTweet';
 import { ITweet } from '../utils/types';
 
 export const NewTweetModal = () => {
-  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [showEmojiState, setShowEmojiState] = useState(false);
   const [tweetId, setTweetId] = useRecoilState(tweetIdState);

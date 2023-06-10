@@ -1,15 +1,12 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState } from '../atoms/atom';
-import { SearchIcon, XIcon } from '@heroicons/react/solid';
-import { useSession } from 'next-auth/react';
+import { colorThemeState, searchModalState } from '../atoms/atom';
+import { SearchIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
-import Input from './Input';
 
 export const SearchModal = () => {
-  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(searchModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
   const [searchQuery, setSearchQuery] = useState('');
