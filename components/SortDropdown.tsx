@@ -8,7 +8,7 @@ interface Props {
 }
 
 /**
- * @description - 
+ * @description - Renders a dropdown (typically for a list of tweets) and when one of the options in the dropdown is clicked, the list of tweets will be sorted accordingly.
  * @returns {React.FC}
  */
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
@@ -42,6 +42,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                   className="absolute right-0 w-56 mt-2 origin-top-right rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
                 >
 
+                  {/* When this clicked, the list of tweets will be sorted by the NEWEST ones. */}
                   <div className="bg-white dark:bg-black rounded-md divide-gray-400  dark:divide-gray-700 rounded-b-none" onClick={() => setSortType('Newest')}>
                     <Menu.Item>
                       {({ active }) => (
@@ -54,6 +55,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                     </Menu.Item>
                   </div>
 
+                  {/* When this clicked, the list of tweets will be sorted by the OLDEST ones. */}
                   <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none" onClick={() => setSortType('Oldest')}>
                     <Menu.Item>
                       {({ active }) => (

@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * @description - 
+ * @description - Renders a light blue (same color as the Twitter bird) ANIMATED spinner. This is typically shown when we make an API request to firebase and we're waiting for the request to finish. So while it's loading, this spinner will be shown.
  * @returns {React.FC}
  */
 const Spinner = () => {

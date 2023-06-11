@@ -9,7 +9,7 @@ interface Props {
 }
 
 /**
- * @description - 
+ * @description - Renders a Tweet with a specific id (tweetID) given.
  * @returns {React.FC}
  */
 const TweetWithID = ({ tweetID }: Props) => {
@@ -20,6 +20,7 @@ const TweetWithID = ({ tweetID }: Props) => {
 
   useEffect(
     () =>
+      // Go into the database and inside the "tweets" collection find a tweet that has an id === "tweetID"
       onSnapshot(doc(db, "tweets", tweetID), (snapshot) => {
         setTweet(snapshot.data());
         setLoading(false);

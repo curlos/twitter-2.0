@@ -12,7 +12,7 @@ interface Props {
 }
 
 /**
- * @description - 
+ * @description - Shows a small event happening on the widgets on the RIGHT sidebar. On the real site, there would also be trending topics as well but this doesn't have any real users to populate enough tweets for something to be trending in real time so ONLY show events. For now, it's based off of video game news.
  * @returns {React.FC}
  */
 const SmallEvent = ({ news }: Props) => {
