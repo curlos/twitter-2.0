@@ -51,10 +51,13 @@ const EditProfileModal = () => {
       setUsernameTakenError(true);
     } else {
 
+      // Create a StorageReference for the profile pic and banner pic (essentially tells us WHERE the files will be stored)
       const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
       const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`);
 
+
       if (selectedFileProfilePic) {
+        // Upload the string of type "data_url" (this is a URI schema for uploading files) and put it in the "/users/profilePic/${}/image" storage reference
         await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
           const downloadURL = await getDownloadURL(profilePicRef);
           updatedUserData.profilePic = downloadURL;
@@ -62,16 +65,21 @@ const EditProfileModal = () => {
       }
 
       if (selectedFileBanner) {
+        // Upload the string of type "data_url" (this is a URI schema for uploading files) and put it in the "/users/profilePic/${}/image" storage reference
         await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
+          // "getDownloadURL()" generates a public URL that can be used to download the file or display it directly in a web browser.
           const downloadURL = await getDownloadURL(bannerRef);
+          // Sets the user's banner to this download URL, will be used as the "img" src.
           updatedUserData.banner = downloadURL;
         });
       }
 
+      // Find the user in the database without the currently logged in user's ID and set their data to the updated data here.
       await updateDoc(doc(db, "users", session.user.uid), {
         ...updatedUserData,
       });
 
+      // Set our local session's data to this as it wouldn't update again unless we signed out and signed back in. So, it needs to be manually by us because of that.
       session.user.name = name;
       session.user.tag = tag;
       session.user.bio = bio;
@@ -80,6 +88,7 @@ const EditProfileModal = () => {
       session.user.profilePic = profilePic;
       session.user.banner = banner;
 
+      // Close the modal and reload the window.
       setIsOpen(false);
       router.push(`/profile/${tag}`).then(() => (
         window.location.reload()
