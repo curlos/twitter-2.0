@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from "../../firebase";
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../../atoms/atom';
+import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState } from '../../atoms/atom';
 import Head from 'next/head';
 import Sidebar from '../../components/Sidebar';
 import { NewTweetModal } from '../../components/NewTweetModal';
@@ -14,7 +14,6 @@ import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import Tweets from '../../components/Tweets';
 import moment from 'moment';
-import SettingsModal from '../../components/SettingsModal';
 import Spinner from '../../components/Spinner';
 import Link from 'next/link';
 import MobileBottomNavBar from '../../components/MobileBottomNavBar';
@@ -22,12 +21,13 @@ import { SearchModal } from '../../components/SearchModal';
 import AuthReminder from '../../components/AuthReminder';
 import SidenavDrawer from '../../components/SidenavDrawer';
 import { useFollow } from '../../utils/useFollow';
+import EditProfileModal from '../../components/EditProfileModal';
 
 const ProfilePage = () => {
   const { data: session } = useSession();
   const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
   const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(editProfileModalState);
   const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [loading, setLoading] = useState(true);
   const [tweetsLoading, setTweetsLoading] = useState(true);
@@ -335,7 +335,7 @@ const ProfilePage = () => {
 
         <Widgets />
         {isOpen && <NewTweetModal />}
-        {isSettingsModalOpen && <SettingsModal />}
+        {isSettingsModalOpen && <EditProfileModal />}
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
 

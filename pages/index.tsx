@@ -3,12 +3,12 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { FaFeatherAlt } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState } from '../atoms/atom';
 import Feed from '../components/Feed';
 import MobileBottomNavBar from '../components/MobileBottomNavBar';
 import { NewTweetModal } from '../components/NewTweetModal';
 import { SearchModal } from '../components/SearchModal';
-import SettingsModal from '../components/SettingsModal';
+import EditProfileModal from '../components/EditProfileModal';
 import Sidebar from '../components/Sidebar';
 import SidenavDrawer from '../components/SidenavDrawer';
 import Widgets from '../components/Widgets';
@@ -17,7 +17,7 @@ import Widgets from '../components/Widgets';
 export default function Home({ trendingResults, followResults, providers }) {
   const { data: session } = useSession();
   const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState);
-  const [isSettingsModalOpen, _setSettingsModalOpen] = useRecoilState(settingsModalState);
+  const [isSettingsModalOpen, _setSettingsModalOpen] = useRecoilState(editProfileModalState);
   const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
@@ -35,7 +35,7 @@ export default function Home({ trendingResults, followResults, providers }) {
         <Widgets />
 
         {isNewTweetModalOpen && <NewTweetModal />}
-        {isSettingsModalOpen && <SettingsModal />}
+        {isSettingsModalOpen && <EditProfileModal />}
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
 

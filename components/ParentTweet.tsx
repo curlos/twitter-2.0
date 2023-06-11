@@ -57,6 +57,7 @@ const ParentTweet = ({ fromModal }: Props) => {
             {/* <span className="border-r-2 border-[#AAB8C2]  dark:border-gray-700 absolute ml-[27px] h-[100%]" /> */}
           </div>
 
+          {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}
           <div>
             <div className="text-gray-400 lg:flex">
               <div className="text-black dark:text-white font-bold mr-[2px]">{author.name}</div>
@@ -76,6 +77,7 @@ const ParentTweet = ({ fromModal }: Props) => {
                 </div>
               )}
             </div>
+
             <div className="my-3 text-gray-400">
               Replying to <span className="text-lightblue-400">
                 <Link href={`/profile/${author.tag}`}>

@@ -9,8 +9,8 @@ export const newTweetModalState = atom({
 });
 
 // Used to detect if the "Edit Settings" modal is open. It's actually really just the modal that lets a user edit their profile where they can change their profile banner, pic, name, username, bio, location and website.
-export const settingsModalState = atom({
-  key: "settingsModalState",
+export const editProfileModalState = atom({
+  key: "editProfileModalState",
   default: false,
 });
 

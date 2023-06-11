@@ -7,7 +7,7 @@ import { SearchIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 
 /**
- * @description - 
+ * @description - Renders the modal that displays a search input for users to type in and filter the tweets they're shown by the query they enter.
  * @returns {React.FC}
  */
 export const SearchModal = () => {

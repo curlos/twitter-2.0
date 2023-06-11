@@ -4,20 +4,20 @@ import { collection, doc, getDocs, query, serverTimestamp, updateDoc, where } fr
 import { useSession } from 'next-auth/react';
 import React, { useState, Fragment, useRef } from 'react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, settingsModalState } from '../atoms/atom';
+import { colorThemeState, editProfileModalState } from '../atoms/atom';
 import { FiCamera } from 'react-icons/fi';
 import { db, storage } from '../firebase';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 
 /**
- * @description - 
+ * @description - Renders a modal where the user can edit their profile info such as their name, username, bio, location and website.
  * @returns {React.FC}
  */
-const SettingsModal = () => {
+const EditProfileModal = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [isOpen, setIsOpen] = useRecoilState(settingsModalState);
+  const [isOpen, setIsOpen] = useRecoilState(editProfileModalState);
   const [name, setName] = useState(session.user.name || '');
   const [tag, setTag] = useState(session.user.tag || '');
   const [bio, setBio] = useState(session.user.bio || '');
@@ -47,10 +47,11 @@ const SettingsModal = () => {
     };
 
     if (await checkIfUsernameTaken()) {
+      // If the username is taken, there is an error and the user must try something else.
       setUsernameTakenError(true);
     } else {
-      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
 
+      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
       const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`);
 
       if (selectedFileProfilePic) {
@@ -86,38 +87,55 @@ const SettingsModal = () => {
     }
   };
 
+  /**
+   * @description - Checks if the username the user entered in the "Username" input field already exists in the database.
+   * @returns {boolean}
+   */
   const checkIfUsernameTaken = async () => {
     if (session.user.tag === tag) {
+      // If the value in the "Username" field is the same as the user's current "username" then nothing has changed and thus the username is NOT taken technically since the user already owns it.
       return false;
     } else {
-      const qUser = query(collection(db, "users"), where('tag', '==', tag));
-      const qUserSnap = await getDocs(qUser);
-      const usernameTaken = qUserSnap.docs.length > 0;
+      // Else if the value in the "Username" field is different from the user's current "username" then we want to search the database for all the users and find if ANY of those users ALREADY have that username. If any of them have it then the username is TAKEN.
+      const queryUser = query(collection(db, "users"), where('tag', '==', tag));
+      const queryUserSnap = await getDocs(queryUser);
+      const usernameTaken = queryUserSnap.docs.length > 0;
 
       return usernameTaken;
     }
   };
 
-  const changeProfilePic = (e) => {
-    const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
+  /**
+   * @description - Handles when a user changes their profile pic by uploading a new file.
+   * @param e - event from input
+   */
+  const changePic = (e, picType: String) => {
+    try {
+      // FileReader is a JavaScript Object used to read data from 'Blob' or 'File' objects.
+      const reader = new FileReader();
+
+      // Onload will be finished when a read operation of a file is complete.
+      // Extract the result of reading the file (this will be a data URL representing the file)
+      // and set it in the state.
+      reader.onload = (readerEvent) => {
+        if (picType === 'profile') {
+          setSelectedFileProfilePic(readerEvent.target.result);
+        } else if (picType === 'banner') {
+          setSelectedFileBanner(readerEvent.target.result);
+        }
+      };
+
+      // Check if a file was selected 
+      // e.target.files is a FileList object representing the files selected in the input
+      // If the user selected at least one file, e.target.files[0] will be truthy
+      if (e.target.files[0]) {
+        // Start reading the first selected file as a data URL
+        // When the reader finishes it will call the onload handler defined above with the data URL from this reader reading the data from the file.
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    } catch (error) {
+      console.error(error);
     }
-
-    reader.onload = (readerEvent) => [
-      setSelectedFileProfilePic(readerEvent.target.result)
-    ];
-  };
-
-  const changeBannerPic = (e) => {
-    const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-    }
-
-    reader.onload = (readerEvent) => [
-      setSelectedFileBanner(readerEvent.target.result)
-    ];
   };
 
   return (
@@ -178,7 +196,7 @@ const SettingsModal = () => {
                       type="file"
                       ref={bannerFilePickerRef}
                       hidden
-                      onChange={changeBannerPic}
+                      onChange={(e) => changePic(e, 'banner')}
                     />
                   </div>
 
@@ -195,7 +213,7 @@ const SettingsModal = () => {
                       type="file"
                       ref={profilePicFilePickerRef}
                       hidden
-                      onChange={changeProfilePic}
+                      onChange={(e) => changePic(e, 'profile')}
                     />
                   </div>
 
@@ -279,4 +297,4 @@ const SettingsModal = () => {
   );
 };
 
-export default SettingsModal;
+export default EditProfileModal;
