@@ -7,6 +7,10 @@ interface Props {
   tag?: string;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
 
   const getLinkHref = (text) => {

@@ -7,6 +7,10 @@ interface Props {
   setSortType: React.Dispatch<React.SetStateAction<string>>;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 export const SortDropdown = ({ sortType, setSortType }: Props) => {
 
   return (

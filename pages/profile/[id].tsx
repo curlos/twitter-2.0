@@ -17,7 +17,7 @@ import moment from 'moment';
 import SettingsModal from '../../components/SettingsModal';
 import Spinner from '../../components/Spinner';
 import Link from 'next/link';
-import Footer from '../../components/Footer';
+import MobileBottomNavBar from '../../components/MobileBottomNavBar';
 import { SearchModal } from '../../components/SearchModal';
 import AuthReminder from '../../components/AuthReminder';
 import SidenavDrawer from '../../components/SidenavDrawer';
@@ -361,7 +361,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
 
-        <Footer />
+        <MobileBottomNavBar />
       </main>
 
 

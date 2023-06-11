@@ -10,6 +10,10 @@ import { db, storage } from '../firebase';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { useRouter } from 'next/router';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const SettingsModal = () => {
   const { data: session } = useSession();
   const router = useRouter();

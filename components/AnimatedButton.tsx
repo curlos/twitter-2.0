@@ -7,7 +7,10 @@ interface Props {
   authName: string,
   signUp: boolean;
 }
-
+/**
+ * @description - This is the button used on the signup (authorization) screen when asking a user to either signup or login. The button will be animated and have a blue color (same blue as the Twitter logo) move through the button.
+ * @returns {React.FC}
+ */
 const AnimatedButton = ({ handleAuth, provider, authName, signUp }: Props) => {
 
   return (

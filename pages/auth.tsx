@@ -58,8 +58,8 @@ const Auth = ({ providers }: Props) => {
           {Object.values(providers).map((provider: IProvider) => {
 
             return (
+              // Show the animated button with the provider (Google, Apple, GitHub, etc.)
               <div key={provider.name} className="py-3">
-
                 <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
               </div>
             );

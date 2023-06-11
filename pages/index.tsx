@@ -5,7 +5,7 @@ import { FaFeatherAlt } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, settingsModalState, sidenavState } from '../atoms/atom';
 import Feed from '../components/Feed';
-import Footer from '../components/Footer';
+import MobileBottomNavBar from '../components/MobileBottomNavBar';
 import { NewTweetModal } from '../components/NewTweetModal';
 import { SearchModal } from '../components/SearchModal';
 import SettingsModal from '../components/SettingsModal';
@@ -49,7 +49,7 @@ export default function Home({ trendingResults, followResults, providers }) {
           <FaFeatherAlt className="h-7 w-7 text-white" />
         </div>
 
-        <Footer />
+        <MobileBottomNavBar />
       </main>
 
     </div>

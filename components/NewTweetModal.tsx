@@ -10,6 +10,10 @@ import { db } from '../firebase';
 import ParentTweet from './ParentTweet';
 import { ITweet } from '../utils/types';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 export const NewTweetModal = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [showEmojiState, setShowEmojiState] = useState(false);

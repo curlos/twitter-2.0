@@ -8,6 +8,10 @@ interface Props {
   tweetID: string;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const TweetWithID = ({ tweetID }: Props) => {
 
   const [tweet, setTweet] = useState<DocumentData>();

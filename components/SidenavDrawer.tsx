@@ -14,6 +14,10 @@ import Link from "next/link";
 import { FaHome } from "react-icons/fa";
 import { FiBookmark } from 'react-icons/fi';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const SidenavDrawer = () => {
 
   const { data: session } = useSession();

@@ -24,7 +24,7 @@ import { SparklesIcon } from '@heroicons/react/outline';
 import Tweet from '../../../../components/Tweet';
 import Widgets from '../../../../components/Widgets';
 import SettingsModal from '../../../../components/SettingsModal';
-import Footer from '../../../../components/Footer';
+import MobileBottomNavBar from '../../../../components/MobileBottomNavBar';
 import { SearchModal } from '../../../../components/SearchModal';
 import Spinner from '../../../../components/Spinner';
 import SidenavDrawer from '../../../../components/SidenavDrawer';
@@ -166,6 +166,7 @@ const TweetVersionHistory = ({ trendingResults, followResults, providers }: Prop
 
                             {parentTweet && parentTweet.data() && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
 
+                            {/* If the parent tweet doesn't get anything from "data()", then that can only mean the tweet has been deleted, so we'd want to show this "DeletedTweet" component */}
                             {parentTweet && !parentTweet.data() && (
                                 <DeletedTweet />
                             )}
@@ -200,7 +201,7 @@ const TweetVersionHistory = ({ trendingResults, followResults, providers }: Prop
                     {isSidenavOpen && <SidenavDrawer />}
 
 
-                    <Footer />
+                    <MobileBottomNavBar />
                 </main>
 
             </div>

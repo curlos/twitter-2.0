@@ -33,6 +33,10 @@ interface Props {
   setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmojiState }: Props) => {
   const { data: session } = useSession();
 

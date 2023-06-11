@@ -11,6 +11,10 @@ interface Props {
   news?: News;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const SmallEvent = ({ news }: Props) => {
   const { title, image, link } = news;
 

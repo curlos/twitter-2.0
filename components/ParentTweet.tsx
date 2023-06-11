@@ -10,6 +10,10 @@ interface Props {
   fromModal: boolean;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const ParentTweet = ({ tweet, fromModal }: Props) => {
 
   const [author, setAuthor] = useState<DocumentData>();

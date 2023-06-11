@@ -7,7 +7,7 @@ import { newTweetModalState, tweetIdState, colorThemeState } from '../atoms/atom
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, setDoc } from '@firebase/firestore';
 import { db } from '../firebase';
 import { getDoc, orderBy, query } from 'firebase/firestore';
-import { Dropdown } from './Dropdown';
+import { TweetDropdown } from './TweetDropdown';
 import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import { HiBadgeCheck } from 'react-icons/hi';
 import { BsPencilFill } from 'react-icons/bs';
@@ -24,6 +24,10 @@ interface Props {
   pastTweet?: boolean;
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
 
   const { data: session } = useSession();
@@ -258,7 +262,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
                     </div>
 
-                    <Dropdown tweet={
+                    <TweetDropdown tweet={
                       {
                         ...tweet,
                         tweetId: id
@@ -345,7 +349,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               </div>
             </div>
 
-            <Dropdown tweet={{
+            <TweetDropdown tweet={{
               ...tweet,
               tweetId: id
             }} author={author} authorId={authorId} deleteTweet={deleteTweet} />

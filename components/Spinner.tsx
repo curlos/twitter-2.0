@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Spinner = () => {
   return (
     <div className="flex items-center justify-center space-x-2">

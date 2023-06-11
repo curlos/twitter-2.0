@@ -1,6 +1,10 @@
 import { BadgeCheckIcon } from '@heroicons/react/solid';
 import React from 'react';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const SmallUser = () => {
   return (
     <div className="flex justify-between items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 p-3">

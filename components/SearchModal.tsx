@@ -6,6 +6,10 @@ import { colorThemeState, searchModalState } from '../atoms/atom';
 import { SearchIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 export const SearchModal = () => {
   const [isOpen, setIsOpen] = useRecoilState(searchModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);

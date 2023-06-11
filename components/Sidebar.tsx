@@ -17,6 +17,10 @@ import Link from "next/link";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs";
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Sidebar = () => {
 
   const { data: session } = useSession();

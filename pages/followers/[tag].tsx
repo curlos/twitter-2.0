@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../../atoms/atom';
-import Footer from '../../components/Footer';
+import MobileBottomNavBar from '../../components/MobileBottomNavBar';
 import MediumUser from '../../components/MediumUser';
 import { NewTweetModal } from '../../components/NewTweetModal';
 import { SearchModal } from '../../components/SearchModal';
@@ -120,7 +120,7 @@ const Followers = () => {
         {isOpen && <NewTweetModal />}
         {isSearchModalOpen && <SearchModal />}
 
-        <Footer />
+        <MobileBottomNavBar />
 
       </main>
     </div>

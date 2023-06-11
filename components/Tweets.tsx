@@ -15,6 +15,10 @@ const getSortedTweets = (tweets) => {
   return sortByNewest(tweets);
 };
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
 
   const [allTweets, setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]));

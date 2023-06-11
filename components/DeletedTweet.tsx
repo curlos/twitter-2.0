@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * @description - This will be shown IF a tweet has been DELETED by the author.
+ * @returns {React.FC}
+ */
 const DeletedTweet = () => {
   return (
     <div className="p-3">

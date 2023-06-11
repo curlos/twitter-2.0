@@ -11,6 +11,10 @@ interface Props {
 
 }
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const MediumUser = ({ userID }: Props) => {
 
   const { data: session } = useSession();

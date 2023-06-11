@@ -2,9 +2,14 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react';
 
+/**
+ * @description - Users can see the site WITHOUT being logged in. When this happens this "reminder" will be shown at the top of the feed (list of tweets) telling the user they can still either log in or sign up.
+ * @returns {React.FC}
+ */
 const AuthReminder = () => {
   const { data: session } = useSession();
 
+  // If the user has a "session", it must mean that they are logged in and have an account which means this reminder would not have to be shown.
   if (session) {
     return null;
   }

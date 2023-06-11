@@ -24,7 +24,7 @@ import { SparklesIcon } from '@heroicons/react/outline';
 import Tweet from '../../../components/Tweet';
 import Widgets from '../../../components/Widgets';
 import SettingsModal from '../../../components/SettingsModal';
-import Footer from '../../../components/Footer';
+import MobileBottomNavBar from '../../../components/MobileBottomNavBar';
 import { SearchModal } from '../../../components/SearchModal';
 import Spinner from '../../../components/Spinner';
 import SidenavDrawer from '../../../components/SidenavDrawer';
@@ -187,7 +187,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
                     {isSidenavOpen && <SidenavDrawer />}
 
 
-                    <Footer />
+                    <MobileBottomNavBar />
                 </main>
 
             </div>

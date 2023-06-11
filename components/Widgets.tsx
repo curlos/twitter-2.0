@@ -5,6 +5,10 @@ import SmallEvent from './SmallEvent';
 import SmallUser from './SmallUser';
 import { getRecent } from '../services/videoGameNews.service';
 
+/**
+ * @description - 
+ * @returns {React.FC}
+ */
 const Widgets = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
