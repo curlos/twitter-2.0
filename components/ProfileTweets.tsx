@@ -11,25 +11,35 @@ interface Props {
   filter?: string;
 }
 
+/**
+ * 
+ * @param {Array<ITweet>} tweets - List of tweets.
+ * @returns {Array<ITweet>}
+ */
 const getSortedTweets = (tweets) => {
   return sortByNewest(tweets);
 };
 
 /**
- * @description - 
+ * @description - Render a list of tweets in the user's profile page.
  * @returns {React.FC}
  */
-const Tweets = ({ tweets, retweets, likes, filter }: Props) => {
+const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
 
   const [allTweets, _setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]));
   const [filteredTweets, setFilteredTweets] = useState([]);
 
   useEffect(() => {
+    // Each time the filter changes, all the tweets will be passed through the filter again.
     getFilteredTweets().then((data) => {
       setFilteredTweets(data);
     });
   }, [filter]);
 
+  /**
+   * @description - Using the user selected filter (or the default of 'Tweets'), filter all the tweets in the list by the filter.
+   * @returns {Array<ITweet>}
+   */
   const getFilteredTweets = async () => {
     switch (filter) {
       case 'Tweets':
@@ -53,6 +63,7 @@ const Tweets = ({ tweets, retweets, likes, filter }: Props) => {
 
   return (
     <div>
+      {/* Render the list of filtered tweets. */}
       {filteredTweets.map((tweet) => {
         const tweetData = tweet.data();
 
@@ -68,4 +79,4 @@ const Tweets = ({ tweets, retweets, likes, filter }: Props) => {
   );
 };
 
-export default Tweets;
+export default ProfileTweets;

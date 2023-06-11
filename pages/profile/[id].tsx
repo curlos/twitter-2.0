@@ -12,7 +12,7 @@ import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/re
 import { collection, orderBy, query, where } from 'firebase/firestore';
 import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
-import Tweets from '../../components/Tweets';
+import Tweets from '../../components/ProfileTweets';
 import moment from 'moment';
 import Spinner from '../../components/Spinner';
 import Link from 'next/link';
