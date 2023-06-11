@@ -21,8 +21,8 @@ const Feed = () => {
 
   const { data: session } = useSession();
   const [tweets, setTweets] = useState([]);
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [isOpen] = useRecoilState(newTweetModalState);
+  const [theme] = useRecoilState(colorThemeState);
   const [loading, setLoading] = useState(true);
   const [sortType, setSortType] = useState('Newest');
   const [filteredTweets, setFilteredTweets] = useState([]);

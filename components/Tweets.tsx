@@ -19,9 +19,9 @@ const getSortedTweets = (tweets) => {
  * @description - 
  * @returns {React.FC}
  */
-const Tweets = ({ author, tweets, retweets, likes, filter }: Props) => {
+const Tweets = ({ tweets, retweets, likes, filter }: Props) => {
 
-  const [allTweets, setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]));
+  const [allTweets, _setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]));
   const [filteredTweets, setFilteredTweets] = useState([]);
 
   useEffect(() => {

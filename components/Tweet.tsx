@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import Router, { useRouter } from 'next/router';
-import { newTweetModalState, tweetIdState, colorThemeState } from '../atoms/atom';
+import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState } from '../atoms/atom';
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, setDoc } from '@firebase/firestore';
 import { db } from '../firebase';
 import { getDoc, orderBy, query } from 'firebase/firestore';
@@ -31,9 +31,9 @@ interface Props {
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
 
   const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [tweetId, setTweetId] = useRecoilState(tweetIdState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [likes, setLikes] = useState([]);
   const [retweets, setRetweets] = useState([]);
   const [bookmarks, setBookmarks] = useState([]);
@@ -207,7 +207,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       return;
     }
 
-    setTweetId(id);
+    setTweetBeingRepliedToId(id);
     setIsOpen(true);
   };
 

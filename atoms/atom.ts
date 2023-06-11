@@ -27,8 +27,8 @@ export const sidenavState = atom({
 });
 
 // This is used to interact between the "NewTweetModal" and "Tweet" components. The reason it needs to be set in here is because a user can create a new tweet in 2 ways (as of now): Create a brand new tweet with no previous context OR Create a brand new tweet where the user is REPLYING to an existing tweet.
-export const tweetIdState = atom({
-  key: "tweetIdState",
+export const tweetBeingRepliedToIdState = atom({
+  key: "tweetBeingRepliedToIdState",
   default: '',
 });
 

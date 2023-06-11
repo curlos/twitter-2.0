@@ -4,18 +4,15 @@ import React from 'react';
 import { FaHome, FaSearch } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, searchModalState, sidenavState } from '../atoms/atom';
-import { useSession } from 'next-auth/react';
 
 /**
  * @description - On mobile, the usual sidebar would not fit so instead all the items will be in a bottom NavBar with all the elements (Home button, Search button, Light/Dark mode button, etc.) from the sidebar but in a more compact version.
  * @returns {React.FC}
  */
 const MobileBottomNavBar: React.FC = () => {
-
-  const { data: session } = useSession();
   const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
-  const [sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState);
+  const [_searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
+  const [_sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState);
 
   return (
     <div className="sm:hidden fixed bottom-0 w-full border-t-[1px] bg-white border-[#AAB8C2] dark:bg-black  dark:border-gray-700 p-4 px-6 flex justify-between items-center h-[60px]">

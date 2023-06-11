@@ -21,18 +21,18 @@ const SettingsModal = () => {
   const [name, setName] = useState(session.user.name || '');
   const [tag, setTag] = useState(session.user.tag || '');
   const [bio, setBio] = useState(session.user.bio || '');
-  const [usernameTakenError, setUsernameTakenError] = useState(false);
+  const [_usernameTakenError, setUsernameTakenError] = useState(false);
   const [location, setLocation] = useState(session.user.location || '');
   const [website, setWebsite] = useState(session.user.website || '');
-  const [banner, setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg');
-  const [profilePic, setProfilePic] = useState(session.user.profilePic || '/assets/default_profile_pic.jpg');
+  const [banner, _setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg');
+  const [profilePic, _setProfilePic] = useState(session.user.profilePic || '/assets/default_profile_pic.jpg');
 
   const profilePicFilePickerRef = useRef(null);
   const bannerFilePickerRef = useRef(null);
 
   const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null);
   const [selectedFileBanner, setSelectedFileBanner] = useState(null);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   const updateUserProfile = async () => {
     const updatedUserData = {

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, tweetIdState, editTweetState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState } from '../atoms/atom';
 import { XIcon } from '@heroicons/react/solid';
 import Input from './Input';
 import { onSnapshot } from '@firebase/firestore';
@@ -11,33 +11,37 @@ import ParentTweet from './ParentTweet';
 import { ITweet } from '../utils/types';
 
 /**
- * @description - 
+ * @description - Renders a modal with the "Input" component that will allow a user to create a new tweet (this tweet can be a new tweet, a reply or a new edit)
  * @returns {React.FC}
  */
 export const NewTweetModal = () => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [showEmojiState, setShowEmojiState] = useState(false);
-  const [tweetId, setTweetId] = useRecoilState(tweetIdState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
-  const [tweet, setTweet] = useState<ITweet>();
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (tweetId) {
-      onSnapshot(doc(db, 'tweets', tweetId), (snapshot) => {
-        setTweet(snapshot.data() as ITweet);
-        setLoading(false);
-      });
-    }
-  }, [db]);
+  const handleClose = () => {
+    setIsOpen(false);
+    // Need to set the tweetId as empty as well because if not then the next time the modal is open, it would be possible to see the tweet that was being replied to show up AGAIN even if you're drafting a completely new tweet that is NOT a reply.
+    setTweetBeingRepliedToId('');
+    setEditTweetInfo({
+      image: '',
+      parentTweet: '',
+      text: '',
+      timestamp: {
+        seconds: 0,
+        nanoseconds: 0,
+      },
+      userID: '',
+      retweetedBy: '',
+      tweetId: ''
+    });
+  };
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
-        setIsOpen(val);
-        setTweetId('');
-      }}>
+      <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={handleClose}>
         <div className={`${theme} flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
             as={Fragment}
@@ -67,29 +71,17 @@ export const NewTweetModal = () => {
             <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]">
               <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div>
-                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={(val) => {
-                    setIsOpen(false);
-                    setTweetId('');
-                    setEditTweetInfo({
-                      image: '',
-                      parentTweet: '',
-                      text: '',
-                      timestamp: {
-                        seconds: 0,
-                        nanoseconds: 0,
-                      },
-                      userID: '',
-                      retweetedBy: '',
-                      tweetId: ''
-                    });
-                  }} />
+                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
                 </div>
               </div>
 
-              {!loading && <ParentTweet tweet={tweet} fromModal={true} />}
+              {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
+              <ParentTweet fromModal={true} />
 
-              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetId) !== ''} tweetId={tweetId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
+              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== ''} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
 
+              {/* Have to show this additional container below the input because for some reason this emoji picker library gets cut off by the container if it's too short. The minimum for comfortability purposes that I saw was "430px". */}
+              {/* TODO: Find out if there's a way to display the emoji picker in the modal without extending the modal's container. If not, find a different library to use. */}
               {showEmojiState && (
                 <div className="h-[430px] w-full p-2" />
               )}

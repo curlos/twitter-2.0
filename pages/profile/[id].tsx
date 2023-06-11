@@ -1,4 +1,4 @@
-import { deleteDoc, doc, getDoc, getDocs, onSnapshot, serverTimestamp } from '@firebase/firestore';
+import { doc, getDoc, getDocs, onSnapshot } from '@firebase/firestore';
 import { getProviders, getSession, useSession } from 'next-auth/react';
 import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import Head from 'next/head';
 import Sidebar from '../../components/Sidebar';
 import { NewTweetModal } from '../../components/NewTweetModal';
 import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid';
-import { collection, orderBy, query, setDoc, where } from 'firebase/firestore';
+import { collection, orderBy, query, where } from 'firebase/firestore';
 import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import Tweets from '../../components/Tweets';
@@ -21,19 +21,14 @@ import MobileBottomNavBar from '../../components/MobileBottomNavBar';
 import { SearchModal } from '../../components/SearchModal';
 import AuthReminder from '../../components/AuthReminder';
 import SidenavDrawer from '../../components/SidenavDrawer';
+import { useFollow } from '../../utils/useFollow';
 
-interface Props {
-  trendingResults: any,
-  followResults: any,
-  providers: any;
-}
-
-const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
+const ProfilePage = () => {
   const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
+  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState);
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [loading, setLoading] = useState(true);
   const [tweetsLoading, setTweetsLoading] = useState(true);
   const [filter, setFilter] = useState('Tweets');
@@ -45,7 +40,7 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [followersYouFollow, setFollowersYouFollow] = useState([]);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   const [followed, setFollowed] = useState(false);
   const router = useRouter();
@@ -133,26 +128,11 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
     setLikes(likesQuerySnapshot.docs);
   };
 
-  const handleFollow = async () => {
-    if (!session) {
-      Router.push('/auth');
-      return;
-    }
-
-    if (followed) {
-      await deleteDoc(doc(db, "users", authorID, "followers", String(session.user.uid)));
-      await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorID));
-    } else {
-      await setDoc(doc(db, "users", authorID, "followers", String(session.user.uid)), {
-        followedAt: serverTimestamp(),
-        followedBy: session.user.uid
-      });
-      await setDoc(doc(db, "users", String(session.user.uid), "following", authorID), {
-        followedAt: serverTimestamp(),
-        followingID: authorID
-      });
-    }
-  };
+  /**
+   * @description - Handles what happens when a user wants to follow or unfollow someone.
+   * @returns {Object || undefined}
+   */
+  const handleFollow = useFollow({ session, followed, db, userID: authorID });
 
   const handleEditOrFollow = () => {
     if (!session) {
@@ -171,8 +151,6 @@ const ProfilePage = ({ trendingResults, followResults, providers }: Props) => {
         </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-
 
       <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex`}>
         <Sidebar />

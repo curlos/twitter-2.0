@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
  */
 export const SearchModal = () => {
   const [isOpen, setIsOpen] = useRecoilState(searchModalState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [searchQuery, setSearchQuery] = useState('');
 
   const router = useRouter();

@@ -23,7 +23,7 @@ const SidenavDrawer = () => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(sidenavState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [activeLink, setActiveLink] = useState('home');
+  const [_activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 
   useEffect(() => {

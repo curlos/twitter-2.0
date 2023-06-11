@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../../atoms/atom';
+import { colorThemeState, newTweetModalState, searchModalState } from '../../atoms/atom';
 import MobileBottomNavBar from '../../components/MobileBottomNavBar';
 import MediumUser from '../../components/MediumUser';
 import { NewTweetModal } from '../../components/NewTweetModal';
@@ -17,10 +17,9 @@ import Widgets from '../../components/Widgets';
 import { db } from '../../firebase';
 
 const Following = () => {
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
+  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [author, setAuthor] = useState<DocumentData>();
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);

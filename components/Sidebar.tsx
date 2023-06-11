@@ -24,10 +24,9 @@ import { BsTwitter } from "react-icons/bs";
 const Sidebar = () => {
 
   const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
-  const [sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState);
+  const [_searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
   const [activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 

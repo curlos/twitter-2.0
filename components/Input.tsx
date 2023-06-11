@@ -28,16 +28,16 @@ import { ITweet } from '../utils/types';
 interface Props {
   editTweetInfo?: ITweet,
   replyModal?: boolean;
-  tweetId?: string,
+  tweetBeingRepliedToId?: string,
   showEmojiState?: boolean,
   setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
- * @description - 
+ * @description - Renders a container for the user to create/edit a tweet. Deals with the content they put into the tweet such as the text, images and/or emojis. Shown at the top of the Feed and the NewTweetModal components.
  * @returns {React.FC}
  */
-const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmojiState }: Props) => {
+const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState }: Props) => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
@@ -45,7 +45,7 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
   const filePickerRef = useRef(null);
   const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0));
 
   useEffect(() => {
@@ -69,13 +69,13 @@ const Input = ({ editTweetInfo, replyModal, tweetId, showEmojiState, setShowEmoj
     const docRef = await addDoc(collection(db, 'tweets'), {
       userID: session.user.uid,
       text: input,
-      parentTweet: replyModal ? tweetId : '',
+      parentTweet: replyModal ? tweetBeingRepliedToId : '',
       timestamp: serverTimestamp(),
       versionHistory: []
     });
 
     if (replyModal) {
-      await setDoc(doc(db, "tweets", tweetId, "replies", docRef.id), {
+      await setDoc(doc(db, "tweets", tweetBeingRepliedToId, "replies", docRef.id), {
         name: session.user.name,
       });
     }

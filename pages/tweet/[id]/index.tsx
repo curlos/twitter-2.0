@@ -1,7 +1,7 @@
 // Importing necessary Firestore functions to interact with the database
 import { doc, DocumentData, onSnapshot } from '@firebase/firestore';
 // Importing authentication functions from NextAuth
-import { getProviders, getSession, useSession } from 'next-auth/react';
+import { getProviders, getSession } from 'next-auth/react';
 // Implementing the Next.js router for URL parameter access and routing actions
 import { useRouter } from 'next/router';
 // Importing React and its hooks
@@ -23,31 +23,19 @@ import { NewTweetModal } from '../../../components/NewTweetModal';
 import { SparklesIcon } from '@heroicons/react/outline';
 import Tweet from '../../../components/Tweet';
 import Widgets from '../../../components/Widgets';
-import SettingsModal from '../../../components/SettingsModal';
 import MobileBottomNavBar from '../../../components/MobileBottomNavBar';
 import { SearchModal } from '../../../components/SearchModal';
 import Spinner from '../../../components/Spinner';
 import SidenavDrawer from '../../../components/SidenavDrawer';
 import DeletedTweet from '../../../components/DeletedTweet';
 
-// Type definition for props received by the TweetPage component
-interface Props {
-    trendingResults: any,
-    followResults: any,
-    providers: any;
-}
-
 // TweetPage component definition
-const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
-
-    // Using session data from NextAuth
-    const { data: session } = useSession();
-
+const TweetPage = () => {
     // Recoil state for the new tweet modal, the app's color theme, the search modal, and the side navigation
-    const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-    const [theme, setTheme] = useRecoilState(colorThemeState);
-    const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
-    const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+    const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
+    const [theme, _setTheme] = useRecoilState(colorThemeState);
+    const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
+    const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
 
     // Local state for holding the current tweet, its ID, its author, any replies, and any parent tweet and its author
     const [tweet, setTweet] = useState<DocumentData>();
@@ -55,7 +43,7 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
     const [author, setAuthor] = useState<DocumentData>();
     const [replies, setReplies] = useState([]);
     const [parentTweet, setParentTweet] = useState<DocumentData>();
-    const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
+    const [_parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
 
     // Loading state for async data fetching operations
     const [loading, setLoading] = useState(true);
@@ -179,13 +167,11 @@ const TweetPage = ({ trendingResults, followResults, providers }: Props) => {
                         </div>
                     )}
 
-
                     <Widgets />
 
                     {isOpen && <NewTweetModal />}
                     {isSearchModalOpen && <SearchModal />}
                     {isSidenavOpen && <SidenavDrawer />}
-
 
                     <MobileBottomNavBar />
                 </main>

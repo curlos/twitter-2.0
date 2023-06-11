@@ -5,8 +5,9 @@ import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
 import { IAuthor, ITweet } from "../utils/types";
-import { collection, deleteDoc, doc, DocumentData, getDoc, onSnapshot, serverTimestamp, setDoc } from "@firebase/firestore";
+import { collection, doc, DocumentData, getDoc, onSnapshot } from "@firebase/firestore";
 import { db } from "../firebase";
+import { useFollow } from "../utils/useFollow";
 
 interface Props {
   tweet: ITweet,
@@ -21,12 +22,12 @@ interface Props {
  */
 export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
   const { data: session } = useSession();
-  const [user, setUser] = useState<DocumentData>();
+  const [_user, setUser] = useState<DocumentData>();
   const [followers, setFollowers] = useState<DocumentData>();
   const [followed, setFollowed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const [_editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
 
   useEffect(() => {
     // Creating a reference to the document in Firestore.
@@ -86,39 +87,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
    * @description - Handles what happens when a user wants to follow or unfollow someone.
    * @returns {Object || undefined}
    */
-  const handleFollow = async () => {
-    // If there's no "session", then the user is not logged in, meaning we should redirect them back to the feed page. Not really sure why they need to be redirected to that home page. Realistically, if they click this button, they should ACTUALLY be redirected to the "/auth" page to get them to signup. This goes for a bunch of other functions as well.
-    if (!session) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: '/'
-        }
-      };
-    }
-
-    // If they click the button and they are FOLLOWING the author of the tweet, then they will UNFOLLOW the author of the tweet.
-    if (followed) {
-      // REMOVE the currently logged in user from the the tweet's author's "followers" list
-      await deleteDoc(doc(db, "users", authorId, "followers", String(session.user.uid)));
-      // REMOVE the current author of this tweet from the currently logged in user's "following" list
-      await deleteDoc(doc(db, "users", String(session.user.uid), "following", authorId));
-    } else {
-      // Else if they click the button and they are NOT FOLLOWING the author of the tweet, then they will FOLLOW the author of the tweet.
-
-      // ADD the currently logged in user as a follower in the tweet's author's "followers" list
-      await setDoc(doc(db, "users", authorId, "followers", String(session.user.uid)), {
-        followedAt: serverTimestamp(),
-        followedBy: session.user.uid
-      });
-
-      // ADD the current author of this tweet into the currently logged in user's "following" list
-      await setDoc(doc(db, "users", String(session.user.uid), "following", authorId), {
-        followedAt: serverTimestamp(),
-        followedBy: session.user.uid
-      });
-    }
-  };
+  const handleFollow = useFollow({ session, followed, db, userID: authorId });
 
   // TODO: Currently, when a user that is NOT logged in clicks the three dot button to show more actions for the tweet, the user will see an empty box. That doesn't seem correct. Need to take a look at how the actual site does it. Probably will need to redirect them to the "/auth" page in some manner as the point of this site is to get as many users as possible.
   return (

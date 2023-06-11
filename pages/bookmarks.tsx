@@ -1,8 +1,7 @@
-import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { getProviders, getSession, useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom';
@@ -18,14 +17,12 @@ import { db } from '../firebase';
 
 const Followers = () => {
   const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
+  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const router = useRouter();
 
   useEffect(() => {
     onSnapshot(collection(db, 'users', session.user.uid, 'bookmarks'), (snapshot) => {
@@ -69,9 +66,7 @@ const Followers = () => {
             </div>
           ) : <Spinner />
           }
-
         </div>
-
 
         <Widgets />
         {isOpen && <NewTweetModal />}

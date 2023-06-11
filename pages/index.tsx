@@ -15,12 +15,12 @@ import Widgets from '../components/Widgets';
 
 
 export default function Home({ trendingResults, followResults, providers }) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState);
-  const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(settingsModalState);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const [isSettingsModalOpen, _setSettingsModalOpen] = useRecoilState(settingsModalState);
+  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
+  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
