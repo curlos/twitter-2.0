@@ -8,11 +8,16 @@ interface Props {
 }
 
 /**
- * @description - 
+ * @description - Renders a sidebar link for the "Sidebar" component.
  * @returns {React.FC}
  */
 const SidebarLink = ({ text, Icon, active, tag }: Props) => {
 
+  /**
+   * @description - Get the href link. If it's not a page, then it won't redirect anywhere. It'll just do whatever it's function intends it do. For example, clicking the "Search" button will open the search modal and won't link anywhere.
+   * @param {String} text - The text that will be displayed.
+   * @returns {String}
+   */
   const getLinkHref = (text) => {
     switch (text) {
       case 'Profile':
@@ -28,6 +33,7 @@ const SidebarLink = ({ text, Icon, active, tag }: Props) => {
 
   return (
     <Link href={getLinkHref(text)}>
+      {/* Show the text as bold when the link is ACTIVE (meaning we are on that page. So, if we were on the user's bookmarks, then the "Bookmark" link would be bold.) */}
       <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold text-lightblue-500 dark:text-white'}`}>
         <Icon className="h-[30px] w-[30px]" />
         <div className="hidden xl:block">{text}</div>

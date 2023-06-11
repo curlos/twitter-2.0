@@ -15,7 +15,7 @@ import { FaHome } from "react-icons/fa";
 import { FiBookmark } from 'react-icons/fi';
 
 /**
- * @description - 
+ * @description - Renders the sidebar (only on MOBILE) that shows the most common pages a user could go to as well as actions they could take such as "Home", "Search", "Bookmarks", "Profile", "Logout", "New Tweet" and information about them such as their profile pic, name and username. The desktop equivalent is the "Sidebar" component.
  * @returns {React.FC}
  */
 const SidenavDrawer = () => {
@@ -70,6 +70,7 @@ const SidenavDrawer = () => {
               </div>
             )}
 
+            {/* Only show if the user is logged in. */}
             {session && session.user && (
               <Link href="/bookmarks">
                 <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
@@ -80,7 +81,7 @@ const SidenavDrawer = () => {
             )}
 
 
-
+            {/* Only show if the user is logged in. */}
             {session && session.user && (
               <Link href={`/profile/${session.user.tag}`}>
                 <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
@@ -90,6 +91,7 @@ const SidenavDrawer = () => {
               </Link>
             )}
 
+            {/* Only show if the user is logged in. */}
             {session && session.user && (
               <div className={`flex items-center gap-4 cursor-pointer`} onClick={() => {
                 signOut({ callbackUrl: 'http://localhost:3000/auth' });
@@ -101,6 +103,7 @@ const SidenavDrawer = () => {
             )}
           </div>
 
+          {/* Only show if the user is logged in. */}
           {session && session.user && (
             <div className="flex items-center justify-between mt-3 w-100 text-xl" onClick={() => setIsOpen(false)}>
               <div className="flex items-center gap-4 w-100">

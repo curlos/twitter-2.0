@@ -18,7 +18,7 @@ import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs";
 
 /**
- * @description - 
+ * @description - Renders the sidebar (only on DESKTOP) that shows the most common pages a user could go to as well as actions they could take such as "Home", "Search", "Bookmarks", "Profile", "Logout", "New Tweet" and information about them such as their profile pic, name and username. The mobile equivalent is the "SidenavDrawer" component.
  * @returns {React.FC}
  */
 const Sidebar = () => {
@@ -30,10 +30,12 @@ const Sidebar = () => {
   const [activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 
+  // Get the theme of the user to determine whether or not we'd display the 'light' theme or 'dark' theme
   useEffect(() => {
     setTheme(localStorage.getItem('theme'));
   }, []);
 
+  // When we click one of the links in the sidebar ("Home", "Bookmarks", or "Profile"), then we want to change the active link to that page. This could also be detected by just going to the page. All that has to happen the router's pathname changing.
   useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {
       setActiveLink('bookmarks');
@@ -76,10 +78,12 @@ const Sidebar = () => {
 
         <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
 
+        {/* Only show if the user is logged in. */}
         {session && session.user && (
           <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
+        {/* Only show if the user is logged in. */}
         {session && session.user && (
           <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
             signOut({ callbackUrl: 'http://localhost:3000/auth' });
@@ -99,6 +103,7 @@ const Sidebar = () => {
           Tweet
         </button>
 
+        {/* This is for mobile which by default will show the blue feather to post a tweet. I could remove it if the user is not logged in but for the purpose of the site, I think it'd be better to leave it there and link to the auth page if the user wants to tweet. */}
         <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => {
           if (!session) {
             Router.push('/auth');
@@ -110,6 +115,7 @@ const Sidebar = () => {
         </div>
       </div>
 
+      {/* If the user is logged in, then at the bottom of the sidebar they'll see their basic profile info (icon, name, username, three dots) */}
       {session && session.user && (
         <div className="hidden xl:flex items-center justify-between mt-3 w-100">
           <div className="flex items-center space-x-2 w-100">
