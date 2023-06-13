@@ -81,8 +81,8 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     }
 
     const downloadURL = await uploadImageAndGetURL(docRef.id);
-    console.log(downloadURL);
-    debugger;
+    // console.log(downloadURL);
+    // debugger;
 
     if (selectedFile) {
       await updateDoc(doc(db, "tweets", docRef.id), {
@@ -90,7 +90,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       });
     }
 
-    debugger;
+    // debugger;
 
     setLoading(false);
     setInput('');
@@ -101,8 +101,9 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
 
   const editTweet = async () => {
     const currentTweet = editTweetInfo;
-    console.log(currentTweet);
-    debugger;
+    // console.log(currentTweet);
+    // debugger;
+
     // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
     if (loading || (!input && !selectedFile)) return;
     setLoading(true);
@@ -129,7 +130,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     }
 
     console.log(updatedObject);
-    debugger;
+    // debugger;
 
 
     try {
@@ -137,17 +138,17 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       if (!imageAlreadyUploaded) {
         const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
         updatedObject.image = downloadURL;
-        debugger;
+        // debugger;
       }
 
-      debugger;
+      // debugger;
 
-      console.log();
-      debugger;
+      // console.log();
+      // debugger;
 
       await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
 
-      debugger;
+      // debugger;
 
       // Once we're finished, reset everything back to the defaults and close the modal.
       setLoading(false);

@@ -285,6 +285,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   // Check if the tweet has been edited at least once.
   const editedTweet = tweet?.versionHistory && tweet.versionHistory.length > 0;
 
+  console.log(tweet);
+
   return (
     // In this component, there are two ways a tweet will be shown: 
     // - As a tweet in a page where we are on the page of that tweet and show the thread of replies below the tweet as well as other detailed info like the specific time it was posted, device it was posted on, and the exact stats of each action (replies, retweets, likes, bookmarks)
@@ -354,7 +356,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                         </Link>
                       </div>
                     ) : null}
-                    <div className={`${pastTweet ? 'text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`}>{tweet.text}</div>
+                    <div className={`${pastTweet ? ' text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`} style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
                     {tweet.image && (
                       <div className="pt-3">
                         <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
@@ -460,7 +462,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             ) : null}
 
             {/* Main content of the tweet - Renders both the text AND image in the tweet. */}
-            <div className="break-all">{tweet.text}</div>
+            <div className="break-all" style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
                 <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2]  dark:border-gray-700" />
