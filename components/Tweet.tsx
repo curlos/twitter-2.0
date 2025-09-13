@@ -375,7 +375,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       retweetTweet();
                     }}>
                       {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
-                      <div className="text-green-400">{retweets.length}</div>
+                      <div className={retweeted ? "text-green-400" : "text-gray-500"}>{retweets.length}</div>
                     </div>
 
                     {/* Like button */}
@@ -384,7 +384,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       likeTweet();
                     }}>
                       {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
-                      <div className="text-red-500">{likes.length}</div>
+                      <div className={liked ? "text-red-500" : "text-gray-500"}>{likes.length}</div>
                     </div>
 
                     {/* Bookmark button */}
