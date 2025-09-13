@@ -132,11 +132,7 @@ const FollowersOrFollowing = () => {
                     let key = null;
                     let userID = null;
 
-                    if (urlContainsFollowers) {
-                      key = userID = String(accountData.followedBy);
-                    } else if (urlContainsFollowing) {
-                      key = userID = String(accountData.followingID);
-                    }
+                    key = userID = account.id;
 
                     return (
                       <MediumUser key={key} userID={userID} />
@@ -156,7 +152,7 @@ const FollowersOrFollowing = () => {
                 <div className="h-[60px]" />
               </div>
             </div>
-          ) : <Spinner />
+          ) : <div className="pt-2"><Spinner /></div>
           }
         </div>
 
