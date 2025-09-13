@@ -196,10 +196,18 @@ const EditProfileModal = () => {
               <div className="h-[70vh] overflow-y-scroll">
 
                 <div className="">
-                  <div className="w-full rounded-full cursor-pointer" onClick={() => bannerFilePickerRef.current.click()}>
-                    <img src={selectedFileBanner || banner} className="w-full max-h-[240px] object-cover" />
+                  <div
+                    className="w-full h-[140px] sm:h-[200px] xl:h-[225px] cursor-pointer relative flex items-center justify-center overflow-hidden bg-black"
+                    onClick={() => bannerFilePickerRef.current.click()}
+                  >
+                    {/* Background image with opacity */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center opacity-50 hover:opacity-30 transition-opacity"
+                      style={{ backgroundImage: `url(${selectedFileBanner || banner})` }}
+                    ></div>
 
-                    <FiCamera className="h-5 w-5 ml-[50%] mt-[-125px] z-50" />
+                    {/* Camera icon - full opacity */}
+                    <FiCamera className="h-8 w-8 text-white drop-shadow-lg relative z-10" />
 
                     <input
                       type="file"
@@ -209,14 +217,18 @@ const EditProfileModal = () => {
                     />
                   </div>
 
-                  <div className="mt-[120px]">
+                  <div
+                    className="mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full cursor-pointer relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black"
+                    onClick={() => profilePicFilePickerRef.current.click()}
+                  >
+                    {/* Background image with opacity */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center rounded-full opacity-50 hover:opacity-30 transition-opacity z-20"
+                      style={{ backgroundImage: `url(${selectedFileProfilePic || profilePic})` }}
+                    ></div>
 
-                  </div>
-
-                  <div className="mt-[-70px] h-[112px] w-[112px] ml-2 rounded-full cursor-pointer" onClick={() => profilePicFilePickerRef.current.click()}>
-                    <img src={selectedFileProfilePic || profilePic} alt={name} className="h-[112px] w-[112px] object-cover rounded-full ml-2 border-4 border-transparent" />
-
-                    <FiCamera className="h-5 w-5 ml-[53px] mt-[-67px] z-50" />
+                    {/* Camera icon - full opacity */}
+                    <FiCamera className="h-6 w-6 text-white drop-shadow-lg relative z-30" />
 
                     <input
                       type="file"
