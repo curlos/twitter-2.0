@@ -285,8 +285,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   // Check if the tweet has been edited at least once.
   const editedTweet = tweet?.versionHistory && tweet.versionHistory.length > 0;
 
-  console.log(tweet);
-
   return (
     // In this component, there are two ways a tweet will be shown: 
     // - As a tweet in a page where we are on the page of that tweet and show the thread of replies below the tweet as well as other detailed info like the specific time it was posted, device it was posted on, and the exact stats of each action (replies, retweets, likes, bookmarks)

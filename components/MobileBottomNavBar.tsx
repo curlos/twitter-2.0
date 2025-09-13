@@ -18,7 +18,9 @@ const MobileBottomNavBar: React.FC = () => {
     <div className="sm:hidden fixed bottom-0 w-full border-t-[1px] bg-white border-[#AAB8C2] dark:bg-black  dark:border-gray-700 p-4 px-6 flex justify-between items-center h-[60px]">
       {/* Will redirect back home to the user's feed. */}
       <Link href={`/`}>
-        <FaHome className="flex-1 h-6 w-6 cursor-pointer" />
+        <div>
+          <FaHome className="flex-1 h-6 w-6 cursor-pointer" />
+        </div>
       </Link>
 
       {/* Clicking this will open the "Search" modal where users can type in whatever they want and filter the tweets shown by their query. */}
