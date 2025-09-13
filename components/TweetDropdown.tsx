@@ -114,7 +114,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
                 >
 
                   <div className="py-1 bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700">

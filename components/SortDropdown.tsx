@@ -39,7 +39,7 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right rounded-md shadow-gray-500 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
+                  className="absolute right-0 w-56 mt-2 origin-top-right rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100] mr-5"
                 >
 
                   {/* When this clicked, the list of tweets will be sorted by the NEWEST ones. */}
