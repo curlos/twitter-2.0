@@ -193,7 +193,7 @@ const EditProfileModal = () => {
                 </div>
               </div>
 
-              <div className="h-[70vh] overflow-y-scroll">
+              <div className="h-[70vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
 
                 <div className="">
                   <div
@@ -273,15 +273,19 @@ const EditProfileModal = () => {
                       <div>Bio</div>
                       <div>{bio.length} / 160</div>
                     </div>
-                    <textarea className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none resize-none" value={bio} onChange={(e) => {
-                      if (e.target.value.length <= 160) {
-                        setBio(e.target.value);
-                      }
-                    }
-                    }></textarea>
+                    <input
+                      className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none"
+                      value={bio}
+                      placeholder="Add your bio"
+                      onChange={(e) => {
+                        if (e.target.value.length <= 160) {
+                          setBio(e.target.value);
+                        }
+                      }}
+                    />
                   </div>
 
-                  <div className="p-2 border border-[#AAB8C2]  dark:border-gray-700 space-y-1 rounded">
+                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
                     <div className="text-sm text-gray-400 flex justify-between">
                       <div>Location</div>
                       <div>{location.length} / 30</div>
