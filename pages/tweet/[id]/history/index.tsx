@@ -164,8 +164,8 @@ const TweetVersionHistory = () => {
                             <div className="font-bold text-xl p-3 pt-5">Version History</div>
 
                             {/* List of Past Tweets */}
-                            {tweet?.versionHistory && tweet?.versionHistory.toReversed().map((pastTweet: ITweet) => (
-                                <Tweet id={String(pastTweet.tweetId)} tweet={pastTweet} tweetID={pastTweet.tweetId} pastTweet={true} />
+                            {tweet?.versionHistory && tweet?.versionHistory.toReversed().map((pastTweet: ITweet, index: number) => (
+                                <Tweet key={`${pastTweet.tweetId}-${pastTweet.timestamp?.seconds || index}`} id={String(pastTweet.tweetId)} tweet={pastTweet} tweetID={pastTweet.tweetId} pastTweet={true} />
                             ))}
 
 
