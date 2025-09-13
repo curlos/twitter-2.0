@@ -16,8 +16,20 @@ interface Props {
  * @param {Array<ITweet>} tweets - List of tweets.
  * @returns {Array<ITweet>}
  */
-const getSortedTweets = (tweets) => {
-  return sortByNewest(tweets);
+const getSortedTweets = (originalTweets, userRetweets) => {
+  // Add retweet flags without destroying Firebase document structure
+  const markedOriginalTweets = originalTweets.map(tweet => {
+    tweet.isRetweet = false;
+    return tweet;
+  });
+
+  const markedRetweets = userRetweets.map(tweet => {
+    tweet.isRetweet = true;
+    return tweet;
+  });
+
+  // Combine and sort using the original sortByNewest function
+  return sortByNewest([...markedOriginalTweets, ...markedRetweets]);
 };
 
 /**
@@ -26,7 +38,7 @@ const getSortedTweets = (tweets) => {
  */
 const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
 
-  const [allTweets, _setAllTweets] = useState(getSortedTweets([...tweets, ...retweets]));
+  const [allTweets, _setAllTweets] = useState(getSortedTweets(tweets, retweets));
   const [filteredTweets, setFilteredTweets] = useState([]);
 
   useEffect(() => {
@@ -61,17 +73,26 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
     }
   };
 
+  console.log(filteredTweets)
+
   return (
     <div>
       {/* Render the list of filtered tweets. */}
       {filteredTweets.map((tweet) => {
         const tweetData = tweet.data();
+        // Create unique key that includes retweet status to avoid duplicate key warnings
+        const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
 
         return (
-          <Tweet key={tweet.id} id={tweet.id} tweet={{
-            ...tweetData,
-            tweetId: tweet.id
-          }} tweetID={tweet.id} />
+          <Tweet
+            key={uniqueKey}
+            id={tweet.id}
+            tweet={{
+              ...tweetData,
+              tweetId: tweet.id
+            }}
+            tweetID={tweet.id}
+          />
         );
       })}
       <div className="h-[60px]" />

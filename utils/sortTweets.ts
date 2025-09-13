@@ -1,6 +1,6 @@
 import { DocumentData } from 'firebase/firestore';
 
-export const sortByNewest = (tweetsToSort: [DocumentData]) => {
+export const sortByNewest = (tweetsToSort: DocumentData[]) => {
   const tweetsToSortClone = [...tweetsToSort];
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
@@ -13,7 +13,7 @@ export const sortByNewest = (tweetsToSort: [DocumentData]) => {
   });
 };
 
-export const sortByOldest = (tweetsToSort: [DocumentData]) => {
+export const sortByOldest = (tweetsToSort: DocumentData[]) => {
   const tweetsToSortClone = [...tweetsToSort];
 
   return tweetsToSortClone.sort((tweetOne, tweetTwo) => {
