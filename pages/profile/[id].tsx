@@ -82,12 +82,20 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!loading && session && session.user) {
       onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
+        // TODO: Fix bug here about following ID!
         let newFollowersYouFollow = [];
         for (let user of snapshot.docs) {
-          const docRef = doc(db, "users", user.data().followingID);
+          // The document ID is the user ID of the person being followed
+          const followingUserID = user.id;
+
+          const docRef = doc(db, "users", followingUserID);
           const snap = await getDoc(docRef);
           const follower = snap.data();
-          newFollowersYouFollow.push({ ...follower, id: snap.id });
+
+          // Only add if the user document exists
+          if (follower) {
+            newFollowersYouFollow.push({ ...follower, id: snap.id });
+          }
         }
 
         const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)));
@@ -187,10 +195,6 @@ const ProfilePage = () => {
               <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
 
               <div className="flex items-center space-x-2">
-                <div className="flex justify-center items-center p-2 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full w-10 h-10">
-                  <DotsHorizontalIcon className="h-5 w-5" />
-                </div>
-
                 <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
                   {session && session.user && session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
