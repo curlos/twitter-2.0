@@ -28,7 +28,7 @@ const Auth = ({ providers }: Props) => {
     <div className="flex min-h-screen w-screen max-w-full">
       <Head>
         <title>Login to Twitter 2.0</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/assets/twitter-logo.svg" />
       </Head>
       <div className="hidden md:flex flex-col flex-1 bg-lightblue-500 justify-center items-center p-12 lg:p-24">
         <div className="space-y-5">

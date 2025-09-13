@@ -132,7 +132,7 @@ const TweetPage = () => {
                     <title>
                         {author?.name} on Twitter: "{tweet?.text}"
                     </title>
-                    <link rel="icon" href="/favicon.ico" />
+                    <link rel="icon" href="/assets/twitter-logo.svg" />
                 </Head>
 
                 <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex  `}>

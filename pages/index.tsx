@@ -26,7 +26,7 @@ export default function Home({ trendingResults, followResults, providers }) {
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
       <Head>
         <title>Twitter 2.0</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/assets/twitter-logo.svg" />
       </Head>
 
       <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen min-w-screen flex`}>
