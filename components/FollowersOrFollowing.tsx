@@ -1,5 +1,5 @@
 import { DocumentData, query, collection, where, getDocs } from "@firebase/firestore";
-import { ArrowLeftIcon, BadgeCheckIcon } from "@heroicons/react/solid";
+import { ArrowLeftIcon, BadgeCheckIcon, UserGroupIcon } from "@heroicons/react/solid";
 import Head from "next/head";
 import Link from "next/link";
 import router, { useRouter } from "next/router";
@@ -95,9 +95,9 @@ const FollowersOrFollowing = () => {
               </div>
 
               {/* Can switch between the two URLs below:
-                    - "/following/${tag}": Shows the people that user is following.
-                    - "followers/${tag}": Shows the people that user is followed by.
-                */}
+                  - "/following/${tag}": Shows the people that user is following.
+                  - "followers/${tag}": Shows the people that user is followed by.
+              */}
               <div className="flex">
                 {/* FOLLOWERS TAB */}
                 <Link href={`/followers/${author.tag}`}>
@@ -126,25 +126,32 @@ const FollowersOrFollowing = () => {
 
               {/* Go through the list of the user's "followers" and render them. This will show basic information about each user (profile pic, name, username, bio) and a button that allows the user to quickly click "follow" to follow or unfollow them.  */}
               <div>
-                {accounts.map((account) => {
-                  const accountData = account.data();
-                  let key = null;
-                  let userID = null;
+                {accounts.length > 0 ? (
+                  accounts.map((account) => {
+                    const accountData = account.data();
+                    let key = null;
+                    let userID = null;
 
-                  if (urlContainsFollowers) {
-                    key = userID = String(accountData.followedBy);
-                  } else if (urlContainsFollowing) {
-                    key = userID = String(accountData.followingID);
-                  }
+                    if (urlContainsFollowers) {
+                      key = userID = String(accountData.followedBy);
+                    } else if (urlContainsFollowing) {
+                      key = userID = String(accountData.followingID);
+                    }
 
-                  console.log(accountData);
-                  console.log(key);
-                  console.log(userID);
-
-                  return (
-                    <MediumUser key={key} userID={userID} />
-                  );
-                })}
+                    return (
+                      <MediumUser key={key} userID={userID} />
+                    );
+                  })
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                    <UserGroupIcon className="h-16 w-16 mb-4 text-gray-400" />
+                    {urlContainsFollowers ? (
+                      <p className="text-xl">No followers</p>
+                    ) : (
+                      <p className="text-xl">Not following anyone</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="h-[60px]" />
               </div>
