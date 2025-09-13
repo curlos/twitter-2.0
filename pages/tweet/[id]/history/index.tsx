@@ -124,8 +124,6 @@ const TweetVersionHistory = () => {
         }
     }, [db, id, parentTweet]);
 
-    console.log(tweet);
-
 
     // Rendering the TweetPage component
     return (

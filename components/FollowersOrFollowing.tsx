@@ -33,9 +33,6 @@ const FollowersOrFollowing = () => {
   const urlContainsFollowers = router.pathname.includes('followers');
   const urlContainsFollowing = router.pathname.includes('following');
 
-  console.log(urlContainsFollowers);
-  console.log(urlContainsFollowing);
-
   useEffect(() => {
     getAccounts();
   }, [db, tag, loading]);

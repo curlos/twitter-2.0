@@ -58,7 +58,7 @@ const Widgets = () => {
         sessionStorage.setItem('latestNews', JSON.stringify(data));
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

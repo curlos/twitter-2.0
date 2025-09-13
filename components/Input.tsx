@@ -81,16 +81,12 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     }
 
     const downloadURL = await uploadImageAndGetURL(docRef.id);
-    // console.log(downloadURL);
-    // debugger;
 
     if (selectedFile) {
       await updateDoc(doc(db, "tweets", docRef.id), {
         image: downloadURL
       });
     }
-
-    // debugger;
 
     setLoading(false);
     setInput('');
@@ -101,8 +97,6 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
 
   const editTweet = async () => {
     const currentTweet = editTweetInfo;
-    // console.log(currentTweet);
-    // debugger;
 
     // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
     if (loading || (!input && !selectedFile)) return;
@@ -129,22 +123,12 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       updatedObject.versionHistory = [{ ...currentTweet }];
     }
 
-    console.log(updatedObject);
-    // debugger;
-
-
     try {
       // If this is a new image that the user just uploaded
       if (!imageAlreadyUploaded) {
         const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
         updatedObject.image = downloadURL;
-        // debugger;
       }
-
-      // debugger;
-
-      // console.log();
-      // debugger;
 
       await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
 
@@ -157,7 +141,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       setShowEmojis(false);
       setIsOpen(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
   };

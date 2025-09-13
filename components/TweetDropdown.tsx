@@ -135,8 +135,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                     {/* This option will only be shown if the tweet belongs to the currently logged in user (meaning if it belongs to the same person who clicked to show the dropdown). If the "Edit" button here is clicked, then the user will be prompted with the Edit Tweet flow where they will be shown a modal with the current tweet's text and/or image (s). */}
                     {session && session.user && author.tag === session.user.tag && (
                       <Menu.Item onClick={() => {
-                        // console.log(tweet);
-                        // debugger;
                         setIsOpen(true);
                         setEditTweetInfo({
                           image: tweet?.image,

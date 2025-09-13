@@ -73,8 +73,6 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
     }
   };
 
-  console.log(filteredTweets)
-
   return (
     <div>
       {/* Render the list of filtered tweets. */}
