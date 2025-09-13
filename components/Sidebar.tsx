@@ -130,11 +130,6 @@ const Sidebar = () => {
               <div className="text-gray-500 break-word">@{session.user.tag}</div>
             </div>
           </div>
-
-          <div>
-            <DotsHorizontalIcon className="h-6 w-6" />
-          </div>
-
         </div>
       )}
     </div>
