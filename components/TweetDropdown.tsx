@@ -137,7 +137,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                       <Menu.Item onClick={() => {
                         setIsOpen(true);
                         setEditTweetInfo({
-                          image: tweet?.image,
+                          image: tweet?.image || '',
                           ...tweet
                         });
                       }}>

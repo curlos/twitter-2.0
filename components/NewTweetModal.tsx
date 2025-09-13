@@ -10,11 +10,15 @@ import { db } from '../firebase';
 import ParentTweet from './ParentTweet';
 import { ITweet } from '../utils/types';
 
+interface Props {
+  setIsEditing?: (editing: boolean) => void;
+}
+
 /**
  * @description - Renders a modal with the "Input" component that will allow a user to create a new tweet (this tweet can be a new tweet, a reply or a new edit)
  * @returns {React.FC}
  */
-export const NewTweetModal = () => {
+export const NewTweetModal = ({ setIsEditing }: Props) => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [showEmojiState, setShowEmojiState] = useState(false);
   const [tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
@@ -78,7 +82,7 @@ export const NewTweetModal = () => {
               {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
               <ParentTweet fromModal={true} />
 
-              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== ''} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} />
+              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== ''} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} />
 
               {/* Have to show this additional container below the input because for some reason this emoji picker library gets cut off by the container if it's too short. The minimum for comfortability purposes that I saw was "430px". */}
               {/* TODO: Find out if there's a way to display the emoji picker in the modal without extending the modal's container. If not, find a different library to use. */}

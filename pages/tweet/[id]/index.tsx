@@ -48,6 +48,9 @@ const TweetPage = () => {
     // Loading state for async data fetching operations
     const [loading, setLoading] = useState(true);
 
+    // State to track when tweet is being edited to prevent onSnapshot updates
+    const [isEditing, setIsEditing] = useState(false);
+
     // Using the Next.js router
     const router = useRouter();
 
@@ -58,11 +61,14 @@ const TweetPage = () => {
     useEffect(
         () =>
             onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
-                // Setting the tweet data and ID in state
-                setTweet(snapshot.data());
-                setTweetID(snapshot.id);
+                // Skip updates when editing to prevent component unmounting
+                if (!isEditing) {
+                    // Setting the tweet data and ID in state
+                    setTweet(snapshot.data());
+                    setTweetID(snapshot.id);
+                }
             }),
-        [db, id]
+        [db, id, isEditing]
     );
 
     // Effect hook for loading the replies to the main tweet
@@ -169,7 +175,7 @@ const TweetPage = () => {
 
                     <Widgets />
 
-                    {isOpen && <NewTweetModal />}
+                    {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
                     {isSearchModalOpen && <SearchModal />}
                     {isSidenavOpen && <SidenavDrawer />}
 

@@ -478,9 +478,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
               <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
                 {editedTweet && <div className="text-gray-500">Last edited</div>}
-                <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('LT')}</div>
+                <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
                 <div className="text-gray-500 font-bold">·</div>
-                <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).format('ll')}</div>
+                <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
                 <div className="text-gray-500 font-bold">·</div>
                 <div className="text-gray-500">Twitter for Web</div>
               </span>

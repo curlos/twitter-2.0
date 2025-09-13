@@ -31,13 +31,15 @@ interface Props {
   tweetBeingRepliedToId?: string,
   showEmojiState?: boolean,
   setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditTweetInfo?: any;
+  setIsEditing?: (editing: boolean) => void;
 }
 
 /**
  * @description - Renders a container for the user to create/edit a tweet. Deals with the content they put into the tweet such as the text, images and/or emojis. Shown at the top of the Feed and the NewTweetModal components.
  * @returns {React.FC}
  */
-const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState }: Props) => {
+const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing }: Props) => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
@@ -100,7 +102,13 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
 
     // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
     if (loading || (!input && !selectedFile)) return;
+
     setLoading(true);
+
+    // Enable editing mode to pause onSnapshot updates
+    if (setIsEditing) {
+      setIsEditing(true);
+    }
 
     // If the image has already been uploaded (meaning it has not been changed since the past version and has a URL as the string)
     const imageAlreadyUploaded = selectedFile && selectedFile.startsWith('http');
@@ -117,22 +125,33 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       updatedObject.image = selectedFile;
     }
 
+    // Create a clean version of currentTweet without Firebase-specific objects
+    const cleanTweetForHistory = {
+      text: currentTweet.text,
+      image: currentTweet.image || '',
+      timestamp: currentTweet.timestamp,
+      userID: currentTweet.userID,
+      tweetId: currentTweet.tweetId,
+      retweetedBy: currentTweet.retweetedBy || '',
+      parentTweet: currentTweet.parentTweet || ''
+    };
+
     if (currentTweet?.versionHistory) {
-      updatedObject.versionHistory = [...currentTweet.versionHistory, { ...currentTweet }];
+      updatedObject.versionHistory = [...currentTweet.versionHistory, cleanTweetForHistory];
     } else {
-      updatedObject.versionHistory = [{ ...currentTweet }];
+      updatedObject.versionHistory = [cleanTweetForHistory];
     }
 
     try {
       // If this is a new image that the user just uploaded
       if (!imageAlreadyUploaded) {
         const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
-        updatedObject.image = downloadURL;
+        if (downloadURL) {
+          updatedObject.image = downloadURL;
+        }
       }
 
       await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
-
-      // debugger;
 
       // Once we're finished, reset everything back to the defaults and close the modal.
       setLoading(false);
@@ -140,10 +159,34 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       setSelectedFile(null);
       setShowEmojis(false);
       setIsOpen(false);
+
+      // Clear the edit tweet info to prevent modal from reopening
+      if (setEditTweetInfo) {
+        setEditTweetInfo({
+          image: '',
+          parentTweet: '',
+          text: '',
+          timestamp: {
+            seconds: 0,
+            nanoseconds: 0,
+          },
+          userID: '',
+          retweetedBy: '',
+          tweetId: ''
+        });
+      }
+
+      // Disable editing mode to resume onSnapshot updates
+      if (setIsEditing) {
+        setIsEditing(false);
+      }
     } catch (error) {
+      // Make sure to disable editing mode even on error
+      if (setIsEditing) {
+        setIsEditing(false);
+      }
       console.error(error);
     }
-
   };
 
   const uploadImageAndGetURL = async (docRefId: string) => {
@@ -154,6 +197,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       const downloadURL = await getDownloadURL(imageRef);
       return downloadURL;
     }
+    return null;
   };
 
   const addImageToPost = (e) => {
