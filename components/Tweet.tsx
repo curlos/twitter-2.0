@@ -498,9 +498,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
                 <div className="text-gray-500 font-bold">·</div>
                 <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
-                <div className="text-gray-500 font-bold">·</div>
-                <div className="text-gray-500">Twitter for Web</div>
               </span>
+
+              <div className="text-gray-500 font-bold">·</div>
+              <div className="text-gray-500">Twitter for Web</div>
             </div>
 
             {/* Row of stats for each different action: Replies, Retweets, Likes - Hidden for past tweets */}
