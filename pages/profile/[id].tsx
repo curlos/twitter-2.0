@@ -47,6 +47,8 @@ const ProfilePage = () => {
   const { id } = router.query;
 
   useEffect(() => {
+    if (!id) return; // Wait for router to populate id
+
     setLoading(true);
 
     const fetchFromDB = async () => {
