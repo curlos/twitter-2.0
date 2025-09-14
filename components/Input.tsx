@@ -26,6 +26,7 @@ import { useRecoilState } from 'recoil';
 import { newTweetModalState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
+import CircularProgress from './CircularProgress';
 
 interface Props {
   editTweetInfo?: ITweet,
@@ -222,10 +223,10 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
   };
 
   const handleTextChange = (e) => {
-    if (e.target.value.length <= 400) {
+    if (e.target.value.length <= MAX_TWEET_LENGTH) {
       setInput(e.target.value);
     } else {
-      setInput(e.target.value.slice(0, 400));
+      setInput(e.target.value.slice(0, MAX_TWEET_LENGTH));
     }
   };
 
@@ -316,7 +317,10 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
               </div>
 
               <div className="hidden md:flex items-center space-x-4">
-                <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
+                <div className="flex items-center gap-2">
+                  <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
+                  <CircularProgress current={input.length} max={MAX_TWEET_LENGTH} />
+                </div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
                   onClick={getButtonObject().function}>
@@ -326,11 +330,13 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
             </div>
 
             <div className="flex md:hidden items-center space-x-4">
-              <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'} flex gap-2`}>
+              <div className="flex items-center gap-2">
+                <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
+                <CircularProgress current={input.length} max={MAX_TWEET_LENGTH} />
                 {input.length >= MAX_TWEET_LENGTH && (
                   <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />
                 )}
-                {input.length}/{MAX_TWEET_LENGTH}</div>
+              </div>
               <button
                 className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
                 onClick={getButtonObject().function}>
