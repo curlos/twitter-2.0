@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { sortByNewest } from '../utils/sortTweets';
 import { IAuthor } from '../utils/types';
 import Tweet from './Tweet';
+import { ChatAltIcon } from '@heroicons/react/outline';
 
 interface Props {
   author: IAuthor,
@@ -65,27 +66,51 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
 
   const filteredTweets = getFilteredTweets();
 
+  const getEmptyStateMessage = () => {
+    switch (filter) {
+      case 'Tweets':
+        return 'No Tweets';
+      case 'Tweets & Replies':
+        return 'No Tweets & Replies';
+      case 'Media':
+        return 'No Media';
+      case 'Likes':
+        return 'No Likes';
+      default:
+        return 'No Tweets';
+    }
+  };
 
   return (
     <div>
-      {/* Render the list of filtered tweets. */}
-      {filteredTweets.map((tweet) => {
-        const tweetData = tweet.data();
-        // Create unique key that includes retweet status to avoid duplicate key warnings
-        const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
+      {filteredTweets.length > 0 ? (
+        <>
+          {/* Render the list of filtered tweets. */}
+          {filteredTweets.map((tweet) => {
+            const tweetData = tweet.data();
+            // Create unique key that includes retweet status to avoid duplicate key warnings
+            const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
 
-        return (
-          <Tweet
-            key={uniqueKey}
-            id={tweet.id}
-            tweet={{
-              ...tweetData,
-              tweetId: tweet.id
-            }}
-            tweetID={tweet.id}
-          />
-        );
-      })}
+            return (
+              <Tweet
+                key={uniqueKey}
+                id={tweet.id}
+                tweet={{
+                  ...tweetData,
+                  tweetId: tweet.id
+                }}
+                tweetID={tweet.id}
+              />
+            );
+          })}
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+          <ChatAltIcon className="h-12 w-12 mb-4" />
+          <p className="text-xl font-semibold">{getEmptyStateMessage()}</p>
+          <p className="text-gray-400 mt-2">When you post, they'll show up here.</p>
+        </div>
+      )}
       <div className="h-[60px]" />
     </div>
   );
