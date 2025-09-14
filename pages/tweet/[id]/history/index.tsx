@@ -175,7 +175,7 @@ const TweetVersionHistory = () => {
                                 <SparklesIcon className="h-5 w-5" />
                             </div>
 
-                            {parentTweet && parentTweet.data() && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
+                            {parentTweet && parentTweet.data() && <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
 
                             {/* If the parent tweet doesn't get anything from "data()", then that can only mean the tweet has been deleted, so we'd want to show this "DeletedTweet" component */}
                             {parentTweet && !parentTweet.data() && (

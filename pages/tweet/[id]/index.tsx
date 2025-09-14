@@ -180,7 +180,7 @@ const TweetPage = () => {
                                 <SparklesIcon className="h-5 w-5" />
                             </div>
 
-                            {parentTweet && parentTweet.data() && <Tweet id={String(id)} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
+                            {parentTweet && parentTweet.data() && <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />}
 
                             {parentTweet && !parentTweet.data() && (
                                 <DeletedTweet />
