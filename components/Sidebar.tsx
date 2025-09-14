@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { HomeIcon } from "@heroicons/react/solid";
+import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid } from "@heroicons/react/solid";
 import {
+  HomeIcon,
   BookmarkIcon,
   UserIcon,
   DotsHorizontalIcon,
@@ -69,18 +70,18 @@ const Sidebar = () => {
           </div>
         )}
 
-        <SidebarLink text="Home" Icon={HomeIcon} active={activeLink === 'home'} />
+        <SidebarLink text="Home" Icon={HomeIcon} IconSolid={HomeIconSolid} active={activeLink === 'home'} />
 
         <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => setSearchModalOpen(true)}>
           <FaSearch className="h-7 w-7 cursor-pointer" />
           <div className="hidden xl:block">Search</div>
         </div>
 
-        <SidebarLink text="Bookmarks" Icon={BookmarkIcon} active={activeLink === 'bookmarks'} />
+        <SidebarLink text="Bookmarks" Icon={BookmarkIcon} IconSolid={BookmarkIconSolid} active={activeLink === 'bookmarks'} />
 
         {/* Only show if the user is logged in. */}
         {session && session.user && (
-          <SidebarLink text="Profile" Icon={UserIcon} active={activeLink === 'profile'} tag={session.user.tag} />
+          <SidebarLink text="Profile" Icon={UserIcon} IconSolid={UserIconSolid} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
         {/* Only show if the user is logged in. */}
