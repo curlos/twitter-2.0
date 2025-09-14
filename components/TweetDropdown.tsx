@@ -30,6 +30,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [_editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
 
   useEffect(() => {
+    let isMounted = true;
     // Creating a reference to the document in Firestore.
     // The document is located in the "users" collection and has an ID of authorId.
     const docRef = doc(db, "users", authorId);
@@ -40,15 +41,20 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
 
       // Calling the .data() method on the DocumentSnapshot to extract the data
       // as a JavaScript object. This data represents the user document from Firestore.
-      setUser(snap.data());
+      if (isMounted) {
+        setUser(snap.data());
 
-      // Updating a piece of state to indicate that the loading of the data is complete.
-      setLoading(false);
+        // Updating a piece of state to indicate that the loading of the data is complete.
+        setLoading(false);
+      }
     });
 
     // The second argument to useEffect is an array of depedencies.
     // When any value in this array changes, the effect callback will run agin
     // Here it will fetch the new user document whenever the authorId changes.
+    return () => {
+      isMounted = false;
+    };
   }, [authorId]);
 
   useEffect(() => {

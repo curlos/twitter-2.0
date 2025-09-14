@@ -92,42 +92,61 @@ const TweetVersionHistory = () => {
 
     // Effect hook for loading the author of the main tweet
     useEffect(() => {
+        let isMounted = true;
         if (tweet) {
             setLoading(true);
             const docRef = doc(db, "users", tweet.userID);
             getDoc(docRef).then((snap) => {
-                setAuthor(snap.data());
-                setLoading(false);
-                setParentTweet(null);
+                if (isMounted) {
+                    setAuthor(snap.data());
+                    setLoading(false);
+                    setParentTweet(null);
+                }
             });
         }
-
+        return () => {
+            isMounted = false;
+        };
     }, [db, id, tweet]);
 
     // Effect hook for loading the parent tweet, if any
     useEffect(
         () => {
+            let isMounted = true;
             if (tweet && tweet.parentTweet && tweet.parentTweet !== "") {
                 const docRef = doc(db, "tweets", String(tweet.parentTweet));
                 getDoc(docRef).then((snap) => {
-                    // Setting the parent tweet in state
-                    setParentTweet(snap);
+                    if (isMounted) {
+                        // Setting the parent tweet in state
+                        setParentTweet(snap);
+                    }
                 });
             }
+            return () => {
+                isMounted = false;
+            };
         }, [db, id, tweet]);
 
     // Effect hook for loading the author of the parent tweet
     useEffect(() => {
+        let isMounted = true;
         if (parentTweet && parentTweet.data()) {
             const docRef = doc(db, "users", String(parentTweet.data().userID));
             getDoc(docRef).then((snap) => {
-                // Setting the parent tweet's author in state
-                setParentTweetAuthor(snap.data());
-                setLoading(false);
+                if (isMounted) {
+                    // Setting the parent tweet's author in state
+                    setParentTweetAuthor(snap.data());
+                    setLoading(false);
+                }
             });
         } else {
-            setLoading(false);
+            if (isMounted) {
+                setLoading(false);
+            }
         }
+        return () => {
+            isMounted = false;
+        };
     }, [db, id, parentTweet]);
 
 

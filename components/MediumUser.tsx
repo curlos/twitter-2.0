@@ -25,15 +25,21 @@ const MediumUser = ({ userID }: Props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     // Find the user in the "users" collection
     const docRef = doc(db, "users", userID);
 
     getDoc(docRef).then((snap) => {
-      setUser(snap.data());
-      setLoading(false);
+      if (isMounted) {
+        setUser(snap.data());
+        setLoading(false);
+      }
     });
 
     // We'll need different information for different users so this would be called everytime the ID of the user we need information from changes.
+    return () => {
+      isMounted = false;
+    };
   }, [userID]);
 
   useEffect(() => {

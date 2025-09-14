@@ -104,52 +104,78 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
   // Get the author of the tweet
   useEffect(() => {
+    let isMounted = true;
     // Go through all the users in the database and find the one with the same ID as the tweet's "userID"
     const docRef = doc(db, "users", tweet.userID);
     getDoc(docRef).then((snap) => {
-      setAuthorId(snap.id);
-      setAuthor(snap.data() as IAuthor);
-      setLoading(false);
+      if (isMounted) {
+        setAuthorId(snap.id);
+        setAuthor(snap.data() as IAuthor);
+        setLoading(false);
+      }
     });
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
   // Get the PARENT tweet (Only if the current tweet is a reply to another tweet, the parent tweet)
   useEffect(() => {
+    let isMounted = true;
     // If this tweet has a "parentTweet", then this tweet is a REPLY to another tweet, the parent tweet.
     if (tweet.parentTweet && tweet.parentTweet !== "") {
-      // tweet.parentTweet probably equals the parentTweet's "id" so we can use that to go through the tweets in the database and find the parent tweet. 
+      // tweet.parentTweet probably equals the parentTweet's "id" so we can use that to go through the tweets in the database and find the parent tweet.
       const docRef = doc(db, "tweets", String(tweet.parentTweet));
       getDoc(docRef).then((snap) => {
-        setParentTweet(snap);
+        if (isMounted) {
+          setParentTweet(snap);
+        }
       });
     }
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
   // Get the AUTHOR of the PARENT TWEET (IF it exists AND the current tweet is a REPLY)
   useEffect(() => {
+    let isMounted = true;
     // TODO: Check what happens when a tweet is deleted. What do the replies show? Should show something like: "This tweet has been deleted." but it doesn't seem like it'd show it from a reply tweet.
     if (parentTweet && parentTweet.data()) {
       const docRef = doc(db, "users", String(parentTweet.data().userID));
       getDoc(docRef).then((snap) => {
-        setParentTweetAuthor(snap.data());
-        setLoading(false);
+        if (isMounted) {
+          setParentTweetAuthor(snap.data());
+          setLoading(false);
+        }
       });
     } else {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
+    return () => {
+      isMounted = false;
+    };
   }, [id, parentTweet]);
 
   // Not entirely sure what this is for. Seems redundant to have this being checked with the retweets collection also available. Perhaps it was a way to QUICKLY check if the logged in user retweeted the current tweet.
   // TODO: The "tweet" value is coming from a prop so need to check why it's being passed through a prop why it's being checked like this. Seems like something would go wrong with only one user at a time being set on the tweet.retweetedBy property. So if a second person retweeted it, their ID would get set on the property and replace the first person.
   // I think the main reason I did this was to be efficient and reduce the amount of queries I had to make the DB.
   useEffect(() => {
+    let isMounted = true;
     if (tweet.retweetedBy) {
       const docRef = doc(db, "users", tweet.retweetedBy);
       getDoc(docRef).then((snap) => {
-        setRetweetedBy(snap.data());
-        setLoading(false);
+        if (isMounted) {
+          setRetweetedBy(snap.data());
+          setLoading(false);
+        }
       });
     }
+    return () => {
+      isMounted = false;
+    };
   }, [tweet.retweetedBy]);
 
 

@@ -36,17 +36,23 @@ const ParentTweet = ({ fromModal }: Props) => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
 
     if (tweet) {
       setLoading(true);
 
       const docRef = doc(db, "users", tweet.userID);
       getDoc(docRef).then((snap) => {
-        setAuthor(snap.data());
-        setLoading(false);
+        if (isMounted) {
+          setAuthor(snap.data());
+          setLoading(false);
+        }
       });
     }
 
+    return () => {
+      isMounted = false;
+    };
   }, [tweet]);
 
   return (
