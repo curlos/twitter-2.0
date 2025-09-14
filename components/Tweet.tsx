@@ -56,14 +56,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
   // Get REPLIES
   useEffect(() => {
-    // Goes through all the tweets in the database and looks for the tweet with the corresponding tweet id and gets the list of replies on that tweet (the replies will be a list of tweets) and orders it from newest to oldest.
-    const unsubscribe = onSnapshot(query(
+    // Goes through all the tweets in the database and looks for the tweet with the corresponding tweet id and gets the list of replies on that tweet (the replies will be a list of tweets).
+    const unsubscribe = onSnapshot(
       collection(db, 'tweets', String(tweetID), 'replies'),
-      orderBy('timestamp', 'desc')
-    ),
       (snapshot) => setReplies(snapshot.docs));
     return () => unsubscribe();
-  }, [id, tweetID]);
+  }, [tweetID]);
 
   // Get LIKES
   useEffect(() => {
@@ -429,6 +427,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       </div>
     </div>
   );
+
 
   return (
     // In this component, there are two ways a tweet will be shown: 
