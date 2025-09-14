@@ -1,7 +1,6 @@
 import { collection, onSnapshot } from 'firebase/firestore';
-import { getProviders, getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom';
@@ -81,28 +80,3 @@ const Followers = () => {
 };
 
 export default Followers;
-
-export async function getServerSideProps(context) {
-  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
-    (res) => res.json()
-  );
-  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
-    (res) => res.json()
-  );
-  const providers = await getProviders();
-  const session = await getSession(context);
-
-  if (!session) {
-    Router.push('/auth');
-    return;
-  }
-
-  return {
-    props: {
-      trendingResults,
-      followResults,
-      providers,
-      session,
-    },
-  };
-}

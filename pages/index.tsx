@@ -1,4 +1,4 @@
-import { getProviders, getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Router from 'next/router';
 import { FaFeatherAlt } from 'react-icons/fa';
@@ -14,7 +14,7 @@ import SidenavDrawer from '../components/SidenavDrawer';
 import Widgets from '../components/Widgets';
 
 
-export default function Home({ trendingResults, followResults, providers }) {
+export default function Home() {
   const { data: session } = useSession();
   const [isNewTweetModalOpen, setIsNewTweetModalOpen] = useRecoilState(newTweetModalState);
   const [isSettingsModalOpen, _setSettingsModalOpen] = useRecoilState(editProfileModalState);
@@ -55,21 +55,3 @@ export default function Home({ trendingResults, followResults, providers }) {
     </div>
   );
 }
-
-export const getServerSideProps = async (context) => {
-  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then((res) => res.json());
-
-  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then((res) => res.json());
-
-  const providers = await getProviders();
-  const session = await getSession(context);
-
-  return {
-    props: {
-      trendingResults,
-      followResults,
-      providers,
-      session
-    }
-  };
-};

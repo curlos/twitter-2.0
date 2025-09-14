@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
-import { getProviders, getSession, signIn } from 'next-auth/react';
+import { getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
 import AnimatedButton from '../components/AnimatedButton';
+import Spinner from '../components/Spinner';
 import { IProvider } from '../utils/types';
 
-interface Props {
-  providers: [IProvider];
-}
-
-const Auth = ({ providers }: Props) => {
+const Auth = () => {
 
   const [signUp, setSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -18,6 +15,17 @@ const Auth = ({ providers }: Props) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [providers, setProviders] = useState({});
+  const [providersLoading, setProvidersLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      const providers = await getProviders();
+      setProviders(providers || {});
+      setProvidersLoading(false);
+    };
+    fetchProviders();
+  }, []);
 
   const handleAuth = (provider: IProvider) => {
     if (signUp) {
@@ -168,16 +176,22 @@ const Auth = ({ providers }: Props) => {
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          {Object.values(providers)
-            .filter((provider: IProvider) => provider.id !== 'credentials')
-            .map((provider: IProvider) => {
-              return (
-                // Show the animated button with the provider (Google, etc.)
-                <div key={provider.name} className="py-3">
-                  <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
-                </div>
-              );
-            })}
+          {providersLoading ? (
+            <div className="py-3 flex justify-center">
+              <Spinner />
+            </div>
+          ) : (
+            Object.values(providers)
+              .filter((provider: IProvider) => provider.id !== 'credentials')
+              .map((provider: IProvider) => {
+                return (
+                  // Show the animated button with the provider (Google, etc.)
+                  <div key={provider.name} className="py-3">
+                    <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
+                  </div>
+                );
+              })
+          )}
 
           {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { setSignUp(true); setError(''); }}>Sign up</a></div>}
 
@@ -189,22 +203,3 @@ const Auth = ({ providers }: Props) => {
 };
 
 export default Auth;
-
-
-export const getServerSideProps = async (context) => {
-  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then((res) => res.json());
-
-  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then((res) => res.json());
-
-  const providers = await getProviders();
-  const session = await getSession(context);
-
-  return {
-    props: {
-      trendingResults,
-      followResults,
-      providers,
-      session
-    }
-  };
-};

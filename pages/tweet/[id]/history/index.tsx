@@ -1,7 +1,5 @@
 // Importing necessary Firestore functions to interact with the database
 import { doc, DocumentData, onSnapshot } from '@firebase/firestore';
-// Importing authentication functions from NextAuth
-import { getProviders, getSession } from 'next-auth/react';
 // Implementing the Next.js router for URL parameter access and routing actions
 import { useRouter } from 'next/router';
 // Importing React and its hooks
@@ -33,10 +31,10 @@ import { ITweet } from '../../../../utils/types';
 // TweetVersionHistory component definition
 const TweetVersionHistory = () => {
     // Recoil state for the new tweet modal, the app's color theme, the search modal, and the side navigation
-    const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-    const [theme, setTheme] = useRecoilState(colorThemeState);
-    const [isSearchModalOpen, setIsSearchModalOpen] = useRecoilState(searchModalState);
-    const [isSidenavOpen, setIsSidenavOpen] = useRecoilState(sidenavState);
+    const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
+    const [theme, _setTheme] = useRecoilState(colorThemeState);
+    const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
+    const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
 
     // Local state for holding the current tweet, its ID, its author, any replies, and any parent tweet and its author
     const [tweet, setTweet] = useState<DocumentData>();
@@ -196,25 +194,3 @@ const TweetVersionHistory = () => {
 };
 
 export default TweetVersionHistory;
-
-// Async function for fetching server-side props before rendering the page
-export async function getServerSideProps(context) {
-    const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
-        (res) => res.json()
-    );
-    const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
-        (res) => res.json()
-    );
-    const providers = await getProviders();
-    const session = await getSession(context);
-
-    // Returning the fetched data as props to the page component
-    return {
-        props: {
-            trendingResults,
-            followResults,
-            providers,
-            session,
-        },
-    };
-}

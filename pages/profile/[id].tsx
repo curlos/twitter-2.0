@@ -1,5 +1,5 @@
 import { doc, getDoc, getDocs, onSnapshot } from '@firebase/firestore';
-import { getProviders, getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from "../../firebase";
@@ -350,30 +350,8 @@ const ProfilePage = () => {
 
         <MobileBottomNavBar />
       </main>
-
-
     </div>
   );
 };
 
 export default ProfilePage;
-
-export async function getServerSideProps(context) {
-  const trendingResults = await fetch("https://www.jsonkeeper.com/b/NKEV").then(
-    (res) => res.json()
-  );
-  const followResults = await fetch("https://www.jsonkeeper.com/b/WWMJ").then(
-    (res) => res.json()
-  );
-  const providers = await getProviders();
-  const session = await getSession(context);
-
-  return {
-    props: {
-      trendingResults,
-      followResults,
-      providers,
-      session,
-    },
-  };
-}
