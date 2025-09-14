@@ -24,11 +24,14 @@ const Followers = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onSnapshot(collection(db, 'users', session.user.uid, 'bookmarks'), (snapshot) => {
+    if (!session?.user?.uid) return;
+
+    const unsubscribe = onSnapshot(collection(db, 'users', session.user.uid, 'bookmarks'), (snapshot) => {
       setTweets(snapshot.docs);
       setLoading(false);
     });
-  }, [db, loading]);
+    return () => unsubscribe();
+  }, [db, loading, session]);
 
 
   return (

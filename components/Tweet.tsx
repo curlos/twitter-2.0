@@ -57,31 +57,31 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   // Get REPLIES
   useEffect(() => {
     // Goes through all the tweets in the database and looks for the tweet with the corresponding tweet id and gets the list of replies on that tweet (the replies will be a list of tweets) and orders it from newest to oldest.
-    onSnapshot(query(
+    const unsubscribe = onSnapshot(query(
       collection(db, 'tweets', String(tweetID), 'replies'),
       orderBy('timestamp', 'desc')
     ),
       (snapshot) => setReplies(snapshot.docs));
+    return () => unsubscribe();
   }, [id, tweetID]);
 
   // Get LIKES
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
+    return () => unsubscribe();
   }, [id, tweetID]);
 
   // Get RETWEETS
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
+    return () => unsubscribe();
   }, [id, tweetID]);
 
-  // Get REPLIES
-  useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'replies'), (snapshot) => setReplies(snapshot.docs));
-  }, [id, tweetID]);
 
   // Get BOOKMARKS
   useEffect(() => {
-    onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
+    return () => unsubscribe();
   }, [id, tweetID]);
 
   // Check if the logged in user (if any) has liked this tweet

@@ -59,7 +59,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     // collection(db, 'users', authorId, 'followers') is getting a reference to the 'followers' subcollection
     // of the docuent with ID authorId in the 'users' collection.
     // This can be read as "the 'followers' of the user with ID authorId".
-    onSnapshot(collection(db, 'users', authorId, 'followers'), (snapshot) =>
+    const unsubscribe = onSnapshot(collection(db, 'users', authorId, 'followers'), (snapshot) =>
       // Set the followers of the author whose tweet is being clicked on to show the dropdown.
       setFollowers(snapshot.docs)
     );
@@ -69,6 +69,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     // db is the Firestore database.
     // authorId is the ID of the author whose followers we're interested in.
     // loading is not used inside the effect, but its changes still cause the effect to re-run.
+    return () => unsubscribe();
   }, [db, authorId, loading]);
 
   useEffect(() => {

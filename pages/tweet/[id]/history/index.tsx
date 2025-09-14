@@ -55,19 +55,25 @@ const TweetVersionHistory = () => {
 
     // Effect hook for loading the main tweet data
     useEffect(
-        () =>
-            onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
+        () => {
+            if (!id) return; // Wait for router to populate id
+
+            const unsubscribe = onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
                 // Setting the tweet data and ID in state
                 setTweet(snapshot.data());
                 setTweetID(snapshot.id);
-            }),
+            });
+            return () => unsubscribe();
+        },
         [db, id]
     );
 
     // Effect hook for loading the replies to the main tweet
     useEffect(
-        () =>
-            onSnapshot(
+        () => {
+            if (!id) return; // Wait for router to populate id
+
+            const unsubscribe = onSnapshot(
                 query(
                     collection(db, "tweets"),
                     where("parentTweet", "==", id),
@@ -78,7 +84,9 @@ const TweetVersionHistory = () => {
                     setReplies(snapshot.docs);
                     setLoading(false);
                 }
-            ),
+            );
+            return () => unsubscribe();
+        },
         [db, id]
     );
 

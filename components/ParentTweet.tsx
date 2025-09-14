@@ -27,10 +27,11 @@ const ParentTweet = ({ fromModal }: Props) => {
     if (tweetBeingRepliedToId) {
       setLoading(true);
 
-      onSnapshot(doc(db, 'tweets', tweetBeingRepliedToId), (snapshot) => {
+      const unsubscribe = onSnapshot(doc(db, 'tweets', tweetBeingRepliedToId), (snapshot) => {
         setTweet(snapshot.data() as ITweet);
         setLoading(false);
       });
+      return () => unsubscribe();
     }
   }, []);
 

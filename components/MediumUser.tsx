@@ -38,7 +38,8 @@ const MediumUser = ({ userID }: Props) => {
 
   useEffect(() => {
     // Get the followers of this user
-    onSnapshot(collection(db, 'users', userID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
+    const unsubscribe = onSnapshot(collection(db, 'users', userID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
+    return () => unsubscribe();
   }, [db, userID, loading]);
 
   useEffect(() => {
