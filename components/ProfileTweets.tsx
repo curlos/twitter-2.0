@@ -38,21 +38,9 @@ const getSortedTweets = (originalTweets, userRetweets) => {
  */
 const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
 
-  const [allTweets, _setAllTweets] = useState(getSortedTweets(tweets, retweets));
-  const [filteredTweets, setFilteredTweets] = useState([]);
+  const allTweets = getSortedTweets(tweets, retweets);
 
-  useEffect(() => {
-    // Each time the filter changes, all the tweets will be passed through the filter again.
-    getFilteredTweets().then((data) => {
-      setFilteredTweets(data);
-    });
-  }, [filter]);
-
-  /**
-   * @description - Using the user selected filter (or the default of 'Tweets'), filter all the tweets in the list by the filter.
-   * @returns {Array<ITweet>}
-   */
-  const getFilteredTweets = async () => {
+  const getFilteredTweets = () => {
     switch (filter) {
       case 'Tweets':
         return allTweets.filter((tweet) => {
@@ -70,8 +58,13 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
         });
       case 'Likes':
         return sortByNewest(likes);
+      default:
+        return allTweets;
     }
   };
+
+  const filteredTweets = getFilteredTweets();
+
 
   return (
     <div>

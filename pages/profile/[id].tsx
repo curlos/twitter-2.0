@@ -12,7 +12,7 @@ import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/re
 import { collection, orderBy, query, where } from 'firebase/firestore';
 import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
-import Tweets from '../../components/ProfileTweets';
+import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
 import Spinner from '../../components/Spinner';
 import Link from 'next/link';
@@ -63,7 +63,31 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!loading) {
       setTweetsLoading(true);
-      fetchTweetsInfo(authorID).then(() => setTweetsLoading(false));
+
+      const tweetsQuery = query(collection(db, "tweets"),
+        where('userID', '==', authorID),
+        orderBy('timestamp', 'desc')
+      );
+      const unsubscribeTweets = onSnapshot(tweetsQuery, (snapshot) => {
+        setTweets(snapshot.docs);
+        setTweetsLoading(false);
+      });
+
+      const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
+      const unsubscribeRetweets = onSnapshot(retweetsQuery, (snapshot) => {
+        setRetweets(snapshot.docs);
+      });
+
+      const likesQuery = query(collection(db, 'users', authorID, 'likes'));
+      const unsubscribeLikes = onSnapshot(likesQuery, (snapshot) => {
+        setLikes(snapshot.docs);
+      });
+
+      return () => {
+        unsubscribeTweets();
+        unsubscribeRetweets();
+        unsubscribeLikes();
+      };
     }
   }, [db, id, loading, filter]);
 
@@ -119,22 +143,6 @@ const ProfilePage = () => {
     return !result;
   };
 
-  const fetchTweetsInfo = async (authorID) => {
-    const tweetsQuery = query(collection(db, "tweets"),
-      where('userID', '==', authorID),
-      orderBy('timestamp', 'desc')
-    );
-    const tweetsQuerySnapshot = await getDocs(tweetsQuery);
-    setTweets(tweetsQuerySnapshot.docs);
-
-    const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
-    const retweetsQuerySnapshot = await getDocs(retweetsQuery);
-    setRetweets(retweetsQuerySnapshot.docs);
-
-    const likesQuery = query(collection(db, 'users', authorID, 'likes'));
-    const likesQuerySnapshot = await getDocs(likesQuery);
-    setLikes(likesQuerySnapshot.docs);
-  };
 
   /**
    * @description - Handles what happens when a user wants to follow or unfollow someone.
@@ -332,7 +340,7 @@ const ProfilePage = () => {
                 <Spinner />
               </div>
             ) : (
-              <Tweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
+              <ProfileTweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
             )}
           </div>
         )}
