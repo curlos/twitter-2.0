@@ -2,10 +2,8 @@ import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, 
 import NextAuth from "next-auth";
 import { Session } from "next-auth/core/types";
 import GoogleProvider from "next-auth/providers/google";
-import GithubProvider from "next-auth/providers/github";
-import TwitterPorivder from "next-auth/providers/twitter";
-import FacebookProvider from "next-auth/providers/facebook";
-import AppleProvider from "next-auth/providers/apple";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
 import { db } from "../../../firebase";
 import cryptoRandomString from 'crypto-random-string';
 
@@ -35,6 +33,7 @@ const addNewUser = async (session: Session) => {
     location: null,
     website: null,
     banner: null,
+    hashedPassword: null, // OAuth users don't have passwords
     dateJoined: serverTimestamp()
   });
 
@@ -46,53 +45,63 @@ export default NextAuth({
   // Configure one or more authentication providers
   // TODO: Add CredentialsProvider (Need this to create a bunch of accounts without having to create a bunch of GMAIL accounts + pretty much every app lets you create an account without having to use a third-party source.)
   providers: [
-    // CredentialsProvider({
-    //   // The name to display on the sign in form (e.g. "Sign in with...")
-    //   name: "Credentials",
-    //   // The credentials is used to generate a suitable form on the sign in page.
-    //   // You can specify whatever fields you are expecting to be submitted.
-    //   // e.g. domain, username, password, 2FA token, etc.
-    //   // You can pass any HTML attribute to the <input> tag through the object.
-    //   credentials: {
-    //     username: { label: "Username", type: "text", placeholder: "jsmith" },
-    //     password: { label: "Password", type: "password" }
-    //   },
-    //   async authorize(credentials, req) {
-    //     // Add logic here to look up the user from the credentials supplied
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "your@email.com" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials, req) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-    //     const session = {
-    //       user: {
-    //         name: credentials.username,
-    //         email: '',
-    //         profilePic: '/assets/default_profile_pic.png',
-    //         banner: null,
-    //         tag: credentials.username
-    //       }
-    //     }
+        try {
+          // Look up user by email
+          const q = query(collection(db, "users"), where('email', '==', credentials.email));
+          const querySnapshot = await getDocs(q);
 
-    //     if (session) {
-    //       // Any object returned will be saved in `user` property of the JWT
-    //       return session
-    //     } else {
-    //       // If you return null then an error will be displayed advising the user to check their details.
-    //       return null
+          if (querySnapshot.docs.length === 0) {
+            return null; // User not found
+          }
 
-    //       // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter        
-    //     }
-    //   }
-    // }),
+          const userDoc = querySnapshot.docs[0];
+          const userData = userDoc.data();
+
+          // Check if password matches
+          if (!userData.hashedPassword) {
+            return null; // User doesn't have a password (OAuth user)
+          }
+
+          const isPasswordValid = await bcrypt.compare(credentials.password, userData.hashedPassword);
+
+          if (!isPasswordValid) {
+            return null; // Invalid password
+          }
+
+          // Return user object
+          return {
+            id: userDoc.id,
+            email: userData.email,
+            name: userData.name,
+            image: userData.profilePic,
+            tag: userData.tag,
+            bio: userData.bio,
+            location: userData.location,
+            website: userData.website,
+            banner: userData.banner,
+            dateJoined: userData.dateJoined
+          };
+        } catch (error) {
+          console.error("Error during credential authentication:", error);
+          return null;
+        }
+      }
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_CLIENT_ID,
-    //   clientSecret: process.env.GITHUB_CLIENT_SECRET
-    // }),
-    // AppleProvider({
-    //   clientId: process.env.APPLE_ID,
-    //   clientSecret: process.env.APPLE_SECRET
-    // })
     // ...add more providers here
   ],
   callbacks: {
@@ -104,17 +113,10 @@ export default NextAuth({
      * @returns 
      */
     async session({ session, token }) {
-      // TODO: No spaces allowed in the username and usernames are all set to all lowercase. This rule could change if I feel like it but for now I'll leave rule like this. It's not really a requirment but a preference.
-      session.user.tag = session.user.name
-        .split(" ")
-        .join("")
-        .toLocaleLowerCase();
-      session.user.profilePic = session.user.image;
-
       const q = query(collection(db, "users"), where('email', '==', session.user.email));
       const querySnapshot = await getDocs(q);
 
-      // If user is signing in with an exisitng account, then set the keys in the object to the values that already exist in the database.
+      // If user is signing in with an existing account, then set the keys in the object to the values that already exist in the database.
       if (querySnapshot.docs.length > 0) {
         // Get values from the database of this existing user and set it inside the session object
         const { name, tag, bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data();
@@ -128,14 +130,21 @@ export default NextAuth({
         session.user.dateJoined = dateJoined;
         session.user.profilePic = profilePic;
         session.user.banner = banner;
+        session.user.image = profilePic; // Ensure image is set for compatibility
 
       } else {
-        // Else if user is signing up with a new account then we add them and create a new user using the information they or the AuthProvider (like Google) provided to us.
+        // This should only happen for new OAuth users (credential users must register first)
+        // Generate tag and profile pic for OAuth users
+        session.user.tag = session.user.name
+          .split(" ")
+          .join("")
+          .toLocaleLowerCase();
+        session.user.profilePic = session.user.image;
+
         const docRef = await addNewUser(session);
         session.user.uid = docRef.id;
 
         const userDoc = await getDoc(docRef);
-
         const { bio, location, website, dateJoined } = userDoc.data();
 
         session.user.bio = bio;
