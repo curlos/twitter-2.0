@@ -393,6 +393,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 ) : (
                   <FaRegBookmark className={`h-[18px] w-[18px] cursor-pointer`} />
                 )}
+                <div className={bookmarked ? "text-yellow-500" : "text-gray-500"}>{bookmarks.length}</div>
               </div>
             </div>
           )}
@@ -521,6 +522,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 <div className="space-x-1">
                   <span className="font-bold">{likes.length}</span>
                   <span className="text-gray-500">Likes</span>
+                </div>
+
+                <div className="space-x-1">
+                  <span className="font-bold">{bookmarks.length}</span>
+                  <span className="text-gray-500">Bookmarks</span>
                 </div>
               </div>
             )}
