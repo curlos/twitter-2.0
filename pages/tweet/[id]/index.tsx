@@ -57,22 +57,24 @@ const TweetPage = () => {
 
     // Effect hook for loading the main tweet data
     useEffect(
-        () =>
-            onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
+        () => {
+            const unsubscribe = onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
                 // Skip updates when editing to prevent component unmounting
                 if (!isEditing) {
                     // Setting the tweet data and ID in state
                     setTweet(snapshot.data());
                     setTweetID(snapshot.id);
                 }
-            }),
+            });
+            return () => unsubscribe();
+        },
         [db, id, isEditing]
     );
 
     // Effect hook for loading the replies to the main tweet
     useEffect(
-        () =>
-            onSnapshot(
+        () => {
+            const unsubscribe = onSnapshot(
                 query(
                     collection(db, "tweets"),
                     where("parentTweet", "==", id),
@@ -83,7 +85,9 @@ const TweetPage = () => {
                     setReplies(snapshot.docs);
                     setLoading(false);
                 }
-            ),
+            );
+            return () => unsubscribe();
+        },
         [db, id]
     );
 

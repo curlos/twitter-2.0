@@ -34,6 +34,7 @@ interface Props {
  */
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
 
+
   const { data: session } = useSession();
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
@@ -156,6 +157,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
    * @description - Handles what happens when a user clicks the "like" button on a tweet.
    */
   const likeTweet = async () => {
+
     // If the user is not logged in, then redirect them to the auth page
     if (!session) {
       Router.push('/auth');

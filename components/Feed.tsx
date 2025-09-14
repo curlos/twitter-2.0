@@ -32,18 +32,21 @@ const Feed = () => {
   /**
    * @description - Gets the initial list of tweets once and also sets the base tweets AND the filtered tweets from those base tweets.
    */
-  useEffect(() => onSnapshot(
-    // Go to the database and get the collection called "tweets" and order that list by decsending timestamp (meaning they would sorted by newest to oldest.)
-    query(collection(db, "tweets"), orderBy("timestamp", "desc")),
-    (snapshot) => {
-      // Using all the tweets we get back set them into the "tweets" state so we can keep track of them all.
-      setTweets(snapshot.docs);
-      // Using all the tweets from this query, we want to filter by certain parameters if they exist
-      setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs));
-      // Now that the API call to the database is done, loading is finished.
-      setLoading(false);
-    }
-  ), []);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      // Go to the database and get the collection called "tweets" and order that list by decsending timestamp (meaning they would sorted by newest to oldest.)
+      query(collection(db, "tweets"), orderBy("timestamp", "desc")),
+      (snapshot) => {
+        // Using all the tweets we get back set them into the "tweets" state so we can keep track of them all.
+        setTweets(snapshot.docs);
+        // Using all the tweets from this query, we want to filter by certain parameters if they exist
+        setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs));
+        // Now that the API call to the database is done, loading is finished.
+        setLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
   /**
    * @description - Get the filtered tweets according to the most up to date filters set by a user (either through searching for specific tweets OR sorting them (newest or oldest))

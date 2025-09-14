@@ -1,4 +1,4 @@
-import { doc, getDoc, getDocs, onSnapshot } from '@firebase/firestore';
+import { getDocs, onSnapshot } from '@firebase/firestore';
 import { useSession } from 'next-auth/react';
 import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import Head from 'next/head';
 import Sidebar from '../../components/Sidebar';
 import { NewTweetModal } from '../../components/NewTweetModal';
 import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid';
-import { collection, orderBy, query, where } from 'firebase/firestore';
+import { collection, orderBy, query, where, documentId } from 'firebase/firestore';
 import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import ProfileTweets from '../../components/ProfileTweets';
@@ -66,6 +66,7 @@ const ProfilePage = () => {
     if (!loading) {
       setTweetsLoading(true);
 
+      // Keep tweets real-time (core Twitter experience)
       const tweetsQuery = query(collection(db, "tweets"),
         where('userID', '==', authorID),
         orderBy('timestamp', 'desc')
@@ -75,60 +76,97 @@ const ProfilePage = () => {
         setTweetsLoading(false);
       });
 
-      const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
-      const unsubscribeRetweets = onSnapshot(retweetsQuery, (snapshot) => {
-        setRetweets(snapshot.docs);
-      });
+      // Convert retweets and likes to periodic updates (less critical)
+      const fetchRetweetsAndLikes = async () => {
+        try {
+          const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
+          const retweetsSnapshot = await getDocs(retweetsQuery);
+          setRetweets(retweetsSnapshot.docs);
 
-      const likesQuery = query(collection(db, 'users', authorID, 'likes'));
-      const unsubscribeLikes = onSnapshot(likesQuery, (snapshot) => {
-        setLikes(snapshot.docs);
-      });
+          const likesQuery = query(collection(db, 'users', authorID, 'likes'));
+          const likesSnapshot = await getDocs(likesQuery);
+          setLikes(likesSnapshot.docs);
+        } catch (error) {
+          console.error('Error fetching retweets/likes:', error);
+        }
+      };
+
+      // Initial fetch
+      fetchRetweetsAndLikes();
+
+      // Periodic updates every 60 seconds for retweets/likes
+      const interval = setInterval(fetchRetweetsAndLikes, 60000);
 
       return () => {
         unsubscribeTweets();
-        unsubscribeRetweets();
-        unsubscribeLikes();
+        clearInterval(interval);
       };
     }
   }, [db, id, loading, filter]);
 
   useEffect(() => {
     if (!loading) {
-      onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
+      const unsubscribeFollowers = onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
+      return () => unsubscribeFollowers();
     }
   }, [db, id, loading]);
 
   useEffect(() => {
     if (!loading) {
-      onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs));
+      const unsubscribeFollowing = onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs));
+      return () => unsubscribeFollowing();
     }
   }, [db, id, loading]);
 
   useEffect(() => {
-    if (!loading && session && session.user) {
-      onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
-        let newFollowersYouFollow = [];
-        for (let user of snapshot.docs) {
-          // The document ID is the user ID of the person being followed
-          const followingUserID = user.id;
+    if (!loading && session && session.user && author) {
+      const fetchFollowersYouFollow = async () => {
+        try {
+          // First get the list of users the current session user is following
+          const followingSnapshot = await getDocs(collection(db, 'users', session.user.uid, 'following'));
+          const followingUserIds = followingSnapshot.docs.map(doc => doc.id);
 
-          const docRef = doc(db, "users", followingUserID);
-          const snap = await getDoc(docRef);
-          const follower = snap.data();
-
-          // Only add if the user document exists
-          if (follower) {
-            newFollowersYouFollow.push({ ...follower, id: snap.id });
+          if (followingUserIds.length === 0) {
+            setFollowersYouFollow([]);
+            return;
           }
+
+          // Batch query to get all user data at once (Firebase 'in' operator supports up to 10 items)
+          const batchedUserData = [];
+          const batchSize = 10;
+
+          for (let i = 0; i < followingUserIds.length; i += batchSize) {
+            const batch = followingUserIds.slice(i, i + batchSize);
+            const usersQuery = query(
+              collection(db, "users"),
+              where(documentId(), 'in', batch)
+            );
+            const usersSnapshot = await getDocs(usersQuery);
+            const batchData = usersSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+            batchedUserData.push(...batchData);
+          }
+
+          // Filter for shared followers
+          const sharedFollowers = batchedUserData.filter((user) =>
+            user.tag !== author.tag && isUserFollowing(user, followers)
+          );
+
+          setFollowersYouFollow(sharedFollowers);
+        } catch (error) {
+          console.error('Error fetching followers you follow:', error);
+          setFollowersYouFollow([]);
         }
+      };
 
-        const sharedFollowers = newFollowersYouFollow.filter((user) => user.tag !== author.tag && isUserFollowing(user, followers));
+      // Initial fetch
+      fetchFollowersYouFollow();
 
-        setFollowersYouFollow(sharedFollowers);
-      });
+      // Periodic updates every 30 seconds (non-critical data doesn't need real-time)
+      const interval = setInterval(fetchFollowersYouFollow, 30000);
+
+      return () => clearInterval(interval);
     }
-  }, [db, id, loading, session, followers]);
+  }, [db, id, loading, session, followers, author]);
 
   useEffect(() => {
     setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
