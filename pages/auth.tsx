@@ -112,7 +112,7 @@ const Auth = ({ providers }: Props) => {
 
       <div className="flex-1 flex justify-center items-center p-4 sm:p-12 lg:p-24">
         <div>
-          <Image src="https://rb.gy/ogau5a" alt="" height={30} width={30} className="text-lightblue-500" />
+          <Image src="/assets/twitter-logo.svg" alt="Twitter Logo" height={30} width={30} className="text-lightblue-500" />
           <h2 className="text-2xl font-bold">See what's happening in the world right now</h2>
           <h6 className="font-bold">Join Twitter 2.0 today</h6>
 

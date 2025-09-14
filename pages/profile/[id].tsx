@@ -106,7 +106,6 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!loading && session && session.user) {
       onSnapshot(collection(db, 'users', session.user.uid, 'following'), async (snapshot) => {
-        // TODO: Fix bug here about following ID!
         let newFollowersYouFollow = [];
         for (let user of snapshot.docs) {
           // The document ID is the user ID of the person being followed
@@ -122,20 +121,18 @@ const ProfilePage = () => {
           }
         }
 
-        const isUserFollowingPromises = await Promise.all(newFollowersYouFollow.map(async (user) => await isUserFollowing(user, followers)));
-
-        const sharedFollowers = newFollowersYouFollow.filter((user, i) => user.tag !== author.tag && isUserFollowingPromises[i]);
+        const sharedFollowers = newFollowersYouFollow.filter((user) => user.tag !== author.tag && isUserFollowing(user, followers));
 
         setFollowersYouFollow(sharedFollowers);
       });
     }
-  }, [db, id, loading]);
+  }, [db, id, loading, session, followers]);
 
   useEffect(() => {
     setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
   }, [followers]);
 
-  const isUserFollowing = async (user, followers) => {
+  const isUserFollowing = (user, followers) => {
     const result = followers.every((follower) => {
       return follower.data().followedBy !== user.id;
     });
@@ -271,14 +268,14 @@ const ProfilePage = () => {
                 <div className="text-sm text-gray-500 flex space-x-3 py-3">
                   <div className="flex">
                     {followersYouFollow.slice(0, 3).map((user, i) => (
-                      <Link href={`/profile/${user.tag}`}>
+                      <Link key={user.tag} href={`/profile/${user.tag}`}>
                         <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full z-50 ${i > 0 ? 'ml-[-9px]' : ''}`} />
                       </Link>
                     ))}
                   </div>
                   <div>
                     Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
-                      <span key={follower.tag}>
+                      <span key={`follower-${follower.tag}`}>
                         <Link href={`/profile/${follower.tag}`}>
                           <span className="cursor-pointer hover:underline">{follower.name}
                           </span>
