@@ -12,6 +12,7 @@ import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/
 import { HiBadgeCheck } from 'react-icons/hi';
 import { BsPencilFill } from 'react-icons/bs';
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
+import NumberFlow from '@number-flow/react';
 import Link from 'next/link';
 import { IAuthor } from '../utils/types';
 
@@ -397,7 +398,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 retweetTweet();
               }}>
                 {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
-                <div className={retweeted ? "text-green-400" : "text-gray-500"}>{retweets.length}</div>
+                <NumberFlow
+                  value={retweets.length}
+                  className={retweeted ? "text-green-400" : "text-gray-500"}
+                />
               </div>
 
               {/* Like button */}
@@ -406,7 +410,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 likeTweet();
               }}>
                 {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
-                <div className={liked ? "text-red-500" : "text-gray-500"}>{likes.length}</div>
+                <NumberFlow
+                  value={likes.length}
+                  className={liked ? "text-red-500" : "text-gray-500"}
+                />
               </div>
 
               {/* Bookmark button */}
@@ -419,7 +426,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 ) : (
                   <FaRegBookmark className={`h-[18px] w-[18px] cursor-pointer`} />
                 )}
-                <div className={bookmarked ? "text-yellow-500" : "text-gray-500"}>{bookmarks.length}</div>
+                <NumberFlow
+                  value={bookmarks.length}
+                  className={bookmarked ? "text-yellow-500" : "text-gray-500"}
+                />
               </div>
             </div>
           )}
@@ -542,17 +552,26 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 </div>
 
                 <div className="space-x-1">
-                  <span className="font-bold">{retweets.length}</span>
+                  <NumberFlow
+                    value={retweets.length}
+                    className="font-bold"
+                  />
                   <span className="text-gray-500">Retweets</span>
                 </div>
 
                 <div className="space-x-1">
-                  <span className="font-bold">{likes.length}</span>
+                  <NumberFlow
+                    value={likes.length}
+                    className="font-bold"
+                  />
                   <span className="text-gray-500">Likes</span>
                 </div>
 
                 <div className="space-x-1">
-                  <span className="font-bold">{bookmarks.length}</span>
+                  <NumberFlow
+                    value={bookmarks.length}
+                    className="font-bold"
+                  />
                   <span className="text-gray-500">Bookmarks</span>
                 </div>
               </div>
