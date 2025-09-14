@@ -58,6 +58,8 @@ const TweetPage = () => {
     // Effect hook for loading the main tweet data
     useEffect(
         () => {
+            if (!id) return; // Wait for router to populate id
+
             const unsubscribe = onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
                 // Skip updates when editing to prevent component unmounting
                 if (!isEditing) {
@@ -74,6 +76,8 @@ const TweetPage = () => {
     // Effect hook for loading the replies to the main tweet
     useEffect(
         () => {
+            if (!id) return; // Wait for router to populate id
+
             const unsubscribe = onSnapshot(
                 query(
                     collection(db, "tweets"),

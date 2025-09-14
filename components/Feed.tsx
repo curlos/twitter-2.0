@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { SparklesIcon } from '@heroicons/react/outline';
 import { db } from "../firebase";
 import Input from './Input';
@@ -48,21 +48,7 @@ const Feed = () => {
     return () => unsubscribe();
   }, []);
 
-  /**
-   * @description - Get the filtered tweets according to the most up to date filters set by a user (either through searching for specific tweets OR sorting them (newest or oldest))
-   */
-  useEffect(() => {
-    setLoading(true);
-    const filteredTweets = getFilteredTweets(router.query.query, tweets);
-    setFilteredTweets(getSortedTweets(filteredTweets));
-    setLoading(false);
-
-    /**
-     * This will run anytime the "sortType" or "router.query.query" values change.
-     * "sortType" - This will change whenever the user clicks a new sort type through the dropdown at the top of the feed.
-     * "router.query.query" - This will change whenever the user types and submits something through the "Search" feature which shows a modal where they would type in.
-     */
-  }, [sortType, router.query.query]);
+  // Move useMemo after function definitions to avoid hoisting issues
 
   /**
    * 
@@ -99,6 +85,20 @@ const Feed = () => {
         return sortByNewest(tweets);
     }
   };
+
+  /**
+   * @description - Get the filtered and sorted tweets using useMemo for performance optimization
+   * Only recalculates when tweets, sortType, or search query actually change
+   */
+  const optimizedFilteredTweets = useMemo(() => {
+    const filtered = getFilteredTweets(router.query.query, tweets);
+    return getSortedTweets(filtered);
+  }, [router.query.query, tweets, sortType]);
+
+  // Update state when optimized tweets change
+  useEffect(() => {
+    setFilteredTweets(optimizedFilteredTweets);
+  }, [optimizedFilteredTweets]);
 
   return (
     loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
