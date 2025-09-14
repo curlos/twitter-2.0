@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Image from "next/image";
 import { db, storage } from '../firebase';
+
+const MAX_TWEET_LENGTH = 500;
 import {
   addDoc,
   collection,
@@ -314,7 +316,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
               </div>
 
               <div className="hidden md:flex items-center space-x-4">
-                <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/400</div>
+                <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
                   onClick={getButtonObject().function}>
@@ -324,11 +326,11 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
             </div>
 
             <div className="flex md:hidden items-center space-x-4">
-              <div className={`${input.length >= 400 ? 'text-red-500' : 'text-black dark:text-white'} flex gap-2`}>
-                {input.length >= 400 && (
+              <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'} flex gap-2`}>
+                {input.length >= MAX_TWEET_LENGTH && (
                   <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />
                 )}
-                {input.length}/400</div>
+                {input.length}/{MAX_TWEET_LENGTH}</div>
               <button
                 className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
                 onClick={getButtonObject().function}>
