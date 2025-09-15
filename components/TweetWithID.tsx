@@ -1,7 +1,7 @@
 import { doc, DocumentData, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import Spinner from './Spinner';
+import TweetSkeletonLoader from './TweetSkeletonLoader';
 import Tweet from './Tweet';
 
 interface Props {
@@ -31,7 +31,7 @@ const TweetWithID = ({ tweetID }: Props) => {
   );
 
   return (
-    loading ? <Spinner /> : <Tweet id={tweetID} tweet={{
+    loading ? <TweetSkeletonLoader /> : <Tweet id={tweetID} tweet={{
       ...tweet,
       tweetId: tweetID
     }} tweetID={tweetID} />

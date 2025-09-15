@@ -66,7 +66,7 @@ const Followers = () => {
 
               <div className="h-[60px]" />
             </div>
-          ) : <Spinner />
+          ) : <div className="pt-5"><Spinner /></div>
           }
         </div>
 
