@@ -7,7 +7,7 @@ import { onSnapshot, query, collection, orderBy } from '@firebase/firestore';
 import Tweet from './Tweet';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
-import Spinner from './Spinner';
+import TweetSkeletonLoader from './TweetSkeletonLoader';
 import { sortByNewest, sortByOldest } from '../utils/sortTweets';
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
@@ -101,48 +101,46 @@ const Feed = () => {
   }, [optimizedFilteredTweets]);
 
   return (
-    loading ? <div className="sm:ml-[80px] xl:ml-[280px] w-[700px] 2xl:w-[800px] pt-4">
-      <Spinner />
-    </div> : (
-      <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
-        <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
-          <div className="flex justify-between items-center">
-            <h2 className="font-bold">Home</h2>
-            <SparklesIcon className="h-5 w-5" />
-          </div>
-
-          <AuthReminder />
+    
+    <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
+      <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
+        <div className="flex justify-between items-center">
+          <h2 className="font-bold">Home</h2>
+          <SparklesIcon className="h-5 w-5" />
         </div>
 
-        {/* If the user is logged in, then show the input so that they can tweet something out if they so wish. */}
-        {session && session.user && (
-          <div className="hidden md:block">
-            <Input />
-          </div>
-        )}
-
-        {/* Show the sort dropdown which will change the "sortType" when one of the options are selected. */}
-        <div>
-          <SortDropdown sortType={sortType} setSortType={setSortType} />
-        </div>
-
-        {/* When everything is done loading, show the filtered tweets. NOTE: If there is NO filter applied, then ALL of the tweets will be shown (as it's done by default). */}
-        {!loading ? filteredTweets.map((tweet) => {
-          return (
-            <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={{
-              ...tweet.data(),
-              tweetId: tweet.id
-            }} />
-          );
-        }) : (
-          // If stuff is still loading, then show the spinner.
-          <Spinner />
-        )}
-
-        <div className="h-[60px]" />
-
+        <AuthReminder />
       </div>
-    )
+
+      {/* If the user is logged in, then show the input so that they can tweet something out if they so wish. */}
+      {session && session.user && (
+        <div className="hidden md:block">
+          <Input />
+        </div>
+      )}
+
+      {/* Show the sort dropdown which will change the "sortType" when one of the options are selected. */}
+      <div>
+        <SortDropdown sortType={sortType} setSortType={setSortType} />
+      </div>
+
+      {/* When everything is done loading, show the filtered tweets. NOTE: If there is NO filter applied, then ALL of the tweets will be shown (as it's done by default). */}
+      {!loading ? filteredTweets.map((tweet) => {
+        return (
+          <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={{
+            ...tweet.data(),
+            tweetId: tweet.id
+          }} />
+        );
+      }) : (
+        // If stuff is still loading, then show 10 skeleton loaders.
+        Array.from({ length: 10 }, (_, index) => (
+          <TweetSkeletonLoader key={index} />
+        ))
+      )}
+
+      <div className="h-[60px]" />
+    </div>
   );
 };
 

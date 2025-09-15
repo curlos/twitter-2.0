@@ -69,7 +69,7 @@ const Widgets = () => {
         <div className="text-gray-500 bg-gray-100 dark:bg-gray-800 p-3 rounded-l-full cursor-pointer">
           <SearchIcon onClick={handleSubmit} className="h-6 w-6" />
         </div>
-        <input placeholder="Search Twitter" value={searchQuery} className="bg-gray-100 dark:bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
+        <input placeholder="Search Twitter 2.0" value={searchQuery} className="bg-gray-100 dark:bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
       </form>
 
       {/* Displays the recommended users to follow. */}
