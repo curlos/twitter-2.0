@@ -10,8 +10,8 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
-} from '@firebase/firestore';
-import { getDownloadURL, ref, uploadString } from '@firebase/storage';
+} from 'firebase/firestore';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   EmojiHappyIcon,

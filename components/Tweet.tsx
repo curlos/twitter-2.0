@@ -366,7 +366,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
           </div>
 
           {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
-          <div className="pb-3">
+          <div className="pb-1">
             {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
                 Replying to
