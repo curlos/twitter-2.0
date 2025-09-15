@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { SparklesIcon } from '@heroicons/react/outline';
+import { XIcon } from '@heroicons/react/solid';
 import { db } from "../firebase";
 import Input from './Input';
 import { useSession } from 'next-auth/react';
@@ -105,7 +106,17 @@ const Feed = () => {
     <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
       <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
         <div className="flex justify-between items-center">
-          <h2 className="font-bold">{router.query.query ? `Search results for: ${router.query.query}` : 'Home'}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold">{router.query.query ? `Search results for: ${router.query.query}` : 'Home'}</h2>
+            {router.query.query && (
+              <button
+                onClick={() => router.push('/')}
+                className="p-1 rounded-full hover:bg-lightblue-100 dark:hover:bg-lightblue-900 transition-colors"
+              >
+                <XIcon className="h-4 w-4 text-gray-500" />
+              </button>
+            )}
+          </div>
           <SparklesIcon className="h-5 w-5" />
         </div>
 
