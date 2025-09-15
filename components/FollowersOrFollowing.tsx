@@ -125,7 +125,6 @@ const FollowersOrFollowing = () => {
               <div>
                 {accounts.length > 0 ? (
                   accounts.map((account) => {
-                    const accountData = account.data();
                     let key = null;
                     let userID = null;
 
@@ -149,7 +148,7 @@ const FollowersOrFollowing = () => {
                 <div className="h-[60px]" />
               </div>
             </div>
-          ) : <div className="pt-2"><Spinner /></div>
+          ) : <div className="pt-5"><Spinner /></div>
           }
         </div>
 

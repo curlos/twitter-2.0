@@ -5,7 +5,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { useFollow } from '../utils/useFollow';
-import Spinner from './Spinner';
+import MediumUserSkeletonLoader from './MediumUserSkeletonLoader';
 
 interface Props {
   userID: string,
@@ -62,7 +62,7 @@ const MediumUser = ({ userID }: Props) => {
   const handleFollow = useFollow({ session, followed, db, userID });
 
   return (
-    loading ? <Spinner /> : (
+    loading ? <MediumUserSkeletonLoader /> : (
       user ? (
         <Link href={`/profile/${user.tag}`}>
           <div className="p-3 flex justify-between items-center text-base cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
