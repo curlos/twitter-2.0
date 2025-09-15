@@ -387,49 +387,65 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
           {!pastTweet && (
             <div className="flex justify-start w-full text-gray-500">
               {/* Reply/Comment button */}
-              <div className="flex-1 items-center flex space-x-2" onClick={handleReplyToTweet}>
-                <FaRegComment className="h-[18px] w-[18px] cursor-pointer" />
-                <div>{replies.length}</div>
+              <div className="flex-1 items-center flex">
+                <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
+                  <FaRegComment className="h-[18px] w-[18px] group-hover:text-blue-500 transition-colors duration-200" />
+                  <div className="group-hover:text-blue-500 transition-colors duration-200">{replies.length}</div>
+                </div>
               </div>
 
               {/* Retweet button */}
-              <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                e.stopPropagation();
-                retweetTweet();
-              }}>
-                {!retweeted ? <FaRetweet className={`h-[18px] w-[18px] cursor-pointer`} /> : <FaRetweet className={`h-[18px] w-[18px] cursor-pointer text-green-400`} />}
-                <NumberFlow
-                  value={retweets.length}
-                  className={retweeted ? "text-green-400" : "text-gray-500"}
-                />
+              <div className="flex-1 items-center flex">
+                <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                  e.stopPropagation();
+                  retweetTweet();
+                }}>
+                  {!retweeted ? (
+                    <FaRetweet className="h-[18px] w-[18px] group-hover:text-green-400 transition-colors duration-200" />
+                  ) : (
+                    <FaRetweet className="h-[18px] w-[18px] text-green-400" />
+                  )}
+                  <NumberFlow
+                    value={retweets.length}
+                    className={`${retweeted ? "text-green-400" : "text-gray-500 group-hover:text-green-400"} transition-colors duration-200`}
+                  />
+                </div>
               </div>
 
               {/* Like button */}
-              <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                e.stopPropagation();
-                likeTweet();
-              }}>
-                {!liked ? <RiHeart3Line className={`h-[18px] w-[18px] cursor-pointer`} /> : <RiHeart3Fill className={`h-[18px] w-[18px] cursor-pointer text-red-500`} />}
-                <NumberFlow
-                  value={likes.length}
-                  className={liked ? "text-red-500" : "text-gray-500"}
-                />
+              <div className="flex-1 items-center flex">
+                <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-red-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                  e.stopPropagation();
+                  likeTweet();
+                }}>
+                  {!liked ? (
+                    <RiHeart3Line className="h-[18px] w-[18px] group-hover:text-red-500 transition-colors duration-200" />
+                  ) : (
+                    <RiHeart3Fill className="h-[18px] w-[18px] text-red-500" />
+                  )}
+                  <NumberFlow
+                    value={likes.length}
+                    className={`${liked ? "text-red-500" : "text-gray-500 group-hover:text-red-500"} transition-colors duration-200`}
+                  />
+                </div>
               </div>
 
               {/* Bookmark button */}
-              <div className="flex-1 items-center flex space-x-2" onClick={(e) => {
-                e.stopPropagation();
-                bookmarkTweet();
-              }}>
-                {bookmarked ? (
-                  <FaBookmark className={`h-[18px] w-[18px] cursor-pointer text-yellow-500`} />
-                ) : (
-                  <FaRegBookmark className={`h-[18px] w-[18px] cursor-pointer`} />
-                )}
-                <NumberFlow
-                  value={bookmarks.length}
-                  className={bookmarked ? "text-yellow-500" : "text-gray-500"}
-                />
+              <div className="flex-1 items-center flex">
+                <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-yellow-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                  e.stopPropagation();
+                  bookmarkTweet();
+                }}>
+                  {bookmarked ? (
+                    <FaBookmark className="h-[16px] w-[16px] text-yellow-500" />
+                  ) : (
+                    <FaRegBookmark className="h-[16px] w-[16px] group-hover:text-yellow-500 transition-colors duration-200" />
+                  )}
+                  <NumberFlow
+                    value={bookmarks.length}
+                    className={`${bookmarked ? "text-yellow-500" : "text-gray-500 group-hover:text-yellow-500"} transition-colors duration-200`}
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -581,35 +597,43 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             {!pastTweet && (
               <div className="flex justify-between w-full text-gray-500 py-2 px-12">
                 {/* Reply button */}
-                <div className="flex space-x-2" onClick={handleReplyToTweet}>
-                  <FaRegComment className="h-6 w-6 cursor-pointer" />
+                <div className="p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
+                  <FaRegComment className="h-6 w-6 group-hover:text-blue-500 transition-colors duration-200" />
                 </div>
 
                 {/* Retweet button */}
-                <div className="flex space-x-2" onClick={(e) => {
+                <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
                   e.stopPropagation();
                   retweetTweet();
                 }}>
-                  {!retweeted ? <FaRetweet className={`h-6 w-6 cursor-pointer`} /> : <FaRetweet className={`h-6 w-6 cursor-pointer text-green-400`} />}
+                  {!retweeted ? (
+                    <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
+                  ) : (
+                    <FaRetweet className="h-6 w-6 text-green-400" />
+                  )}
                 </div>
 
                 {/* Like Button */}
-                <div className="flex space-x-2" onClick={(e) => {
+                <div className="p-2 rounded-full hover:bg-red-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
                   e.stopPropagation();
                   likeTweet();
                 }}>
-                  {!liked ? <RiHeart3Line className={`h-6 w-6 cursor-pointer`} /> : <RiHeart3Fill className={`h-6 w-6 cursor-pointer text-red-500`} />}
+                  {!liked ? (
+                    <RiHeart3Line className="h-6 w-6 group-hover:text-red-500 transition-colors duration-200" />
+                  ) : (
+                    <RiHeart3Fill className="h-6 w-6 text-red-500" />
+                  )}
                 </div>
 
                 {/* Bookmark button */}
-                <div className="flex space-x-2" onClick={(e) => {
+                <div className="p-2 rounded-full hover:bg-yellow-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
                   e.stopPropagation();
                   bookmarkTweet();
                 }}>
                   {bookmarked ? (
-                    <FaBookmark className={`h-6 w-6 cursor-pointer text-yellow-500`} />
+                    <FaBookmark className="h-5 w-5 text-yellow-500" />
                   ) : (
-                    <FaRegBookmark className={`h-6 w-6 cursor-pointer`} />
+                    <FaRegBookmark className="h-5 w-5 group-hover:text-yellow-500 transition-colors duration-200" />
                   )}
                 </div>
               </div>
