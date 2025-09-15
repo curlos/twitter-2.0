@@ -105,7 +105,7 @@ const Feed = () => {
     <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
       <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
         <div className="flex justify-between items-center">
-          <h2 className="font-bold">Home</h2>
+          <h2 className="font-bold">{router.query.query ? `Search results for: ${router.query.query}` : 'Home'}</h2>
           <SparklesIcon className="h-5 w-5" />
         </div>
 
@@ -113,7 +113,7 @@ const Feed = () => {
       </div>
 
       {/* If the user is logged in, then show the input so that they can tweet something out if they so wish. */}
-      {session && session.user && (
+      {session && session.user && !router.query.query && (
         <div className="hidden md:block">
           <Input />
         </div>
