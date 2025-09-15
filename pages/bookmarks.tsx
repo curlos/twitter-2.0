@@ -4,6 +4,7 @@ import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom';
+import { useAuthRedirect } from '../hooks/useAuthRedirect';
 import MobileBottomNavBar from '../components/MobileBottomNavBar';
 import { NewTweetModal } from '../components/NewTweetModal';
 import { SearchModal } from '../components/SearchModal';
@@ -15,6 +16,7 @@ import Widgets from '../components/Widgets';
 import { db } from '../firebase';
 
 const Followers = () => {
+  useAuthRedirect(); // Just handle the redirect, don't block rendering
   const { data: session } = useSession();
   const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);

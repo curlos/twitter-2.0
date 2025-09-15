@@ -78,7 +78,7 @@ const Sidebar = () => {
           <div className="hidden xl:block">Search</div>
         </div>
 
-        <SidebarLink text="Bookmarks" Icon={BookmarkIcon} IconSolid={BookmarkIconSolid} active={activeLink === 'bookmarks'} />
+        {session && session.user && <SidebarLink text="Bookmarks" Icon={BookmarkIcon} IconSolid={BookmarkIconSolid} active={activeLink === 'bookmarks'} />}
 
         {/* Only show if the user is logged in. */}
         {session && session.user && (
