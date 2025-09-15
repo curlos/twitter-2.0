@@ -15,6 +15,7 @@ import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/out
 import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
 import Spinner from '../../components/Spinner';
+import TweetSkeletonLoader from '../../components/TweetSkeletonLoader';
 import Link from 'next/link';
 import MobileBottomNavBar from '../../components/MobileBottomNavBar';
 import { SearchModal } from '../../components/SearchModal';
@@ -373,8 +374,10 @@ const ProfilePage = () => {
             />
 
             {tweetsLoading ? (
-              <div className='flex justify-center items-center min-h-[70vh]'>
-                <Spinner />
+              <div>
+                {Array.from({ length: 10 }, (_, index) => (
+                  <TweetSkeletonLoader key={index} />
+                ))}
               </div>
             ) : (
               <ProfileTweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
