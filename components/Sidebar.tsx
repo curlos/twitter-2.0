@@ -9,6 +9,7 @@ import {
   SunIcon,
   MoonIcon
 } from "@heroicons/react/outline";
+import { Menu, Transition } from "@headlessui/react";
 import SidebarLink from "./SidebarLink";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
@@ -84,15 +85,6 @@ const Sidebar = () => {
           <SidebarLink text="Profile" Icon={UserIcon} IconSolid={UserIconSolid} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
-        {/* Only show if the user is logged in. */}
-        {session && session.user && (
-          <div className={`flex items-center space-x-2 text-xl cursor-pointer`} onClick={() => {
-            signOut({ callbackUrl: 'http://localhost:3000/auth' });
-          }}>
-            <LogoutIcon className="h-[30px] w-[30px]" />
-            <div className="hidden xl:block">Logout</div>
-          </div>
-        )}
 
         <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => {
           if (!session) {
@@ -116,20 +108,64 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* If the user is logged in, then at the bottom of the sidebar they'll see their basic profile info (icon, name, username, three dots) */}
+      {/* If the user is logged in, then at the bottom of the sidebar they'll see their basic profile info (icon, name, username) with a dropdown menu */}
       {session && session.user && (
         <div className="hidden xl:flex items-center justify-between mt-3 w-100">
-          <div className="flex items-center space-x-2 w-100">
-            <Link href={`/profile/${session.user.tag}`}>
-              <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] object-cover cursor-pointer" />
-            </Link>
+          <div className="relative w-full">
+            <Menu>
+              {({ open }) => (
+                <>
+                  <Menu.Button className="flex items-center space-x-2 w-full p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+                    <img src={session.user.profilePic} alt={session.user.name} className="rounded-full w-[55px] h-[55px] object-cover" />
+                    <div className="flex flex-col w-full">
+                      <div className="text-left">{session.user.name}</div>
+                      <div className="text-gray-500 break-word text-left">@{session.user.tag}</div>
+                    </div>
+                    <DotsHorizontalIcon className="h-5 w-5 text-gray-400" />
+                  </Menu.Button>
 
-            <div className="flex flex-col w-100">
-              <Link href={`/profile/${session.user.tag}`}>
-                <div className="cursor-pointer hover:underline">{session.user.name}</div>
-              </Link>
-              <div className="text-gray-500 break-word">@{session.user.tag}</div>
-            </div>
+                  <Transition
+                    show={open}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Menu.Items
+                      static
+                      className="absolute -top-2 transform -translate-y-full left-0 w-full origin-bottom-left divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
+                    >
+                      <div className="p-1 bg-white dark:bg-black rounded-md">
+                        <Menu.Item>
+                          {() => (
+                            <Link href={`/profile/${session.user.tag}`}>
+                              <div className="bg-white dark:bg-black text-black dark:text-white w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-md">
+                                <UserIcon className="h-4 w-4" />
+                                <span>View Profile</span>
+                              </div>
+                            </Link>
+                          )}
+                        </Menu.Item>
+
+                        <Menu.Item>
+                          {() => (
+                            <div
+                              className="bg-white dark:bg-black text-red-500 w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-2 rounded-md"
+                              onClick={() => signOut({ callbackUrl: 'http://localhost:3000/auth' })}
+                            >
+                              <LogoutIcon className="h-4 w-4" />
+                              <span>Logout</span>
+                            </div>
+                          )}
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </>
+              )}
+            </Menu>
           </div>
         </div>
       )}
