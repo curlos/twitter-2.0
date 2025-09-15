@@ -27,6 +27,8 @@ const SidebarLink = ({ text, Icon, IconSolid, active, tag }: Props) => {
         return `/messages`;
       case 'Bookmarks':
         return `/bookmarks`;
+      case 'Settings':
+        return `/settings`;
       default:
         return '/';
     }
@@ -35,7 +37,7 @@ const SidebarLink = ({ text, Icon, IconSolid, active, tag }: Props) => {
   return (
     <Link href={getLinkHref(text)}>
       {/* Show the text as bold when the link is ACTIVE (meaning we are on that page. So, if we were on the user's bookmarks, then the "Bookmark" link would be bold.) */}
-      <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold text-lightblue-500 dark:text-white'}`}>
+      <div className={`flex items-center space-x-2 text-xl cursor-pointer ${active && 'font-bold text-lightblue-500 dark:text-lightblue-500'}`}>
         {active && IconSolid ? (
           <IconSolid className="h-[30px] w-[30px]" />
         ) : (

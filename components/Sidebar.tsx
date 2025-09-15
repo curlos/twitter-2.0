@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid } from "@heroicons/react/solid";
+import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid, CogIcon as CogIconSolid } from "@heroicons/react/solid";
 import {
   HomeIcon,
   BookmarkIcon,
   UserIcon,
   DotsHorizontalIcon,
   LogoutIcon,
-  SunIcon,
-  MoonIcon
+  CogIcon
 } from "@heroicons/react/outline";
 import { Menu, Transition } from "@headlessui/react";
 import SidebarLink from "./SidebarLink";
@@ -37,12 +36,14 @@ const Sidebar = () => {
     setTheme(localStorage.getItem('theme'));
   }, []);
 
-  // When we click one of the links in the sidebar ("Home", "Bookmarks", or "Profile"), then we want to change the active link to that page. This could also be detected by just going to the page. All that has to happen the router's pathname changing.
+  // When we click one of the links in the sidebar ("Home", "Bookmarks", "Profile", or "Settings"), then we want to change the active link to that page. This could also be detected by just going to the page. All that has to happen the router's pathname changing.
   useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {
       setActiveLink('bookmarks');
     } else if (router.pathname.startsWith('/profile')) {
       setActiveLink('profile');
+    } else if (router.pathname.startsWith('/settings')) {
+      setActiveLink('settings');
     } else {
       setActiveLink('home');
     }
@@ -54,22 +55,6 @@ const Sidebar = () => {
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <BsTwitter className="h-[30px] w-[30px] text-lightblue-500 dark:text-white" />
         </div>
-
-        {theme === 'dark' ? (
-          <div className="cursor-pointer" onClick={() => {
-            setTheme('light');
-            localStorage.theme = 'light';
-          }}>
-            <SunIcon className="h-[30px] w-[30px] dark:text-white" />
-          </div>
-        ) : (
-          <div className="cursor-pointer" onClick={() => {
-            setTheme('dark');
-            localStorage.theme = 'dark';
-          }}>
-            <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
-          </div>
-        )}
 
         <SidebarLink text="Home" Icon={HomeIcon} IconSolid={HomeIconSolid} active={activeLink === 'home'} />
 
@@ -85,6 +70,7 @@ const Sidebar = () => {
           <SidebarLink text="Profile" Icon={UserIcon} IconSolid={UserIconSolid} active={activeLink === 'profile'} tag={session.user.tag} />
         )}
 
+        <SidebarLink text="Settings" Icon={CogIcon} IconSolid={CogIconSolid} active={activeLink === 'settings'} />
 
         <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => {
           if (!session) {
