@@ -10,11 +10,11 @@ import { TweetDropdown } from '../TweetDropdown';
 import { FaRetweet } from 'react-icons/fa';
 import { HiBadgeCheck } from 'react-icons/hi';
 import { BsPencilFill } from 'react-icons/bs';
-import { XIcon } from '@heroicons/react/solid';
 import NumberFlow from '@number-flow/react';
 import Link from 'next/link';
 import TweetActions from './TweetActions';
 import useTweetData from './useTweetData';
+import ImageModal from '../ImageModal';
 
 interface Props {
   id: string,
@@ -379,30 +379,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       )}
 
       {/* Image Modal */}
-      {showImageModal && tweet.image && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-          onClick={handleCloseImageModal}
-        >
-          <button
-            className="absolute top-4 right-4 z-10 p-2 bg-black bg-opacity-50 rounded-full text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCloseImageModal();
-            }}
-          >
-            <XIcon className="h-6 w-6" />
-          </button>
-          <div className="relative">
-            <img
-              src={tweet.image}
-              alt=""
-              className="max-h-[100vh] object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-        </div>
-      )}
+      <ImageModal
+        isOpen={showImageModal}
+        image={tweet.image}
+        onClose={handleCloseImageModal}
+      />
     </>
   );
 };
