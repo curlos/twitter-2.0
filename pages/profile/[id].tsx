@@ -19,6 +19,109 @@ import AuthReminder from '../../components/AuthReminder';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 
+const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followers, following, followersYouFollow }) => {
+  return (
+    <>
+      <div>
+        <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[225px] object-cover" />
+      </div>
+
+      <div className="flex justify-between items-start p-4 pb-0">
+        <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
+
+        <div className="flex items-center space-x-2">
+          <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
+            {session && session.user && session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 pt-2">
+        <div className="flex items-center">
+          <h2 className="text-xl font-[900]">{author.name}</h2>
+          <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
+        </div>
+
+        <div className="text-base text-gray-500">@{author.tag}</div>
+
+        <div className="text-base">{author.bio}</div>
+
+        <div className="flex text-base text-gray-500 space-x-4 py-2">
+          {author.location ? (
+            <div className="flex text-gray-500 space-x-1">
+              <LocationMarkerIcon className="h-5 w-5" />
+              <div className="">{author.location}</div>
+            </div>
+          ) : null}
+
+          {author.website ? (
+            <div className="flex space-x-1">
+              <LinkIcon className="h-5 w-5" />
+              <a href={`${!author.website.includes('https://') ?
+                `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
+            </div>
+          ) : null}
+
+          <div className="flex space-x-1">
+            <CalendarIcon className="h-5 w-5" />
+            <div className="">Joined {moment(new Date(author.dateJoined.seconds * 1000)).format('MMMM YYYY')}</div>
+          </div>
+
+        </div>
+
+        <div className="text-gray-500 text-base flex space-x-4">
+          <Link href={{
+            pathname: `/following/[tag]`,
+            query: { tag: author.tag || 't' }
+          }}>
+            <div className="space-x-1 cursor-pointer hover:underline">
+              <span className="text-black dark:text-white font-bold">{following.length}</span>
+              <span>Following</span>
+            </div>
+          </Link>
+
+
+          <Link href={{
+            pathname: `/followers/[tag]`,
+            query: { tag: author.tag || 't' }
+          }}>
+            <div className="space-x-1 cursor-pointer hover:underline">
+              <span className="text-black dark:text-white font-bold">{followers.length}</span>
+              <span>Followers</span>
+            </div>
+          </Link>
+        </div>
+
+        {followersYouFollow && followersYouFollow.length ? (
+          <div className="text-sm text-gray-500 flex space-x-3 py-3">
+            <div className="flex">
+              {followersYouFollow.slice(0, 3).map((user, i) => (
+                <Link key={user.tag} href={`/profile/${user.tag}`}>
+                  <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full z-50 ${i > 0 ? 'ml-[-9px]' : ''}`} />
+                </Link>
+              ))}
+            </div>
+            <div>
+              Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
+                <span key={`follower-${follower.tag}`}>
+                  <Link href={`/profile/${follower.tag}`}>
+                    <span className="cursor-pointer hover:underline">{follower.name}
+                    </span>
+                  </Link>
+                  <span>
+                    {i === followersYouFollow.slice(0, 3).length - 1 ? '' : ', '}
+                  </span>
+                </span>
+
+              ))} {followersYouFollow.length > followersYouFollow.slice(0, 3).length ? `, and ${followersYouFollow.length - followersYouFollow.slice(0, 3).length} ${(followersYouFollow.length - followersYouFollow.slice(0, 3).length) > 1 ? 'others' : 'other'} you follow` : null}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+};
+
 const ProfilePage = () => {
   const { data: session } = useSession();
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(editProfileModalState);
@@ -172,7 +275,6 @@ const ProfilePage = () => {
     return !result;
   };
 
-
   /**
    * @description - Handles what happens when a user wants to follow or unfollow someone.
    * @returns {Object || undefined}
@@ -207,140 +309,18 @@ const ProfilePage = () => {
               <AuthReminder />
             </PageHeader>
 
-            <div>
-              <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[225px] object-cover" />
-            </div>
+            <ProfileHeader
+              author={author}
+              session={session}
+              id={id}
+              followed={followed}
+              handleEditOrFollow={handleEditOrFollow}
+              followers={followers}
+              following={following}
+              followersYouFollow={followersYouFollow}
+            />
 
-            <div className="flex justify-between items-start p-4 pb-0">
-              <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
-
-              <div className="flex items-center space-x-2">
-                <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
-                  {session && session.user && session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 pt-2">
-              <div className="flex items-center">
-                <h2 className="text-xl font-[900]">{author.name}</h2>
-                <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
-              </div>
-
-              <div className="text-base text-gray-500">@{author.tag}</div>
-
-              <div className="text-base">{author.bio}</div>
-
-              <div className="flex text-base text-gray-500 space-x-4 py-2">
-                {author.location ? (
-                  <div className="flex text-gray-500 space-x-1">
-                    <LocationMarkerIcon className="h-5 w-5" />
-                    <div className="">{author.location}</div>
-                  </div>
-                ) : null}
-
-                {author.website ? (
-                  <div className="flex space-x-1">
-                    <LinkIcon className="h-5 w-5" />
-                    <a href={`${!author.website.includes('https://') ?
-                      `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
-                  </div>
-                ) : null}
-
-                <div className="flex space-x-1">
-                  <CalendarIcon className="h-5 w-5" />
-                  <div className="">Joined {moment(new Date(author.dateJoined.seconds * 1000)).format('MMMM YYYY')}</div>
-                </div>
-
-              </div>
-
-              <div className="text-gray-500 text-base flex space-x-4">
-                <Link href={{
-                  pathname: `/following/[tag]`,
-                  query: { tag: author.tag || 't' }
-                }}>
-                  <div className="space-x-1 cursor-pointer hover:underline">
-                    <span className="text-black dark:text-white font-bold">{following.length}</span>
-                    <span>Following</span>
-                  </div>
-                </Link>
-
-
-                <Link href={{
-                  pathname: `/followers/[tag]`,
-                  query: { tag: author.tag || 't' }
-                }}>
-                  <div className="space-x-1 cursor-pointer hover:underline">
-                    <span className="text-black dark:text-white font-bold">{followers.length}</span>
-                    <span>Followers</span>
-                  </div>
-                </Link>
-              </div>
-
-              {followersYouFollow && followersYouFollow.length ? (
-                <div className="text-sm text-gray-500 flex space-x-3 py-3">
-                  <div className="flex">
-                    {followersYouFollow.slice(0, 3).map((user, i) => (
-                      <Link key={user.tag} href={`/profile/${user.tag}`}>
-                        <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full z-50 ${i > 0 ? 'ml-[-9px]' : ''}`} />
-                      </Link>
-                    ))}
-                  </div>
-                  <div>
-                    Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
-                      <span key={`follower-${follower.tag}`}>
-                        <Link href={`/profile/${follower.tag}`}>
-                          <span className="cursor-pointer hover:underline">{follower.name}
-                          </span>
-                        </Link>
-                        <span>
-                          {i === followersYouFollow.slice(0, 3).length - 1 ? '' : ', '}
-                        </span>
-                      </span>
-
-                    ))} {followersYouFollow.length > followersYouFollow.slice(0, 3).length ? `, and ${followersYouFollow.length - followersYouFollow.slice(0, 3).length} ${(followersYouFollow.length - followersYouFollow.slice(0, 3).length) > 1 ? 'others' : 'other'} you follow` : null}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="flex">
-              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 ml-2 cursor-pointer" onClick={() => setFilter('Tweets')}>
-                <div className={`${filter === 'Tweets' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets</div>
-                {filter === 'Tweets' ? (
-                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                  />
-                ) : null}
-              </div>
-
-              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Tweets & Replies')}>
-                <div className={`${filter === 'Tweets & Replies' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Tweets & Replies</div>
-
-                {filter === 'Tweets & Replies' ? (
-                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                  />
-                ) : null}
-              </div>
-
-              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Media')}>
-                <div className={`${filter === 'Media' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Media</div>
-
-                {filter === 'Media' ? (
-                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                  />
-                ) : null}
-              </div>
-
-              <div className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 cursor-pointer" onClick={() => setFilter('Likes')}>
-                <div className={`${filter === 'Likes' && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>Likes</div>
-
-                {filter === 'Likes' ? (
-                  <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full"
-                  />
-                ) : null}
-              </div>
-
-            </div>
+            <FilterTabs filter={filter} setFilter={setFilter} />
 
             <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
             />
@@ -359,6 +339,29 @@ const ProfilePage = () => {
         {isSettingsModalOpen && <EditProfileModal />}
       </ContentContainer>
     </AppLayout>
+  );
+};
+
+const FilterTabs = ({ filter, setFilter }) => {
+  const tabs = ['Tweets', 'Tweets & Replies', 'Media', 'Likes'];
+
+  return (
+    <div className="flex">
+      {tabs.map((tab) => (
+        <div
+          key={tab}
+          className="flex flex-grow flex-col items-center text-base text-gray-500 mr-2 ml-2 cursor-pointer"
+          onClick={() => setFilter(tab)}
+        >
+          <div className={`${filter === tab && 'text-black dark:text-white font-bold'} flex-1 py-2 flex justify-center items-center`}>
+            {tab}
+          </div>
+          {filter === tab ? (
+            <div className="w-full h-1 m-0 bg-lightblue-400 rounded-full" />
+          ) : null}
+        </div>
+      ))}
+    </div>
   );
 };
 
