@@ -10,7 +10,7 @@ import { SearchModal } from '../components/SearchModal';
 import Sidebar from '../components/Sidebar';
 import SidenavDrawer from '../components/SidenavDrawer';
 import Widgets from '../components/Widgets';
-import { SunIcon, MoonIcon, MailIcon, LockClosedIcon } from '@heroicons/react/outline';
+import { SunIcon, MoonIcon, MailIcon, LockClosedIcon, ChevronDownIcon } from '@heroicons/react/outline';
 
 const Settings = () => {
   useAuthRedirect();
@@ -32,6 +32,9 @@ const Settings = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [hasPassword, setHasPassword] = useState(false);
+
+  const [isEmailAccordionOpen, setIsEmailAccordionOpen] = useState(false);
+  const [isPasswordAccordionOpen, setIsPasswordAccordionOpen] = useState(false);
 
   useEffect(() => {
     setTheme(localStorage.getItem('theme'));
@@ -234,132 +237,172 @@ const Settings = () => {
                 <h3 className="text-lg font-semibold mb-4">Account</h3>
 
                 <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <div className="mb-4">
-                      <div className="font-medium">Change Email Address</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
-                        <MailIcon className="h-4 w-4" />
-                        <span>Update your email address</span>
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <button
+                      onClick={() => setIsEmailAccordionOpen(!isEmailAccordionOpen)}
+                      className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
+                        isEmailAccordionOpen ? 'rounded-t-lg' : 'rounded-lg'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <MailIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                        <div className="text-left">
+                          <div className="font-medium">Change Email Address</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">Update your email address</div>
+                        </div>
+                      </div>
+                      <ChevronDownIcon
+                        className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+                          isEmailAccordionOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isEmailAccordionOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="pt-4">
+                          <div className="mb-4">
+                            <div className="text-sm font-medium">Current Email</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <span>{session?.user?.email}</span>
+                            </div>
+                          </div>
+
+                          <form onSubmit={handleEmailUpdate} className="space-y-4">
+                            <div>
+                              <label htmlFor="newEmail" className="block text-sm font-medium mb-2">
+                                New Email Address
+                              </label>
+                              <input
+                                type="email"
+                                id="newEmail"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
+                                placeholder="Enter new email address"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                                disabled={isUpdatingEmail}
+                              />
+                            </div>
+
+                            {emailError && (
+                              <div className="text-red-500 text-sm">{emailError}</div>
+                            )}
+
+                            {emailSuccess && (
+                              <div className="text-green-500 text-sm">{emailSuccess}</div>
+                            )}
+
+                            <button
+                              type="submit"
+                              disabled={isUpdatingEmail || !newEmail.trim()}
+                              className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                            >
+                              {isUpdatingEmail ? 'Updating...' : 'Update Email'}
+                            </button>
+                          </form>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="mb-4">
-                      <div className="text-sm font-medium">Current Email</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        <span>{session?.user?.email}</span>
-                      </div>
-                    </div>
-
-                    <form onSubmit={handleEmailUpdate} className="space-y-4">
-                      <div>
-                        <label htmlFor="newEmail" className="block text-sm font-medium mb-2">
-                          New Email Address
-                        </label>
-                        <input
-                          type="email"
-                          id="newEmail"
-                          value={newEmail}
-                          onChange={(e) => setNewEmail(e.target.value)}
-                          placeholder="Enter new email address"
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                          disabled={isUpdatingEmail}
-                        />
-                      </div>
-
-                      {emailError && (
-                        <div className="text-red-500 text-sm">{emailError}</div>
-                      )}
-
-                      {emailSuccess && (
-                        <div className="text-green-500 text-sm">{emailSuccess}</div>
-                      )}
-
-                      <button
-                        type="submit"
-                        disabled={isUpdatingEmail || !newEmail.trim()}
-                        className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                      >
-                        {isUpdatingEmail ? 'Updating...' : 'Update Email'}
-                      </button>
-                    </form>
                   </div>
 
                   {hasPassword && (
-                    <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                      <div className="mb-4">
-                        <div className="font-medium">Change Password</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
-                          <LockClosedIcon className="h-4 w-4" />
-                          <span>Update your account password</span>
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+                      <button
+                        onClick={() => setIsPasswordAccordionOpen(!isPasswordAccordionOpen)}
+                        className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
+                          isPasswordAccordionOpen ? 'rounded-t-lg' : 'rounded-lg'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <LockClosedIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                          <div className="text-left">
+                            <div className="font-medium">Change Password</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">Update your account password</div>
+                          </div>
+                        </div>
+                        <ChevronDownIcon
+                          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+                            isPasswordAccordionOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        isPasswordAccordionOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}>
+                        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+                          <div className="pt-4">
+                            <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                              <div>
+                                <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
+                                  Current Password
+                                </label>
+                                <input
+                                  type="password"
+                                  id="currentPassword"
+                                  value={currentPassword}
+                                  onChange={(e) => setCurrentPassword(e.target.value)}
+                                  placeholder="Enter current password"
+                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                                  disabled={isUpdatingPassword}
+                                />
+                              </div>
+
+                              <div>
+                                <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
+                                  New Password
+                                </label>
+                                <input
+                                  type="password"
+                                  id="newPassword"
+                                  value={newPassword}
+                                  onChange={(e) => setNewPassword(e.target.value)}
+                                  placeholder="Enter new password"
+                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                                  disabled={isUpdatingPassword}
+                                />
+                              </div>
+
+                              <div>
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+                                  Confirm New Password
+                                </label>
+                                <input
+                                  type="password"
+                                  id="confirmPassword"
+                                  value={confirmPassword}
+                                  onChange={(e) => setConfirmPassword(e.target.value)}
+                                  placeholder="Confirm new password"
+                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                                  disabled={isUpdatingPassword}
+                                />
+                              </div>
+
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.
+                              </div>
+
+                              {passwordError && (
+                                <div className="text-red-500 text-sm">{passwordError}</div>
+                              )}
+
+                              {passwordSuccess && (
+                                <div className="text-green-500 text-sm">{passwordSuccess}</div>
+                              )}
+
+                              <button
+                                type="submit"
+                                disabled={isUpdatingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
+                                className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                              >
+                                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                              </button>
+                            </form>
+                          </div>
                         </div>
                       </div>
-
-                      <form onSubmit={handlePasswordUpdate} className="space-y-4">
-                        <div>
-                          <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
-                            Current Password
-                          </label>
-                          <input
-                            type="password"
-                            id="currentPassword"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            placeholder="Enter current password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                            disabled={isUpdatingPassword}
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
-                            New Password
-                          </label>
-                          <input
-                            type="password"
-                            id="newPassword"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Enter new password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                            disabled={isUpdatingPassword}
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                            Confirm New Password
-                          </label>
-                          <input
-                            type="password"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Confirm new password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                            disabled={isUpdatingPassword}
-                          />
-                        </div>
-
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.
-                        </div>
-
-                        {passwordError && (
-                          <div className="text-red-500 text-sm">{passwordError}</div>
-                        )}
-
-                        {passwordSuccess && (
-                          <div className="text-green-500 text-sm">{passwordSuccess}</div>
-                        )}
-
-                        <button
-                          type="submit"
-                          disabled={isUpdatingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
-                          className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                        >
-                          {isUpdatingPassword ? 'Updating...' : 'Update Password'}
-                        </button>
-                      </form>
                     </div>
                   )}
                 </div>
