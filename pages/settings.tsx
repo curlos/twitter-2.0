@@ -12,15 +12,7 @@ const Settings = () => {
   useAuthRedirect();
   const { data: session, update } = useSession();
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState('');
-  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [hasPassword, setHasPassword] = useState(false);
-
-  const [isPasswordAccordionOpen, setIsPasswordAccordionOpen] = useState(false);
 
   useEffect(() => {
     // Check if user has a password (credential users vs OAuth users)
@@ -38,65 +30,6 @@ const Settings = () => {
       checkUserPassword();
     }
   }, [session]);
-
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError('');
-    setPasswordSuccess('');
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError('All fields are required');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match');
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      setPasswordError('New password must be at least 8 characters long');
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
-    if (!passwordRegex.test(newPassword)) {
-      setPasswordError('Password must contain at least one lowercase letter, one uppercase letter, and one number');
-      return;
-    }
-
-    if (currentPassword === newPassword) {
-      setPasswordError('New password must be different from current password');
-      return;
-    }
-
-    setIsUpdatingPassword(true);
-
-    try {
-      const response = await fetch('/api/user/update-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setPasswordError(data.error || 'Failed to update password');
-      } else {
-        setPasswordSuccess('Password updated successfully!');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-      }
-    } catch (error) {
-      setPasswordError('Network error. Please try again.');
-    } finally {
-      setIsUpdatingPassword(false);
-    }
-  };
 
   return (
     <AppLayout title="Settings / Twitter 2.0">
@@ -126,104 +59,7 @@ const Settings = () => {
                 <div className="space-y-4">
                   <EmailAccordion session={session} update={update} />
 
-                  {hasPassword && (
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
-                      <button
-                        onClick={() => setIsPasswordAccordionOpen(!isPasswordAccordionOpen)}
-                        className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
-                          isPasswordAccordionOpen ? 'rounded-t-lg' : 'rounded-lg'
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <LockClosedIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                          <div className="text-left">
-                            <div className="font-medium">Change Password</div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">Update your account password</div>
-                          </div>
-                        </div>
-                        <ChevronDownIcon
-                          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
-                            isPasswordAccordionOpen ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </button>
-
-                      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        isPasswordAccordionOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
-                      }`}>
-                        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
-                          <div className="pt-4">
-                            <form onSubmit={handlePasswordUpdate} className="space-y-4">
-                              <div>
-                                <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
-                                  Current Password
-                                </label>
-                                <input
-                                  type="password"
-                                  id="currentPassword"
-                                  value={currentPassword}
-                                  onChange={(e) => setCurrentPassword(e.target.value)}
-                                  placeholder="Enter current password"
-                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                                  disabled={isUpdatingPassword}
-                                />
-                              </div>
-
-                              <div>
-                                <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
-                                  New Password
-                                </label>
-                                <input
-                                  type="password"
-                                  id="newPassword"
-                                  value={newPassword}
-                                  onChange={(e) => setNewPassword(e.target.value)}
-                                  placeholder="Enter new password"
-                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                                  disabled={isUpdatingPassword}
-                                />
-                              </div>
-
-                              <div>
-                                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                                  Confirm New Password
-                                </label>
-                                <input
-                                  type="password"
-                                  id="confirmPassword"
-                                  value={confirmPassword}
-                                  onChange={(e) => setConfirmPassword(e.target.value)}
-                                  placeholder="Confirm new password"
-                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
-                                  disabled={isUpdatingPassword}
-                                />
-                              </div>
-
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.
-                              </div>
-
-                              {passwordError && (
-                                <div className="text-red-500 text-sm">{passwordError}</div>
-                              )}
-
-                              {passwordSuccess && (
-                                <div className="text-green-500 text-sm">{passwordSuccess}</div>
-                              )}
-
-                              <button
-                                type="submit"
-                                disabled={isUpdatingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
-                                className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                              >
-                                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
-                              </button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {hasPassword && <PasswordAccordion />}
                 </div>
               </div>
             </div>
@@ -395,6 +231,174 @@ const EmailAccordion = ({ session, update }) => {
                 className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {isUpdatingEmail ? 'Updating...' : 'Update Email'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PasswordAccordion = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isPasswordAccordionOpen, setIsPasswordAccordionOpen] = useState(false);
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError('All fields are required');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters long');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    if (!passwordRegex.test(newPassword)) {
+      setPasswordError('Password must contain at least one lowercase letter, one uppercase letter, and one number');
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setPasswordError('New password must be different from current password');
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+
+    try {
+      const response = await fetch('/api/user/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setPasswordError(data.error || 'Failed to update password');
+      } else {
+        setPasswordSuccess('Password updated successfully!');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch (error) {
+      setPasswordError('Network error. Please try again.');
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
+  return (
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+      <button
+        onClick={() => setIsPasswordAccordionOpen(!isPasswordAccordionOpen)}
+        className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
+          isPasswordAccordionOpen ? 'rounded-t-lg' : 'rounded-lg'
+        }`}
+      >
+        <div className="flex items-center space-x-3">
+          <LockClosedIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          <div className="text-left">
+            <div className="font-medium">Change Password</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Update your account password</div>
+          </div>
+        </div>
+        <ChevronDownIcon
+          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+            isPasswordAccordionOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+        isPasswordAccordionOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="pt-4">
+            <form onSubmit={handlePasswordUpdate} className="space-y-4">
+              <div>
+                <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter current password"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  disabled={isUpdatingPassword}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  disabled={isUpdatingPassword}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  disabled={isUpdatingPassword}
+                />
+              </div>
+
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.
+              </div>
+
+              {passwordError && (
+                <div className="text-red-500 text-sm">{passwordError}</div>
+              )}
+
+              {passwordSuccess && (
+                <div className="text-green-500 text-sm">{passwordSuccess}</div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isUpdatingPassword || !currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()}
+                className="px-4 py-2 bg-lightblue-500 text-white rounded-lg hover:bg-lightblue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
               </button>
             </form>
           </div>
