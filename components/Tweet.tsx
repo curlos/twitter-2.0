@@ -6,7 +6,7 @@ import Router, { useRouter } from 'next/router';
 import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState } from '../atoms/atom';
 import { collection, deleteDoc, doc, DocumentData, onSnapshot, serverTimestamp, setDoc } from '@firebase/firestore';
 import { db } from '../firebase';
-import { getDoc, orderBy, query } from 'firebase/firestore';
+import { getDoc } from 'firebase/firestore';
 import { TweetDropdown } from './TweetDropdown';
 import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import { HiBadgeCheck } from 'react-icons/hi';
@@ -35,149 +35,30 @@ interface Props {
  * @returns {React.FC}
  */
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
-
-
   const { data: session } = useSession();
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
-  const [likes, setLikes] = useState([]);
-  const [retweets, setRetweets] = useState([]);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [replies, setReplies] = useState([]);
-  const [liked, setLiked] = useState(false);
-  const [retweeted, setRetweeted] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
-  const [parentTweet, setParentTweet] = useState<DocumentData>();
-  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
-  const [authorId, setAuthorId] = useState<string>();
-  const [author, setAuthor] = useState<IAuthor>();
-  const [retweetedBy, setRetweetedBy] = useState<DocumentData>();
-  const [loading, setLoading] = useState(true);
   const [showImageModal, setShowImageModal] = useState(false);
   const router = useRouter();
 
-  // Get REPLIES
-  useEffect(() => {
-    // Goes through all the tweets in the database and looks for the tweet with the corresponding tweet id and gets the list of replies on that tweet (the replies will be a list of tweets).
-    const unsubscribe = onSnapshot(
-      collection(db, 'tweets', String(tweetID), 'replies'),
-      (snapshot) => setReplies(snapshot.docs));
-    return () => unsubscribe();
-  }, [tweetID]);
+  // Use the custom hook for tweet data management
+  const {
+    likes,
+    retweets,
+    bookmarks,
+    replies,
+    liked,
+    retweeted,
+    bookmarked,
+    parentTweet,
+    parentTweetAuthor,
+    authorId,
+    author,
+    retweetedBy,
+    loading
+  } = useTweetData(id, tweet, tweetID);
 
-  // Get LIKES
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
-
-  // Get RETWEETS
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
-
-
-  // Get BOOKMARKS
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
-
-  // Check if the logged in user (if any) has liked this tweet
-  useEffect(() => {
-    // Go through the array of likes (will be a list of users) and find out if the currently logged in user (if any) is among the id's of users who liked the tweet.
-    setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1);
-  }, [likes]);
-
-  // Check if the logged in user (if any) has retweeted this tweet
-  useEffect(() => {
-    // Go through the array of retweets (will be a list of users) and find out if the currently logged in user (if any) is among the id's of users who retweeted the tweet.
-    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1);
-  }, [retweets]);
-
-  // Check if the logged in user (if any) has bookmarked this tweet
-  useEffect(() => {
-    // Go through the array of bookmarks (will be a list of users) and find out if the currently logged in user (if any) is among the id's of users who bookmarked the tweet.
-    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1);
-  }, [bookmarks]);
-
-  // Get the author of the tweet
-  useEffect(() => {
-    let isMounted = true;
-    // Go through all the users in the database and find the one with the same ID as the tweet's "userID"
-    const docRef = doc(db, "users", tweet.userID);
-    getDoc(docRef).then((snap) => {
-      if (isMounted) {
-        setAuthorId(snap.id);
-        setAuthor(snap.data() as IAuthor);
-        setLoading(false);
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  // Get the PARENT tweet (Only if the current tweet is a reply to another tweet, the parent tweet)
-  useEffect(() => {
-    let isMounted = true;
-    // If this tweet has a "parentTweet", then this tweet is a REPLY to another tweet, the parent tweet.
-    if (tweet.parentTweet && tweet.parentTweet !== "") {
-      // tweet.parentTweet probably equals the parentTweet's "id" so we can use that to go through the tweets in the database and find the parent tweet.
-      const docRef = doc(db, "tweets", String(tweet.parentTweet));
-      getDoc(docRef).then((snap) => {
-        if (isMounted) {
-          setParentTweet(snap);
-        }
-      });
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  // Get the AUTHOR of the PARENT TWEET (IF it exists AND the current tweet is a REPLY)
-  useEffect(() => {
-    let isMounted = true;
-    // TODO: Check what happens when a tweet is deleted. What do the replies show? Should show something like: "This tweet has been deleted." but it doesn't seem like it'd show it from a reply tweet.
-    if (parentTweet && parentTweet.data()) {
-      const docRef = doc(db, "users", String(parentTweet.data().userID));
-      getDoc(docRef).then((snap) => {
-        if (isMounted) {
-          setParentTweetAuthor(snap.data());
-          setLoading(false);
-        }
-      });
-    } else {
-      if (isMounted) {
-        setLoading(false);
-      }
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [id, parentTweet]);
-
-  // Not entirely sure what this is for. Seems redundant to have this being checked with the retweets collection also available. Perhaps it was a way to QUICKLY check if the logged in user retweeted the current tweet.
-  // TODO: The "tweet" value is coming from a prop so need to check why it's being passed through a prop why it's being checked like this. Seems like something would go wrong with only one user at a time being set on the tweet.retweetedBy property. So if a second person retweeted it, their ID would get set on the property and replace the first person.
-  // I think the main reason I did this was to be efficient and reduce the amount of queries I had to make the DB.
-  useEffect(() => {
-    let isMounted = true;
-    if (tweet.retweetedBy) {
-      const docRef = doc(db, "users", tweet.retweetedBy);
-      getDoc(docRef).then((snap) => {
-        if (isMounted) {
-          setRetweetedBy(snap.data());
-          setLoading(false);
-        }
-      });
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [tweet.retweetedBy]);
 
 
   /**
@@ -700,6 +581,153 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       )}
     </>
   );
+};
+
+/**
+ * Custom hook to manage tweet data and related state
+ */
+const useTweetData = (id: string, tweet: any, tweetID: string) => {
+  const { data: session } = useSession();
+  const [likes, setLikes] = useState([]);
+  const [retweets, setRetweets] = useState([]);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [replies, setReplies] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [retweeted, setRetweeted] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [parentTweet, setParentTweet] = useState<DocumentData>();
+  const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
+  const [authorId, setAuthorId] = useState<string>();
+  const [author, setAuthor] = useState<IAuthor>();
+  const [retweetedBy, setRetweetedBy] = useState<DocumentData>();
+  const [loading, setLoading] = useState(true);
+
+  // Get REPLIES
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'tweets', String(tweetID), 'replies'),
+      (snapshot) => setReplies(snapshot.docs));
+    return () => unsubscribe();
+  }, [tweetID]);
+
+  // Get LIKES
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
+    return () => unsubscribe();
+  }, [id, tweetID]);
+
+  // Get RETWEETS
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
+    return () => unsubscribe();
+  }, [id, tweetID]);
+
+  // Get BOOKMARKS
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
+    return () => unsubscribe();
+  }, [id, tweetID]);
+
+  // Check if the logged in user (if any) has liked this tweet
+  useEffect(() => {
+    setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1);
+  }, [likes, session?.user.uid]);
+
+  // Check if the logged in user (if any) has retweeted this tweet
+  useEffect(() => {
+    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1);
+  }, [retweets, session?.user.uid]);
+
+  // Check if the logged in user (if any) has bookmarked this tweet
+  useEffect(() => {
+    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1);
+  }, [bookmarks, session?.user.uid]);
+
+  // Get the author of the tweet
+  useEffect(() => {
+    let isMounted = true;
+    const docRef = doc(db, "users", tweet.userID);
+    getDoc(docRef).then((snap) => {
+      if (isMounted) {
+        setAuthorId(snap.id);
+        setAuthor(snap.data() as IAuthor);
+        setLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [id, tweet.userID]);
+
+  // Get the PARENT tweet (Only if the current tweet is a reply to another tweet, the parent tweet)
+  useEffect(() => {
+    let isMounted = true;
+    if (tweet.parentTweet && tweet.parentTweet !== "") {
+      const docRef = doc(db, "tweets", String(tweet.parentTweet));
+      getDoc(docRef).then((snap) => {
+        if (isMounted) {
+          setParentTweet(snap);
+        }
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [id, tweet.parentTweet]);
+
+  // Get the AUTHOR of the PARENT TWEET (IF it exists AND the current tweet is a REPLY)
+  useEffect(() => {
+    let isMounted = true;
+    if (parentTweet && parentTweet.data()) {
+      const docRef = doc(db, "users", String(parentTweet.data().userID));
+      getDoc(docRef).then((snap) => {
+        if (isMounted) {
+          setParentTweetAuthor(snap.data());
+          setLoading(false);
+        }
+      });
+    } else {
+      if (isMounted) {
+        setLoading(false);
+      }
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [id, parentTweet]);
+
+  // Get retweeted by user info
+  useEffect(() => {
+    let isMounted = true;
+    if (tweet.retweetedBy) {
+      const docRef = doc(db, "users", tweet.retweetedBy);
+      getDoc(docRef).then((snap) => {
+        if (isMounted) {
+          setRetweetedBy(snap.data());
+          setLoading(false);
+        }
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [tweet.retweetedBy]);
+
+  return {
+    likes,
+    retweets,
+    bookmarks,
+    replies,
+    liked,
+    retweeted,
+    bookmarked,
+    parentTweet,
+    parentTweetAuthor,
+    authorId,
+    author,
+    retweetedBy,
+    loading
+  };
 };
 
 export default Tweet;
