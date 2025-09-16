@@ -27,12 +27,26 @@ const Auth = () => {
     fetchProviders();
   }, []);
 
-  const handleAuth = (provider: IProvider) => {
-    if (signUp) {
-      // This is for OAuth signup - same as signin for OAuth providers
-      signIn(provider.id, { callbackUrl: "/" });
-    } else {
-      signIn(provider.id, { callbackUrl: "/" });
+  const handleAuth = async (provider: IProvider) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn(provider.id, {
+        redirect: false,
+        callbackUrl: "/"
+      });
+
+      if (result?.error) {
+        setError(`Authentication failed: ${result.error}`);
+      } else if (result?.url) {
+        // Successful authentication, redirect manually
+        window.location.href = result.url;
+      }
+    } catch (error) {
+      setError('An error occurred during authentication. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,11 +79,15 @@ const Auth = () => {
           const result = await signIn('credentials', {
             email,
             password,
+            redirect: false,
             callbackUrl: '/',
           });
 
           if (result?.error) {
             setError('Registration successful, but login failed. Please try logging in.');
+          } else if (result?.url) {
+            // Successful login after registration, redirect manually
+            window.location.href = result.url;
           }
         } else {
           setError(data.message || 'Registration failed');
@@ -79,11 +97,15 @@ const Auth = () => {
         const result = await signIn('credentials', {
           email,
           password,
+          redirect: false,
           callbackUrl: '/',
         });
 
         if (result?.error) {
           setError('Invalid email or password');
+        } else if (result?.url) {
+          // Successful login, redirect manually
+          window.location.href = result.url;
         }
       }
     } catch (error) {
@@ -187,7 +209,7 @@ const Auth = () => {
                 return (
                   // Show the animated button with the provider (Google, etc.)
                   <div key={provider.name} className="py-3">
-                    <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} />
+                    <AnimatedButton handleAuth={handleAuth} provider={provider} authName={provider.name} signUp={signUp} disabled={loading} />
                   </div>
                 );
               })
