@@ -236,9 +236,16 @@ const Settings = () => {
                 <div className="space-y-4">
                   <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                     <div className="mb-4">
-                      <div className="font-medium">Current Email</div>
+                      <div className="font-medium">Change Email Address</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
                         <MailIcon className="h-4 w-4" />
+                        <span>Update your email address</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="text-sm font-medium">Current Email</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         <span>{session?.user?.email}</span>
                       </div>
                     </div>
