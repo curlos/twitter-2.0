@@ -12,6 +12,7 @@ import { FaRetweet, FaRegComment, FaBookmark, FaRegBookmark } from 'react-icons/
 import { HiBadgeCheck } from 'react-icons/hi';
 import { BsPencilFill } from 'react-icons/bs';
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
+import { XIcon } from '@heroicons/react/solid';
 import NumberFlow from '@number-flow/react';
 import Link from 'next/link';
 import { IAuthor } from '../utils/types';
@@ -53,6 +54,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const [author, setAuthor] = useState<IAuthor>();
   const [retweetedBy, setRetweetedBy] = useState<DocumentData>();
   const [loading, setLoading] = useState(true);
+  const [showImageModal, setShowImageModal] = useState(false);
   const router = useRouter();
 
   // Get REPLIES
@@ -298,6 +300,23 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   };
 
   /**
+   * @description - Opens the image modal to show the full-screen view of the tweet image.
+   */
+  const handleImageClick = (e) => {
+    e.stopPropagation();
+    setShowImageModal(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  /**
+   * @description - Closes the image modal and restores scrolling.
+   */
+  const handleCloseImageModal = () => {
+    setShowImageModal(false);
+    document.body.style.overflow = 'unset';
+  };
+
+  /**
    * @description - Gets the longest word in string (separated by whitespace).
    * @returns {String}
    */
@@ -378,7 +397,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             <div className={`${pastTweet ? ' text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`} style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
             {tweet.image && (
               <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
+                <img
+                  src={tweet.image}
+                  alt=""
+                  className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={handleImageClick}
+                />
               </div>
             )}
           </div>
@@ -456,192 +480,225 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
 
   return (
-    // In this component, there are two ways a tweet will be shown: 
-    // - As a tweet in a page where we are on the page of that tweet and show the thread of replies below the tweet as well as other detailed info like the specific time it was posted, device it was posted on, and the exact stats of each action (replies, retweets, likes, bookmarks)
-    // - As a tweet in a list where we WON'T see any of the more detailed info and will see the simplified version of it with the author and the content of the tweet.
-    !tweetPage ? (
-      !loading && author ? (
-        // This is the SIMPLE tweet where we won't see as much detailed information (like a thread of replies) but ONLY the content of the tweet and the author.
-        <div className={`${theme} max-w-full text-base p-3 w-full ${!pastTweet ? 'cursor-pointer' : ''} ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
-          {pastTweet ? (
-            <div onClick={(e) => e.preventDefault()}>
-              {renderTweetContent()}
-            </div>
-          ) : (
-            <Link href={`/tweet/${tweetID}`}>
-              {renderTweetContent()}
-            </Link>
-          )}
-        </div>
-      ) : null
-    ) : (
-      !loading && author ? (
-        // This shows the other view, the FULL-SIZED Tweet when it's on it's own page.
-        <div className="text-base p-5 border-b border-[#AAB8C2] dark:border-gray-700 w-full">
-
-          {/* Top of the tweet where the information about it's author is shown.  */}
-          <div className="flex justify-between">
-            <div className="flex">
-              <Link href={`/profile/${author.tag}`}>
-                <div className="mr-2">
-                  <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
-                </div>
+    <>
+      {/* In this component, there are two ways a tweet will be shown:
+      - As a tweet in a page where we are on the page of that tweet and show the thread of replies below the tweet as well as other detailed info like the specific time it was posted, device it was posted on, and the exact stats of each action (replies, retweets, likes, bookmarks)
+      - As a tweet in a list where we WON'T see any of the more detailed info and will see the simplified version of it with the author and the content of the tweet. */}
+      {!tweetPage ? (
+        !loading && author ? (
+          // This is the SIMPLE tweet where we won't see as much detailed information (like a thread of replies) but ONLY the content of the tweet and the author.
+          <div className={`${theme} max-w-full text-base p-3 w-full ${!pastTweet ? 'cursor-pointer' : ''} ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
+            {pastTweet ? (
+              <div onClick={(e) => e.preventDefault()}>
+                {renderTweetContent()}
+              </div>
+            ) : (
+              <Link href={`/tweet/${tweetID}`}>
+                {renderTweetContent()}
               </Link>
+            )}
+          </div>
+        ) : null
+      ) : (
+        !loading && author ? (
+          // This shows the other view, the FULL-SIZED Tweet when it's on it's own page.
+          <div className="text-base p-5 border-b border-[#AAB8C2] dark:border-gray-700 w-full">
 
-              <div className="">
+            {/* Top of the tweet where the information about it's author is shown.  */}
+            <div className="flex justify-between">
+              <div className="flex">
                 <Link href={`/profile/${author.tag}`}>
-                  <div className="flex">
-                    <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
-                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+                  <div className="mr-2">
+                    <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
                   </div>
                 </Link>
-                <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
+
+                <div className="">
+                  <Link href={`/profile/${author.tag}`}>
+                    <div className="flex">
+                      <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
+                      <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+                    </div>
+                  </Link>
+                  <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
+                </div>
               </div>
+
+              {/* Dropdown where different actions can be seen - Hidden for past tweets */}
+              {!pastTweet && (
+                <TweetDropdown tweet={{
+                  ...tweet,
+                  tweetId: id
+                }} author={author} authorId={authorId} deleteTweet={deleteTweet} />
+              )}
             </div>
 
-            {/* Dropdown where different actions can be seen - Hidden for past tweets */}
-            {!pastTweet && (
-              <TweetDropdown tweet={{
-                ...tweet,
-                tweetId: id
-              }} author={author} authorId={authorId} deleteTweet={deleteTweet} />
-            )}
-          </div>
-
-          {/* This will be shown if the parent tweet has been deleted. */}
-          {/* TODO: I thought earlier that maybe this wasn't taken care of but it seems like I did. Will have to confirm. */}
-          {parentTweet && !parentTweet.data() && (
-            <div className="text-xl w-full">
-              <div className="text-[15px] text-gray-500">
-                <span>Replying to</span>
-                <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@deleted</span>
+            {/* This will be shown if the parent tweet has been deleted. */}
+            {/* TODO: I thought earlier that maybe this wasn't taken care of but it seems like I did. Will have to confirm. */}
+            {parentTweet && !parentTweet.data() && (
+              <div className="text-xl w-full">
+                <div className="text-[15px] text-gray-500">
+                  <span>Replying to</span>
+                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@deleted</span>
+                </div>
               </div>
+            )}
+
+            <div className="text-xl pt-3 w-full">
+              {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
+              {parentTweet && parentTweetAuthor ? (
+                <div className="text-[15px] text-gray-500">
+                  <span>Replying to</span>
+                  <Link href={`/profile/${author.tag}`}>
+                    <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@{parentTweetAuthor.tag}</span>
+                  </Link>
+                </div>
+              ) : null}
+
+              {/* Main content of the tweet - Renders both the text AND image in the tweet. */}
+              <div className="break-all" style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
+              {tweet.image && (
+                <div className="pt-3">
+                  <img
+                    src={tweet.image}
+                    alt=""
+                    className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={handleImageClick}
+                  />
+                </div>
+              )}
             </div>
-          )}
 
-          <div className="text-xl pt-3 w-full">
-            {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
-            {parentTweet && parentTweetAuthor ? (
-              <div className="text-[15px] text-gray-500">
-                <span>Replying to</span>
-                <Link href={`/profile/${author.tag}`}>
-                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@{parentTweetAuthor.tag}</span>
-                </Link>
-              </div>
-            ) : null}
+            <div className="divide-y divide-gray-500">
+              <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {
+                if (editedTweet) {
+                  router.push(`/tweet/${id}/history`);
+                }
+              }}>
+                {/* If the tweet has been edited, the last edited time will be displayed and if the link is clicked, the user will be redirected to the tweet version history page. */}
+                {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
+                <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
+                  {editedTweet && <div className="text-gray-500">Last edited</div>}
+                  <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
+                  <div className="text-gray-500 font-bold">·</div>
+                  <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
+                </span>
 
-            {/* Main content of the tweet - Renders both the text AND image in the tweet. */}
-            <div className="break-all" style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
-            {tweet.image && (
-              <div className="pt-3">
-                <img src={tweet.image} alt="" className="rounded-2xl w-full object-contain border border-[#AAB8C2]  dark:border-gray-700" />
-              </div>
-            )}
-          </div>
-
-          <div className="divide-y divide-gray-500">
-            <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {
-              if (editedTweet) {
-                router.push(`/tweet/${id}/history`);
-              }
-            }}>
-              {/* If the tweet has been edited, the last edited time will be displayed and if the link is clicked, the user will be redirected to the tweet version history page. */}
-              {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
-              <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
-                {editedTweet && <div className="text-gray-500">Last edited</div>}
-                <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
                 <div className="text-gray-500 font-bold">·</div>
-                <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
-              </span>
+                <div className="text-gray-500">Twitter for Web</div>
+              </div>
 
-              <div className="text-gray-500 font-bold">·</div>
-              <div className="text-gray-500">Twitter for Web</div>
+              {/* Row of stats for each different action: Replies, Retweets, Likes - Hidden for past tweets */}
+              {/* TODO: Add bookmarks here. Maybe take a look at adding views as well. That's much more optional though. */}
+              {!pastTweet && (
+                <div className="flex space-x-4 py-4">
+                  <div className="space-x-1">
+                    <span className="font-bold">{replies.length}</span>
+                    <span className="text-gray-500">Replies</span>
+                  </div>
+
+                  <div className="space-x-1">
+                    <NumberFlow
+                      value={retweets.length}
+                      className="font-bold"
+                    />
+                    <span className="text-gray-500">Retweets</span>
+                  </div>
+
+                  <div className="space-x-1">
+                    <NumberFlow
+                      value={likes.length}
+                      className="font-bold"
+                    />
+                    <span className="text-gray-500">Likes</span>
+                  </div>
+
+                  <div className="space-x-1">
+                    <NumberFlow
+                      value={bookmarks.length}
+                      className="font-bold"
+                    />
+                    <span className="text-gray-500">Bookmarks</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Row of different actions that can be performed on the tweet: Reply/Comment, Retweet, Like, and Bookmark - Hidden for past tweets */}
+              {!pastTweet && (
+                <div className="flex justify-between w-full text-gray-500 py-2 px-12">
+                  {/* Reply button */}
+                  <div className="p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
+                    <FaRegComment className="h-6 w-6 group-hover:text-blue-500 transition-colors duration-200" />
+                  </div>
+
+                  {/* Retweet button */}
+                  <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                    e.stopPropagation();
+                    retweetTweet();
+                  }}>
+                    {!retweeted ? (
+                      <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
+                    ) : (
+                      <FaRetweet className="h-6 w-6 text-green-400" />
+                    )}
+                  </div>
+
+                  {/* Like Button */}
+                  <div className="p-2 rounded-full hover:bg-red-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                    e.stopPropagation();
+                    likeTweet();
+                  }}>
+                    {!liked ? (
+                      <RiHeart3Line className="h-6 w-6 group-hover:text-red-500 transition-colors duration-200" />
+                    ) : (
+                      <RiHeart3Fill className="h-6 w-6 text-red-500" />
+                    )}
+                  </div>
+
+                  {/* Bookmark button */}
+                  <div className="p-2 rounded-full hover:bg-yellow-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
+                    e.stopPropagation();
+                    bookmarkTweet();
+                  }}>
+                    {bookmarked ? (
+                      <FaBookmark className="h-5 w-5 text-yellow-500" />
+                    ) : (
+                      <FaRegBookmark className="h-5 w-5 group-hover:text-yellow-500 transition-colors duration-200" />
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+          </div>
+        ) : null
+      )}
 
-            {/* Row of stats for each different action: Replies, Retweets, Likes - Hidden for past tweets */}
-            {/* TODO: Add bookmarks here. Maybe take a look at adding views as well. That's much more optional though. */}
-            {!pastTweet && (
-              <div className="flex space-x-4 py-4">
-                <div className="space-x-1">
-                  <span className="font-bold">{replies.length}</span>
-                  <span className="text-gray-500">Replies</span>
-                </div>
-
-                <div className="space-x-1">
-                  <NumberFlow
-                    value={retweets.length}
-                    className="font-bold"
-                  />
-                  <span className="text-gray-500">Retweets</span>
-                </div>
-
-                <div className="space-x-1">
-                  <NumberFlow
-                    value={likes.length}
-                    className="font-bold"
-                  />
-                  <span className="text-gray-500">Likes</span>
-                </div>
-
-                <div className="space-x-1">
-                  <NumberFlow
-                    value={bookmarks.length}
-                    className="font-bold"
-                  />
-                  <span className="text-gray-500">Bookmarks</span>
-                </div>
-              </div>
-            )}
-
-            {/* Row of different actions that can be performed on the tweet: Reply/Comment, Retweet, Like, and Bookmark - Hidden for past tweets */}
-            {!pastTweet && (
-              <div className="flex justify-between w-full text-gray-500 py-2 px-12">
-                {/* Reply button */}
-                <div className="p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
-                  <FaRegComment className="h-6 w-6 group-hover:text-blue-500 transition-colors duration-200" />
-                </div>
-
-                {/* Retweet button */}
-                <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
-                  e.stopPropagation();
-                  retweetTweet();
-                }}>
-                  {!retweeted ? (
-                    <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
-                  ) : (
-                    <FaRetweet className="h-6 w-6 text-green-400" />
-                  )}
-                </div>
-
-                {/* Like Button */}
-                <div className="p-2 rounded-full hover:bg-red-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
-                  e.stopPropagation();
-                  likeTweet();
-                }}>
-                  {!liked ? (
-                    <RiHeart3Line className="h-6 w-6 group-hover:text-red-500 transition-colors duration-200" />
-                  ) : (
-                    <RiHeart3Fill className="h-6 w-6 text-red-500" />
-                  )}
-                </div>
-
-                {/* Bookmark button */}
-                <div className="p-2 rounded-full hover:bg-yellow-500/20 transition-colors duration-200 cursor-pointer group" onClick={(e) => {
-                  e.stopPropagation();
-                  bookmarkTweet();
-                }}>
-                  {bookmarked ? (
-                    <FaBookmark className="h-5 w-5 text-yellow-500" />
-                  ) : (
-                    <FaRegBookmark className="h-5 w-5 group-hover:text-yellow-500 transition-colors duration-200" />
-                  )}
-                </div>
-              </div>
-            )}
+      {/* Image Modal */}
+      {showImageModal && tweet.image && (
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-80"
+          onClick={handleCloseImageModal}
+        >
+          <button
+            className="absolute top-4 right-4 z-10 p-2 bg-black bg-opacity-50 rounded-full text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCloseImageModal();
+            }}
+          >
+            <XIcon className="h-6 w-6" />
+          </button>
+          <div className="relative max-w-[90vw] max-h-[85vh]">
+            <img
+              src={tweet.image}
+              alt=""
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
           </div>
         </div>
-      ) : null
-    )
+      )}
+    </>
   );
 };
 
