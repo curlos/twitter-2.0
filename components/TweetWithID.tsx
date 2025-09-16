@@ -2,7 +2,7 @@ import { doc, DocumentData, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import TweetSkeletonLoader from './TweetSkeletonLoader';
-import Tweet from './Tweet';
+import Tweet from './Tweet/Tweet';
 
 interface Props {
   tweetID: string;

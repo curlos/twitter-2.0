@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { sortByNewest } from '../utils/sortTweets';
 import { IAuthor } from '../utils/types';
-import Tweet from './Tweet';
+import Tweet from './Tweet/Tweet';
 import { ChatAltIcon } from '@heroicons/react/outline';
 
 interface Props {

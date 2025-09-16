@@ -5,7 +5,7 @@ import { db } from "../firebase";
 import Input from './Input';
 import { useSession } from 'next-auth/react';
 import { onSnapshot, query, collection, orderBy } from '@firebase/firestore';
-import Tweet from './Tweet';
+import Tweet from './Tweet/Tweet';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
 import TweetSkeletonLoader from './TweetSkeletonLoader';

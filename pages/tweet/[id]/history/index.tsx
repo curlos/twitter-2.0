@@ -3,7 +3,7 @@ import AppLayout from '../../../../components/Layout/AppLayout';
 import PageHeader from '../../../../components/Layout/PageHeader';
 import ContentContainer from '../../../../components/Layout/ContentContainer';
 import { SparklesIcon } from '@heroicons/react/outline';
-import Tweet from '../../../../components/Tweet';
+import Tweet from '../../../../components/Tweet/Tweet';
 import DeletedTweet from '../../../../components/DeletedTweet';
 import { ITweet } from '../../../../utils/types';
 import { useTweetData } from '../../../../hooks/useTweetData';
