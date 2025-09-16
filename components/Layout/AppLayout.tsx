@@ -14,12 +14,14 @@ interface AppLayoutProps {
   children: React.ReactNode;
   title?: string;
   showWidgets?: boolean;
+  setIsEditing?: (editing: boolean) => void;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   title = 'Twitter 2.0',
-  showWidgets = true
+  showWidgets = true,
+  setIsEditing
 }) => {
   const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
@@ -39,7 +41,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {children}
         {showWidgets && <Widgets />}
 
-        {isOpen && <NewTweetModal />}
+        {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
         {isEditProfileModalOpen && <EditProfileModal />}
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
