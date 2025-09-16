@@ -4,32 +4,24 @@ import Router, { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from "../../firebase";
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState } from '../../atoms/atom';
-import Head from 'next/head';
-import Sidebar from '../../components/Sidebar';
-import { NewTweetModal } from '../../components/NewTweetModal';
-import { BadgeCheckIcon, ArrowLeftIcon, DotsHorizontalIcon } from '@heroicons/react/solid';
+import { editProfileModalState } from '../../atoms/atom';
+import AppLayout from '../../components/Layout/AppLayout';
+import PageHeader from '../../components/Layout/PageHeader';
+import ContentContainer from '../../components/Layout/ContentContainer';
+import { BadgeCheckIcon } from '@heroicons/react/solid';
 import { collection, orderBy, query, where, documentId } from 'firebase/firestore';
-import Widgets from '../../components/Widgets';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
-import Spinner from '../../components/Spinner';
 import TweetSkeletonLoader from '../../components/TweetSkeletonLoader';
 import Link from 'next/link';
-import MobileBottomNavBar from '../../components/MobileBottomNavBar';
-import { SearchModal } from '../../components/SearchModal';
 import AuthReminder from '../../components/AuthReminder';
-import SidenavDrawer from '../../components/SidenavDrawer';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 
 const ProfilePage = () => {
   const { data: session } = useSession();
-  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
-  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(editProfileModalState);
-  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [loading, setLoading] = useState(true);
   const [tweetsLoading, setTweetsLoading] = useState(true);
   const [filter, setFilter] = useState('Tweets');
@@ -41,7 +33,6 @@ const ProfilePage = () => {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [followersYouFollow, setFollowersYouFollow] = useState([]);
-  const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   const [followed, setFollowed] = useState(false);
   const router = useRouter();
@@ -198,40 +189,23 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
-      <Head>
-        <title>
-          Twitter 2.0
-        </title>
-        <link rel="icon" href="/assets/twitter-logo.svg" />
-      </Head>
-
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white px-0 lg:px-36 xl:px-48 2xl:px-12 min-h-screen flex`}>
-        <Sidebar />
-
-        {loading ? (
-          <div className="flex justify-center mt-4 flex-grow sm:ml-[80px] xl:ml-[280px] w-full">
-            <Spinner />
-          </div>
-        ) : (
-          author && <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
-            <div className="border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white dark:bg-black sticky top-0 z-[50]">
-              <div className="flex items-center space-x-4">
-                <div className="cursor-pointer mx-3" onClick={() => router.push('/')}>
-                  <ArrowLeftIcon className="h-6 w-6" />
+    <AppLayout title={author ? `${author.name} (@${author.tag}) / Twitter 2.0` : "Profile / Twitter 2.0"}>
+      <ContentContainer loading={loading}>
+        {author && (
+          <>
+            <PageHeader
+              title={
+                <div className="flex items-center">
+                  {author.name}
+                  <BadgeCheckIcon className="h-6 w-6 text-lightblue-500 ml-1" />
                 </div>
-                <div className="">
-                  <div className="flex items-center mb-0 p-0">
-                    <h2 className="font-bold">{author.name}</h2>
-                    <BadgeCheckIcon className="h-6 w-6 text-lightblue-500" />
-                  </div>
-
-                  <div className="text-gray-400 text-sm">{tweets.length} Tweets</div>
-                </div>
-              </div>
-
+              }
+              subtitle={`${tweets.length} Tweets`}
+              showBackButton={true}
+              backPath="/"
+            >
               <AuthReminder />
-            </div>
+            </PageHeader>
 
             <div>
               <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[225px] object-cover" />
@@ -245,8 +219,6 @@ const ProfilePage = () => {
                   {session && session.user && session.user.tag === String(id) ? 'Edit Profile' : (followed ? 'Following' : 'Follow')}
                 </div>
               </div>
-
-
             </div>
 
             <div className="p-4 pt-2">
@@ -382,18 +354,11 @@ const ProfilePage = () => {
             ) : (
               <ProfileTweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
             )}
-          </div>
+          </>
         )}
-
-        <Widgets />
-        {isOpen && <NewTweetModal />}
         {isSettingsModalOpen && <EditProfileModal />}
-        {isSearchModalOpen && <SearchModal />}
-        {isSidenavOpen && <SidenavDrawer />}
-
-        <MobileBottomNavBar />
-      </main>
-    </div>
+      </ContentContainer>
+    </AppLayout>
   );
 };
 
