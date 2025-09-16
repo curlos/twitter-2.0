@@ -381,7 +381,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       {/* Image Modal */}
       {showImageModal && tweet.image && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-80"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
           onClick={handleCloseImageModal}
         >
           <button
@@ -393,11 +393,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
           >
             <XIcon className="h-6 w-6" />
           </button>
-          <div className="relative max-w-[90vw] max-h-[85vh]">
+          <div className="relative">
             <img
               src={tweet.image}
               alt=""
-              className="max-w-full max-h-full object-contain rounded-lg"
+              className="max-h-[100vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
