@@ -18,16 +18,42 @@ import Link from 'next/link';
 import AuthReminder from '../../components/AuthReminder';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
+import ImageModal from '../../components/ImageModal';
 
 const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followers, following, followersYouFollow }) => {
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowImageModal(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage('');
+    document.body.style.overflow = 'unset';
+  };
+
   return (
     <>
       <div>
-        <img src={author.banner || "/assets/profile_banner.jpg"} alt="" className="w-full max-h-[225px] object-cover" />
+        <img
+          src={author.banner || "/assets/profile_banner.jpg"}
+          alt=""
+          className="w-full max-h-[225px] object-cover cursor-pointer"
+          onClick={() => handleImageClick(author.banner || "/assets/profile_banner.jpg")}
+        />
       </div>
 
       <div className="flex justify-between items-start p-4 pb-0">
-        <img src={author.profilePic} alt="" className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover" />
+        <img
+          src={author.profilePic}
+          alt=""
+          className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover cursor-pointer"
+          onClick={() => handleImageClick(author.profilePic)}
+        />
 
         <div className="flex items-center space-x-2">
           <div className="flex justify-center items-center p-2 px-4 border-2 border-[#AAB8C2] dark:border-gray-700 rounded-full cursor-pointer" onClick={handleEditOrFollow}>
@@ -118,6 +144,13 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
           </div>
         ) : null}
       </div>
+
+      {/* Image Modal */}
+      <ImageModal
+        isOpen={showImageModal}
+        image={selectedImage}
+        onClose={handleCloseImageModal}
+      />
     </>
   );
 };
