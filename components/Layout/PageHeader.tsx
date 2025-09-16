@@ -3,7 +3,7 @@ import { ArrowLeftIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 
 interface PageHeaderProps {
-  title: string;
+  title: string | React.ReactNode;
   subtitle?: string;
   showBackButton?: boolean;
   backPath?: string;
