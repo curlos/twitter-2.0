@@ -1,4 +1,4 @@
-import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs, doc } from "firebase/firestore";
 import NextAuth from "next-auth";
 import { Session } from "next-auth/core/types";
 import GoogleProvider from "next-auth/providers/google";
@@ -41,7 +41,7 @@ const addNewUser = async (session: Session) => {
   return docRef;
 };
 
-export default NextAuth({
+export const authOptions = {
   // Configure one or more authentication providers
   // TODO: Add CredentialsProvider (Need this to create a bunch of accounts without having to create a bunch of GMAIL accounts + pretty much every app lets you create an account without having to use a third-party source.)
   providers: [
@@ -106,33 +106,94 @@ export default NextAuth({
   ],
   callbacks: {
     /**
+     * @description - JWT callback runs before session callback and handles token updates
+     */
+    async jwt({ token, trigger }: any) {
+      // When update() is called, refresh user data from database
+      if (trigger === "update" && token.sub) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', token.sub));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+
+            // Update token with fresh database data
+            token.email = userData.email;
+            token.name = userData.name;
+            token.picture = userData.profilePic;
+          }
+        } catch (error) {
+          console.error('JWT callback - error fetching user:', error);
+        }
+      }
+
+      return token;
+    },
+
+    /**
      * @description - This is callback function that'll be called after the AuthProvider is done dealing with the account given to it by the user (like a user signing up using their Google Account). Then we can get the base information about a user using the data from the AuthProvider. For example, a user signing in with a GMAIL account will have an email, a name, an image (for their icon), etc. so we'll get that information right at the start of the callback inside the "session.user" object.
      * @param {
      *  {Session}: session - The object with the information about the user
-     * } 
-     * @returns 
+     * }
+     * @returns
      */
     async session({ session, token }) {
-      const q = query(collection(db, "users"), where('email', '==', session.user.email));
-      const querySnapshot = await getDocs(q);
+      // Try to find user by UID first (more reliable), then fall back to email for initial login
+      let userFound = false;
 
-      // If user is signing in with an existing account, then set the keys in the object to the values that already exist in the database.
-      if (querySnapshot.docs.length > 0) {
-        // Get values from the database of this existing user and set it inside the session object
-        const { name, tag, bio, location, website, dateJoined, profilePic, banner } = querySnapshot.docs[0].data();
+      // Use UID from token (token.sub) instead of session.user.uid
+      if (token.sub) {
+        // If we have a UID, use direct document lookup (handles email changes properly)
+        try {
+          const userDoc = await getDoc(doc(db, 'users', token.sub));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
 
-        session.user.name = name;
-        session.user.tag = tag;
-        session.user.uid = querySnapshot.docs[0].id;
-        session.user.bio = bio;
-        session.user.location = location;
-        session.user.website = website;
-        session.user.dateJoined = dateJoined;
-        session.user.profilePic = profilePic;
-        session.user.banner = banner;
-        session.user.image = profilePic; // Ensure image is set for compatibility
+            // Update session with fresh data from database (including any email changes)
+            session.user.email = userData.email;
+            session.user.name = userData.name;
+            session.user.tag = userData.tag;
+            session.user.uid = token.sub; // Use token.sub as UID
+            session.user.bio = userData.bio;
+            session.user.location = userData.location;
+            session.user.website = userData.website;
+            session.user.dateJoined = userData.dateJoined;
+            session.user.profilePic = userData.profilePic;
+            session.user.banner = userData.banner;
+            session.user.image = userData.profilePic;
 
-      } else {
+            userFound = true;
+          }
+        } catch (error) {
+          console.error('Error fetching user by UID:', error);
+        }
+      }
+
+      // Fall back to email lookup for initial sessions (when UID not yet set)
+      if (!userFound) {
+        const q = query(collection(db, "users"), where('email', '==', session.user.email));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.docs.length > 0) {
+          // Get values from the database of this existing user and set it inside the session object
+          const { name, tag, bio, location, website, dateJoined, profilePic, banner, email } = querySnapshot.docs[0].data();
+
+          session.user.email = email;
+          session.user.name = name;
+          session.user.tag = tag;
+          session.user.uid = querySnapshot.docs[0].id;
+          session.user.bio = bio;
+          session.user.location = location;
+          session.user.website = website;
+          session.user.dateJoined = dateJoined;
+          session.user.profilePic = profilePic;
+          session.user.banner = banner;
+          session.user.image = profilePic;
+
+          userFound = true;
+        }
+      }
+
+      if (!userFound) {
         // This should only happen for new OAuth users (credential users must register first)
         // Generate tag and profile pic for OAuth users
         session.user.tag = session.user.name
@@ -157,4 +218,6 @@ export default NextAuth({
     },
   },
   secret: process.env.JWT_SECRET
-});
+};
+
+export default NextAuth(authOptions);
