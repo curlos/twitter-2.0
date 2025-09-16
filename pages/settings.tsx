@@ -1,24 +1,17 @@
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom';
+import { colorThemeState } from '../atoms/atom';
 import { useAuthRedirect } from '../hooks/useAuthRedirect';
-import MobileBottomNavBar from '../components/MobileBottomNavBar';
-import { NewTweetModal } from '../components/NewTweetModal';
-import { SearchModal } from '../components/SearchModal';
-import Sidebar from '../components/Sidebar';
-import SidenavDrawer from '../components/SidenavDrawer';
-import Widgets from '../components/Widgets';
+import AppLayout from '../components/Layout/AppLayout';
+import PageHeader from '../components/Layout/PageHeader';
+import ContentContainer from '../components/Layout/ContentContainer';
 import { SunIcon, MoonIcon, MailIcon, LockClosedIcon, ChevronDownIcon } from '@heroicons/react/outline';
 
 const Settings = () => {
   useAuthRedirect();
   const { data: session, update } = useSession();
-  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
-  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
 
   const [newEmail, setNewEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -166,28 +159,12 @@ const Settings = () => {
   };
 
   return (
-    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
-      <Head>
-        <title>
-          Settings / Twitter 2.0
-        </title>
-        <link rel="icon" href="/assets/twitter-logo.svg" />
-      </Head>
-
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen px-0 lg:px-36 xl:px-48 2xl:px-12 flex`}>
-        <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
-          <div>
-            <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0">
-              <div className="">
-                <div className="flex items-center mb-0 p-0">
-                  <h2 className="font-bold text-xl">Settings</h2>
-                </div>
-                {session?.user && (
-                  <div className="text-gray-400 text-sm">@{session.user.tag}</div>
-                )}
-              </div>
-            </div>
+    <AppLayout title="Settings / Twitter 2.0">
+      <ContentContainer>
+        <PageHeader
+          title="Settings"
+          subtitle={session?.user ? `@${session.user.tag}` : undefined}
+        />
 
             <div className="p-6">
               <div className="mb-6">
@@ -409,18 +386,8 @@ const Settings = () => {
               </div>
             </div>
 
-            <div className="h-[60px]" />
-          </div>
-        </div>
-
-        <Widgets />
-        {isOpen && <NewTweetModal />}
-        {isSearchModalOpen && <SearchModal />}
-        {isSidenavOpen && <SidenavDrawer />}
-
-        <MobileBottomNavBar />
-      </main>
-    </div>
+      </ContentContainer>
+    </AppLayout>
   );
 };
 

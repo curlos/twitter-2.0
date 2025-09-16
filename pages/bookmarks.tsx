@@ -1,27 +1,16 @@
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from '../atoms/atom';
 import { useAuthRedirect } from '../hooks/useAuthRedirect';
-import MobileBottomNavBar from '../components/MobileBottomNavBar';
-import { NewTweetModal } from '../components/NewTweetModal';
-import { SearchModal } from '../components/SearchModal';
-import Sidebar from '../components/Sidebar';
-import SidenavDrawer from '../components/SidenavDrawer';
-import Spinner from '../components/Spinner';
+import AppLayout from '../components/Layout/AppLayout';
+import PageHeader from '../components/Layout/PageHeader';
+import ContentContainer from '../components/Layout/ContentContainer';
 import TweetWithID from '../components/TweetWithID';
-import Widgets from '../components/Widgets';
 import { db } from '../firebase';
 
 const Followers = () => {
-  useAuthRedirect(); // Just handle the redirect, don't block rendering
+  useAuthRedirect();
   const { data: session } = useSession();
-  const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
-  const [theme, _setTheme] = useRecoilState(colorThemeState);
-  const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,50 +26,20 @@ const Followers = () => {
 
 
   return (
-    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
-      <Head>
-        <title>
-          Bookmarks / Twitter 2.0
-        </title>
-        <link rel="icon" href="/assets/twitter-logo.svg" />
-      </Head>
+    <AppLayout title="Bookmarks / Twitter 2.0">
+      <ContentContainer loading={loading}>
+        <PageHeader
+          title="Bookmarks"
+          subtitle={session?.user ? `@${session.user.tag}` : undefined}
+        />
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen px-0 lg:px-36 xl:px-48 2xl:px-12 flex`}>
-        <Sidebar />
-        <div className="flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700">
-          {!loading ? (
-            <div>
-              <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0">
-                <div className="">
-                  <div className="flex items-center mb-0 p-0">
-                    <h2 className="font-bold text-xl">Bookmarks</h2>
-                  </div>
-
-                  <div className="text-gray-400 text-sm">@{session.user.tag}</div>
-                </div>
-              </div>
-
-              <div>
-                {tweets.map((tweet) => (
-                  <TweetWithID key={tweet.data().tweetID} tweetID={tweet.data().tweetID} />
-                ))}
-              </div>
-
-              <div className="h-[60px]" />
-            </div>
-          ) : <div className="pt-5"><Spinner /></div>
-          }
+        <div>
+          {tweets.map((tweet) => (
+            <TweetWithID key={tweet.data().tweetID} tweetID={tweet.data().tweetID} />
+          ))}
         </div>
-
-        <Widgets />
-        {isOpen && <NewTweetModal />}
-        {isSearchModalOpen && <SearchModal />}
-        {isSidenavOpen && <SidenavDrawer />}
-
-        <MobileBottomNavBar />
-
-      </main>
-    </div>
+      </ContentContainer>
+    </AppLayout>
   );
 };
 
