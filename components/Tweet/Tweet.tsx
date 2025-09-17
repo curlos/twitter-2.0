@@ -196,7 +196,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                         key={index}
                         src={image}
                         alt=""
-                        className={`h-[300px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                        className={`w-full aspect-[1/1] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                           index === 0 ? 'rounded-l-2xl' : 'rounded-r-2xl'
                         }`}
                         onClick={(e) => handleImageClick(e, index)}
@@ -204,24 +204,24 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                     ))}
                   </div>
                 ) : tweet.images.length === 3 ? (
-                  <div className="grid grid-cols-2 gap-2 h-[300px]">
+                  <div className="grid grid-cols-2 gap-2">
                     <img
                       src={tweet.images[0]}
                       alt=""
-                      className="rounded-l-2xl w-full h-[300px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      className="rounded-l-2xl w-full h-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                       onClick={(e) => handleImageClick(e, 0)}
                     />
                     <div className="flex flex-col gap-2">
                       <img
                         src={tweet.images[1]}
                         alt=""
-                        className="rounded-tr-2xl w-full h-[146px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="rounded-tr-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={(e) => handleImageClick(e, 1)}
                       />
                       <img
                         src={tweet.images[2]}
                         alt=""
-                        className="rounded-br-2xl w-full h-[146px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="rounded-br-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={(e) => handleImageClick(e, 2)}
                       />
                     </div>
@@ -233,7 +233,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                         <img
                           src={image}
                           alt=""
-                          className={`h-[200px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                          className={`w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                             index === 0 ? 'rounded-tl-2xl' :
                             index === 1 ? 'rounded-tr-2xl' :
                             index === 2 ? 'rounded-bl-2xl' :
@@ -381,7 +381,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                           key={index}
                           src={image}
                           alt=""
-                          className={`h-[350px] w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                          className={`w-full aspect-[1/1] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                             index === 0 ? 'rounded-l-2xl' : 'rounded-r-2xl'
                           }`}
                           onClick={(e) => handleImageClick(e, index)}
@@ -389,24 +389,24 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       ))}
                     </div>
                   ) : tweet.images.length === 3 ? (
-                    <div className="grid grid-cols-2 gap-2 h-[350px]">
+                    <div className="grid grid-cols-2 gap-2">
                       <img
                         src={tweet.images[0]}
                         alt=""
-                        className="rounded-l-2xl w-full h-[350px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="rounded-l-2xl w-full h-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={(e) => handleImageClick(e, 0)}
                       />
                       <div className="flex flex-col gap-2">
                         <img
                           src={tweet.images[1]}
                           alt=""
-                          className="rounded-tr-2xl w-full h-[171px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                          className="rounded-tr-2xl w-full aspect-[3/2] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                           onClick={(e) => handleImageClick(e, 1)}
                         />
                         <img
                           src={tweet.images[2]}
                           alt=""
-                          className="rounded-br-2xl w-full h-[171px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                          className="rounded-br-2xl w-full aspect-[3/2] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                           onClick={(e) => handleImageClick(e, 2)}
                         />
                       </div>
@@ -418,7 +418,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                           <img
                             src={image}
                             alt=""
-                            className={`h-[171px] w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                            className={`w-full aspect-[3/2] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                               index === 0 ? 'rounded-tl-2xl' :
                               index === 1 ? 'rounded-tr-2xl' :
                               index === 2 ? 'rounded-bl-2xl' :
