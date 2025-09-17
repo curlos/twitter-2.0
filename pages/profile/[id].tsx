@@ -148,7 +148,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
       {/* Image Modal */}
       <ImageModal
         isOpen={showImageModal}
-        image={selectedImage}
+        images={selectedImage ? [selectedImage] : []}
         onClose={handleCloseImageModal}
       />
     </>

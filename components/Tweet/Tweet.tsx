@@ -526,7 +526,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       {/* Image Modal */}
       <ImageModal
         isOpen={showImageModal}
-        image={tweet.image}
+        images={tweet.images && tweet.images.length > 0 ? tweet.images : tweet.image ? [tweet.image] : []}
         onClose={handleCloseImageModal}
       />
     </>
