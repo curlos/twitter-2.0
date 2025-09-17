@@ -26,7 +26,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const [isOpen, _setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
-  const [isEditProfileModalOpen, _setIsEditProfileModalOpen] = useRecoilState(editProfileModalState);
   const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
 
   return (
@@ -42,7 +41,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {showWidgets && <Widgets />}
 
         {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
-        {isEditProfileModalOpen && <EditProfileModal />}
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
 

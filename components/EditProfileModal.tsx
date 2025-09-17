@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
  * @returns {React.FC}
  */
 const EditProfileModal = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useRecoilState(editProfileModalState);
   const [name, setName] = useState(session.user.name || '');
@@ -79,16 +79,10 @@ const EditProfileModal = () => {
         ...updatedUserData,
       });
 
-      // Set our local session's data to this as it wouldn't update again unless we signed out and signed back in. So, it needs to be manually by us because of that.
-      session.user.name = name;
-      session.user.tag = tag;
-      session.user.bio = bio;
-      session.user.location = location;
-      session.user.website = website;
-      session.user.profilePic = profilePic;
-      session.user.banner = banner;
+      // Update the session with the new user data
+      await update();
 
-      // Close the modal and reload the window.
+      // Close the modal
       setIsOpen(false);
       router.push(`/profile/${tag}`).then(() => (
         window.location.reload()
