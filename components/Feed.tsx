@@ -13,6 +13,7 @@ import { sortByNewest, sortByOldest } from '../utils/sortTweets';
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
 import AuthReminder from './AuthReminder';
+import InfiniteScroll from './InfiniteScroll';
 
 /**
  * @description - List of tweets to be shown on the user's "feed" page (first page they arrive on essentially)
@@ -135,20 +136,30 @@ const Feed = () => {
         <SortDropdown sortType={sortType} setSortType={setSortType} />
       </div>
 
-      {/* When everything is done loading, show the filtered tweets. NOTE: If there is NO filter applied, then ALL of the tweets will be shown (as it's done by default). */}
-      {!loading ? filteredTweets.map((tweet) => {
-        return (
-          <Tweet key={tweet.id} id={tweet.id} tweetID={tweet.id} tweet={{
-            ...tweet.data(),
-            tweetId: tweet.id
-          }} />
-        );
-      }) : (
-        // If stuff is still loading, then show 10 skeleton loaders.
-        Array.from({ length: 10 }, (_, index) => (
-          <TweetSkeletonLoader key={index} />
-        ))
-      )}
+      {/* Infinite scroll tweets */}
+      <InfiniteScroll
+        items={filteredTweets}
+        renderItem={(tweet) => (
+          <Tweet
+            key={tweet.id}
+            id={tweet.id}
+            tweetID={tweet.id}
+            tweet={{
+              ...tweet.data(),
+              tweetId: tweet.id
+            }}
+          />
+        )}
+        itemsPerPage={10}
+        loading={loading}
+        LoadingComponent={() => (
+          <>
+            {Array.from({ length: 10 }, (_, index) => (
+              <TweetSkeletonLoader key={index} />
+            ))}
+          </>
+        )}
+      />
 
       <div className="h-[60px]" />
     </div>
