@@ -28,6 +28,21 @@ import { newTweetModalState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 import CircularProgress from './CircularProgress';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import SortableImageItem from './SortableImageItem';
 
 interface Props {
   editTweetInfo?: ITweet,
@@ -273,6 +288,28 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end for reordering images
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setSelectedFiles((images) => {
+        const oldIndex = images.findIndex(img => img === active.id);
+        const newIndex = images.findIndex(img => img === over.id);
+
+        return arrayMove(images, oldIndex, newIndex);
+      });
+    }
+  };
+
   const addEmoji = (e) => {
     let sym = e.unified.split('-');
     let codesArray = [];
@@ -325,16 +362,28 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
 
           {selectedFiles.length > 0 && (
             <div className="py-3">
-              <div className="grid grid-cols-2 gap-2">
-                {selectedFiles.map((file, index) => (
-                  <div key={index} className="relative">
-                    <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 right-1 cursor-pointer z-10" onClick={() => removeImage(index)}>
-                      <XIcon className="text-white h-5" />
-                    </div>
-                    <img src={file} alt="" className="rounded-2xl max-h-40 w-full object-cover border border-gray-400 dark:border-gray-700" />
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={selectedFiles}
+                  strategy={rectSortingStrategy}
+                >
+                  <div className="grid grid-cols-2 gap-2">
+                    {selectedFiles.map((file, index) => (
+                      <SortableImageItem
+                        key={file}
+                        id={file}
+                        image={file}
+                        index={index}
+                        onRemove={removeImage}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
 

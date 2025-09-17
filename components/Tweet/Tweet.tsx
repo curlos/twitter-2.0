@@ -208,7 +208,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                     <img
                       src={tweet.images[0]}
                       alt=""
-                      className="rounded-l-2xl w-full h-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      className="rounded-l-2xl w-full h-[300px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                       onClick={(e) => handleImageClick(e, 0)}
                     />
                     <div className="flex flex-col gap-2">
@@ -393,7 +393,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       <img
                         src={tweet.images[0]}
                         alt=""
-                        className="rounded-l-2xl w-full h-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                        className="rounded-l-2xl w-full h-[350px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={(e) => handleImageClick(e, 0)}
                       />
                       <div className="flex flex-col gap-2">
