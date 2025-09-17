@@ -39,7 +39,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
-  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  // Derive showImageModal from selectedImageIndex
+  const showImageModal = selectedImageIndex !== null;
   const router = useRouter();
 
   // Use the custom hook for tweet data management
@@ -84,9 +87,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   /**
    * @description - Opens the image modal to show the full-screen view of the tweet image.
    */
-  const handleImageClick = (e) => {
+  const handleImageClick = (e: React.MouseEvent, imageIndex: number = 0) => {
     e.stopPropagation();
-    setShowImageModal(true);
+    setSelectedImageIndex(imageIndex);
     document.body.style.overflow = 'hidden';
   };
 
@@ -94,7 +97,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
    * @description - Closes the image modal and restores scrolling.
    */
   const handleCloseImageModal = () => {
-    setShowImageModal(false);
+    setSelectedImageIndex(null);
     document.body.style.overflow = 'unset';
   };
 
@@ -184,7 +187,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                     src={tweet.images[0]}
                     alt=""
                     className="rounded-2xl max-h-[500px] w-full object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={handleImageClick}
+                    onClick={(e) => handleImageClick(e, 0)}
                   />
                 ) : tweet.images.length === 2 ? (
                   <div className="grid grid-cols-2 gap-2">
@@ -196,7 +199,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                         className={`h-[300px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                           index === 0 ? 'rounded-l-2xl' : 'rounded-r-2xl'
                         }`}
-                        onClick={handleImageClick}
+                        onClick={(e) => handleImageClick(e, index)}
                       />
                     ))}
                   </div>
@@ -206,20 +209,20 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       src={tweet.images[0]}
                       alt=""
                       className="rounded-l-2xl w-full h-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={handleImageClick}
+                      onClick={(e) => handleImageClick(e, 0)}
                     />
                     <div className="flex flex-col gap-2">
                       <img
                         src={tweet.images[1]}
                         alt=""
                         className="rounded-tr-2xl w-full h-[146px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={handleImageClick}
+                        onClick={(e) => handleImageClick(e, 1)}
                       />
                       <img
                         src={tweet.images[2]}
                         alt=""
                         className="rounded-br-2xl w-full h-[146px] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={handleImageClick}
+                        onClick={(e) => handleImageClick(e, 2)}
                       />
                     </div>
                   </div>
@@ -236,10 +239,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                             index === 2 ? 'rounded-bl-2xl' :
                             'rounded-br-2xl'
                           }`}
-                          onClick={handleImageClick}
+                          onClick={(e) => handleImageClick(e, index)}
                         />
                         {index === 3 && tweet.images.length > 4 && (
-                          <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={handleImageClick}>
+                          <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={(e) => handleImageClick(e, 0)}>
                             <PhotographIcon className="h-5 w-5 text-white" />
                             <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
                           </div>
@@ -255,7 +258,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   src={tweet.image}
                   alt=""
                   className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                  onClick={handleImageClick}
+                  onClick={(e) => handleImageClick(e, 0)}
                 />
               </div>
             )}
@@ -369,7 +372,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       src={tweet.images[0]}
                       alt=""
                       className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={handleImageClick}
+                      onClick={(e) => handleImageClick(e, 0)}
                     />
                   ) : tweet.images.length === 2 ? (
                     <div className="grid grid-cols-2 gap-2">
@@ -381,7 +384,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                           className={`h-[350px] w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
                             index === 0 ? 'rounded-l-2xl' : 'rounded-r-2xl'
                           }`}
-                          onClick={handleImageClick}
+                          onClick={(e) => handleImageClick(e, index)}
                         />
                       ))}
                     </div>
@@ -391,20 +394,20 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                         src={tweet.images[0]}
                         alt=""
                         className="rounded-l-2xl w-full h-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={handleImageClick}
+                        onClick={(e) => handleImageClick(e, 0)}
                       />
                       <div className="flex flex-col gap-2">
                         <img
                           src={tweet.images[1]}
                           alt=""
                           className="rounded-tr-2xl w-full h-[171px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={handleImageClick}
+                          onClick={(e) => handleImageClick(e, 1)}
                         />
                         <img
                           src={tweet.images[2]}
                           alt=""
                           className="rounded-br-2xl w-full h-[171px] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={handleImageClick}
+                          onClick={(e) => handleImageClick(e, 2)}
                         />
                       </div>
                     </div>
@@ -421,10 +424,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                               index === 2 ? 'rounded-bl-2xl' :
                               'rounded-br-2xl'
                             }`}
-                            onClick={handleImageClick}
+                            onClick={(e) => handleImageClick(e, index)}
                           />
                           {index === 3 && tweet.images.length > 4 && (
-                            <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={handleImageClick}>
+                            <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={(e) => handleImageClick(e, 0)}>
                               <PhotographIcon className="h-5 w-5 text-white" />
                               <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
                             </div>
@@ -440,7 +443,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                     src={tweet.image}
                     alt=""
                     className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={handleImageClick}
+                    onClick={(e) => handleImageClick(e, 0)}
                   />
                 </div>
               )}
@@ -527,6 +530,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       <ImageModal
         isOpen={showImageModal}
         images={tweet.images && tweet.images.length > 0 ? tweet.images : tweet.image ? [tweet.image] : []}
+        initialIndex={selectedImageIndex ?? 0}
         onClose={handleCloseImageModal}
       />
     </>
