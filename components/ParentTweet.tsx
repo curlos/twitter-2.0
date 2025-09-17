@@ -78,7 +78,20 @@ const ParentTweet = ({ fromModal }: Props) => {
             <div>
               <div className="text-black dark:text-white break-words max-w-[420px]">{tweet.text}</div>
 
-              {tweet.image && (
+              {(tweet.images && tweet.images.length > 0) ? (
+                <div className="pt-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    {tweet.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt=""
+                        className="rounded-2xl max-h-[250px] w-full object-cover"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : tweet.image && (
                 <div className="pt-3">
                   <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain" />
                 </div>

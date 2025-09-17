@@ -8,6 +8,7 @@ export interface IProvider {
 
 export interface ITweet {
   image?: string,
+  images?: string[],
   parentTweet: string,
   text: string,
   timestamp: {

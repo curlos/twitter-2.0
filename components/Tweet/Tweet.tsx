@@ -176,7 +176,21 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               </div>
             ) : null}
             <div className={`${pastTweet ? ' text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`} style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
-            {tweet.image && (
+            {(tweet.images && tweet.images.length > 0) ? (
+              <div className="pt-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {tweet.images.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt=""
+                      className="rounded-2xl max-h-[250px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={handleImageClick}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : tweet.image && (
               <div className="pt-3">
                 <img
                   src={tweet.image}
@@ -287,9 +301,23 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 </div>
               ) : null}
 
-              {/* Main content of the tweet - Renders both the text AND image in the tweet. */}
+              {/* Main content of the tweet - Renders both the text AND image(s) in the tweet. */}
               <div className="break-all" style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
-              {tweet.image && (
+              {(tweet.images && tweet.images.length > 0) ? (
+                <div className="pt-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    {tweet.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt=""
+                        className="rounded-2xl w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={handleImageClick}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : tweet.image && (
                 <div className="pt-3">
                   <img
                     src={tweet.image}

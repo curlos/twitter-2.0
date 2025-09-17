@@ -145,6 +145,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                         setIsOpen(true);
                         setEditTweetInfo({
                           image: tweet?.image || '',
+                          images: tweet?.images || [],
                           ...tweet
                         });
                       }}>

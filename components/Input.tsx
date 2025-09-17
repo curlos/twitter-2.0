@@ -3,6 +3,7 @@ import Image from "next/image";
 import { db, storage } from '../firebase';
 
 const MAX_TWEET_LENGTH = 500;
+const MAX_IMAGES = 10;
 import {
   addDoc,
   collection,
@@ -47,11 +48,12 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
 
   const [input, setInput] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const filePickerRef = useRef(null);
   const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
   const [loading, setLoading] = useState(false);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0));
+  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0 || editTweetInfo?.images?.length > 0));
 
   useEffect(() => {
     if (isEditingTweet) {
@@ -59,16 +61,19 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
         setInput(editTweetInfo.text);
       }
 
-      if (editTweetInfo?.image) {
+      if (editTweetInfo?.images && editTweetInfo.images.length > 0) {
+        setSelectedFiles(editTweetInfo.images);
+      } else if (editTweetInfo?.image) {
         setSelectedFile(editTweetInfo?.image);
+        setSelectedFiles([]);
       }
 
     }
   }, [editTweetInfo]);
 
   const sendTweet = async () => {
-    // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
-    if (loading || (!input && !selectedFile)) return;
+    // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
+    if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
     setLoading(true);
 
     const docRef = await addDoc(collection(db, 'tweets'), {
@@ -85,9 +90,13 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       });
     }
 
-    const downloadURL = await uploadImageAndGetURL(docRef.id);
-
-    if (selectedFile) {
+    if (selectedFiles.length > 0) {
+      const imageUrls = await uploadImagesAndGetURLs(docRef.id);
+      await updateDoc(doc(db, "tweets", docRef.id), {
+        images: imageUrls
+      });
+    } else if (selectedFile) {
+      const downloadURL = await uploadImageAndGetURL(docRef.id);
       await updateDoc(doc(db, "tweets", docRef.id), {
         image: downloadURL
       });
@@ -96,6 +105,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     setLoading(false);
     setInput('');
     setSelectedFile(null);
+    setSelectedFiles([]);
     setShowEmojis(false);
     setIsOpen(false);
   };
@@ -103,8 +113,8 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
   const editTweet = async () => {
     const currentTweet = editTweetInfo;
 
-    // If a tweet is already being sent or there's no text AND no image then DO NOT send tweet
-    if (loading || (!input && !selectedFile)) return;
+    // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
+    if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
 
     setLoading(true);
 
@@ -113,8 +123,9 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       setIsEditing(true);
     }
 
-    // If the image has already been uploaded (meaning it has not been changed since the past version and has a URL as the string)
+    // If the image(s) have already been uploaded (meaning they have not been changed since the past version and have URLs as strings)
     const imageAlreadyUploaded = selectedFile && selectedFile.startsWith('http');
+    const imagesAlreadyUploaded = selectedFiles.length > 0 && selectedFiles.every(file => file.startsWith('http'));
     const updatedObject: any = {
       timestamp: serverTimestamp(),
     };
@@ -124,7 +135,9 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       updatedObject.text = input;
     }
 
-    if (imageAlreadyUploaded) {
+    if (imagesAlreadyUploaded) {
+      updatedObject.images = selectedFiles;
+    } else if (imageAlreadyUploaded) {
       updatedObject.image = selectedFile;
     }
 
@@ -132,6 +145,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     const cleanTweetForHistory = {
       text: currentTweet.text,
       image: currentTweet.image || '',
+      images: currentTweet.images || [],
       timestamp: currentTweet.timestamp,
       userID: currentTweet.userID,
       tweetId: currentTweet.tweetId,
@@ -146,8 +160,14 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     }
 
     try {
-      // If this is a new image that the user just uploaded
-      if (!imageAlreadyUploaded) {
+      // If these are new images that the user just uploaded
+      if (selectedFiles.length > 0 && !imagesAlreadyUploaded) {
+        const imageUrls = await uploadImagesAndGetURLs(currentTweet.tweetId);
+        if (imageUrls.length > 0) {
+          updatedObject.images = imageUrls;
+        }
+      } else if (selectedFile && !imageAlreadyUploaded) {
+        // If this is a new single image that the user just uploaded
         const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
         if (downloadURL) {
           updatedObject.image = downloadURL;
@@ -160,6 +180,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       setLoading(false);
       setInput('');
       setSelectedFile(null);
+      setSelectedFiles([]);
       setShowEmojis(false);
       setIsOpen(false);
 
@@ -167,6 +188,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       if (setEditTweetInfo) {
         setEditTweetInfo({
           image: '',
+          images: [],
           parentTweet: '',
           text: '',
           timestamp: {
@@ -203,15 +225,43 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     return null;
   };
 
-  const addImageToPost = (e) => {
-    const reader = new FileReader();
-    if (e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
+  const uploadImagesAndGetURLs = async (docRefId: string) => {
+    const imageUrls = [];
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const imageRef = ref(storage, `tweets/${docRefId}/image_${i}`);
+      await uploadString(imageRef, selectedFiles[i], "data_url");
+      const downloadURL = await getDownloadURL(imageRef);
+      imageUrls.push(downloadURL);
     }
 
-    reader.onload = (readerEvent) => [
-      setSelectedFile(readerEvent.target.result)
-    ];
+    return imageUrls;
+  };
+
+  const addImageToPost = (e) => {
+    const files = Array.from(e.target.files);
+    const totalFiles = selectedFiles.length + files.length;
+
+    if (totalFiles > MAX_IMAGES) {
+      alert(`You can only upload up to ${MAX_IMAGES} images per tweet.`);
+      return;
+    }
+
+    const filePromises = files.map(file => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (readerEvent) => resolve(readerEvent.target.result);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(filePromises).then(results => {
+      setSelectedFiles(prev => [...prev, ...results]);
+    });
+  };
+
+  const removeImage = (index) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const addEmoji = (e) => {
@@ -264,6 +314,21 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
             onChange={handleTextChange}
             className={`bg-white dark:bg-black text-black dark:text-white outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
 
+          {selectedFiles.length > 0 && (
+            <div className="py-3">
+              <div className="grid grid-cols-2 gap-2">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="relative">
+                    <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 right-1 cursor-pointer z-10" onClick={() => removeImage(index)}>
+                      <XIcon className="text-white h-5" />
+                    </div>
+                    <img src={file} alt="" className="rounded-2xl max-h-40 w-full object-cover border border-gray-400 dark:border-gray-700" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {selectedFile && (
             <div className="py-3">
               <div className="relative">
@@ -288,6 +353,8 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
                     type="file"
                     ref={filePickerRef}
                     hidden
+                    multiple
+                    accept="image/*"
                     onChange={addImageToPost}
                   />
                 </div>
