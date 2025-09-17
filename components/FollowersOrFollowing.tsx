@@ -8,6 +8,7 @@ import AppLayout from "./Layout/AppLayout";
 import PageHeader from "./Layout/PageHeader";
 import ContentContainer from "./Layout/ContentContainer";
 import MediumUser from "./MediumUser";
+import InfiniteScroll from "./InfiniteScroll";
 
 /**
  * @description - Renders the content for either the "/followers/${tag}" OR "/following/${tag}" pages.
@@ -100,29 +101,30 @@ const FollowersOrFollowing = () => {
             </div>
 
             {/* Go through the list of the user's "followers" and render them. This will show basic information about each user (profile pic, name, username, bio) and a button that allows the user to quickly click "follow" to follow or unfollow them.  */}
-            <div>
-              {accounts.length > 0 ? (
-                accounts.map((account) => {
-                  let key = null;
-                  let userID = null;
-
-                  key = userID = account.id;
+            {accounts.length > 0 ? (
+              <InfiniteScroll
+                items={accounts}
+                renderItem={(account) => {
+                  const key = account.id;
+                  const userID = account.id;
 
                   return (
                     <MediumUser key={key} userID={userID} />
                   );
-                })
-              ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-                  <UserGroupIcon className="h-16 w-16 mb-4 text-gray-400" />
-                  {urlContainsFollowers ? (
-                    <p className="text-xl">No followers</p>
-                  ) : (
-                    <p className="text-xl">Not following anyone</p>
-                  )}
-                </div>
-              )}
-            </div>
+                }}
+                itemsPerPage={10}
+                loading={loading}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                <UserGroupIcon className="h-16 w-16 mb-4 text-gray-400" />
+                {urlContainsFollowers ? (
+                  <p className="text-xl">No followers</p>
+                ) : (
+                  <p className="text-xl">Not following anyone</p>
+                )}
+              </div>
+            )}
           </>
         )}
       </ContentContainer>

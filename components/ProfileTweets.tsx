@@ -3,6 +3,7 @@ import { sortByNewest } from '../utils/sortTweets';
 import { IAuthor } from '../utils/types';
 import Tweet from './Tweet/Tweet';
 import { ChatAltIcon } from '@heroicons/react/outline';
+import InfiniteScroll from './InfiniteScroll';
 
 interface Props {
   author: IAuthor,
@@ -84,9 +85,9 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
   return (
     <div>
       {filteredTweets.length > 0 ? (
-        <>
-          {/* Render the list of filtered tweets. */}
-          {filteredTweets.map((tweet) => {
+        <InfiniteScroll
+          items={filteredTweets}
+          renderItem={(tweet) => {
             const tweetData = tweet.data();
             // Create unique key that includes retweet status to avoid duplicate key warnings
             const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
@@ -102,8 +103,9 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
                 tweetID={tweet.id}
               />
             );
-          })}
-        </>
+          }}
+          itemsPerPage={10}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-gray-500">
           <ChatAltIcon className="h-12 w-12 mb-4" />

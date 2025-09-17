@@ -6,6 +6,7 @@ import AppLayout from '../components/Layout/AppLayout';
 import PageHeader from '../components/Layout/PageHeader';
 import ContentContainer from '../components/Layout/ContentContainer';
 import TweetWithID from '../components/TweetWithID';
+import InfiniteScroll from '../components/InfiniteScroll';
 import { db } from '../firebase';
 
 const Followers = () => {
@@ -33,11 +34,14 @@ const Followers = () => {
           subtitle={session?.user ? `@${session.user.tag}` : undefined}
         />
 
-        <div>
-          {tweets.map((tweet) => (
+        <InfiniteScroll
+          items={tweets}
+          renderItem={(tweet) => (
             <TweetWithID key={tweet.data().tweetID} tweetID={tweet.data().tweetID} />
-          ))}
-        </div>
+          )}
+          itemsPerPage={10}
+          loading={loading}
+        />
       </ContentContainer>
     </AppLayout>
   );
