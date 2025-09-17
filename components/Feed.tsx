@@ -102,6 +102,7 @@ const Feed = () => {
     setFilteredTweets(optimizedFilteredTweets);
   }, [optimizedFilteredTweets]);
 
+
   return (
     
     <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
