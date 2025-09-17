@@ -15,6 +15,7 @@ import Link from 'next/link';
 import TweetActions from './TweetActions';
 import useTweetData from './useTweetData';
 import ImageModal from '../ImageModal';
+import { PhotographIcon } from '@heroicons/react/solid';
 
 interface Props {
   id: string,
@@ -225,18 +226,25 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     {tweet.images.slice(0, 4).map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt=""
-                        className={`h-[200px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
-                          index === 0 ? 'rounded-tl-2xl' :
-                          index === 1 ? 'rounded-tr-2xl' :
-                          index === 2 ? 'rounded-bl-2xl' :
-                          'rounded-br-2xl'
-                        }`}
-                        onClick={handleImageClick}
-                      />
+                      <div key={index} className="relative">
+                        <img
+                          src={image}
+                          alt=""
+                          className={`h-[200px] w-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                            index === 0 ? 'rounded-tl-2xl' :
+                            index === 1 ? 'rounded-tr-2xl' :
+                            index === 2 ? 'rounded-bl-2xl' :
+                            'rounded-br-2xl'
+                          }`}
+                          onClick={handleImageClick}
+                        />
+                        {index === 3 && tweet.images.length > 4 && (
+                          <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={handleImageClick}>
+                            <PhotographIcon className="h-5 w-5 text-white" />
+                            <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
@@ -403,18 +411,25 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       {tweet.images.slice(0, 4).map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt=""
-                          className={`h-[171px] w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
-                            index === 0 ? 'rounded-tl-2xl' :
-                            index === 1 ? 'rounded-tr-2xl' :
-                            index === 2 ? 'rounded-bl-2xl' :
-                            'rounded-br-2xl'
-                          }`}
-                          onClick={handleImageClick}
-                        />
+                        <div key={index} className="relative">
+                          <img
+                            src={image}
+                            alt=""
+                            className={`h-[171px] w-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                              index === 0 ? 'rounded-tl-2xl' :
+                              index === 1 ? 'rounded-tr-2xl' :
+                              index === 2 ? 'rounded-bl-2xl' :
+                              'rounded-br-2xl'
+                            }`}
+                            onClick={handleImageClick}
+                          />
+                          {index === 3 && tweet.images.length > 4 && (
+                            <div className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`} onClick={handleImageClick}>
+                              <PhotographIcon className="h-5 w-5 text-white" />
+                              <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   )}
