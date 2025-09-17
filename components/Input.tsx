@@ -28,6 +28,7 @@ import { newTweetModalState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 import CircularProgress from './CircularProgress';
+import Spinner from './Spinner';
 import {
   DndContext,
   closestCenter,
@@ -348,7 +349,13 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
   };
 
   return (
-    <div className={`flex p-3 space-x-2 border-b z-10 border-[#AAB8C2]  dark:border-gray-700 ${loading && 'opacity-60'} ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`relative flex p-3 space-x-2 border-b z-10 border-[#AAB8C2]  dark:border-gray-700 ${(replyModal && 'pt-0 border-none') || ''}`}>
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
+          <Spinner />
+        </div>
+      )}
+
       <Link href={`/profile/${session.user.tag}`}>
         <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
       </Link>
@@ -404,7 +411,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
           <div>
             <div className="flex justify-between items-center">
               <div className="flex space-x-3 text-lightblue-400 py-4">
-                <div className="icon" onClick={() => filePickerRef.current.click()}>
+                <div className="icon cursor-pointer" onClick={() => filePickerRef.current.click()}>
                   <PhotographIcon className="h-7 w-7 hoverAnimation" />
 
                   <input
@@ -417,7 +424,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
                   />
                 </div>
 
-                <div className="icon" onClick={() => {
+                <div className="icon cursor-pointer" onClick={() => {
                   setShowEmojis(!showEmojis);
                   if (setShowEmojiState) {
                     setShowEmojiState(!showEmojis);
