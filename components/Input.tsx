@@ -126,6 +126,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     // If the image(s) have already been uploaded (meaning they have not been changed since the past version and have URLs as strings)
     const imageAlreadyUploaded = selectedFile && selectedFile.startsWith('http');
     const imagesAlreadyUploaded = selectedFiles.length > 0 && selectedFiles.every(file => file.startsWith('http'));
+    const hasNewImages = selectedFiles.length > 0 && selectedFiles.some(file => !file.startsWith('http'));
     const updatedObject: any = {
       timestamp: serverTimestamp(),
     };
@@ -160,8 +161,8 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     }
 
     try {
-      // If these are new images that the user just uploaded
-      if (selectedFiles.length > 0 && !imagesAlreadyUploaded) {
+      // If there are images (mix of existing URLs and new uploads)
+      if (selectedFiles.length > 0 && (hasNewImages || !imagesAlreadyUploaded)) {
         const imageUrls = await uploadImagesAndGetURLs(currentTweet.tweetId);
         if (imageUrls.length > 0) {
           updatedObject.images = imageUrls;
@@ -229,10 +230,18 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     const imageUrls = [];
 
     for (let i = 0; i < selectedFiles.length; i++) {
-      const imageRef = ref(storage, `tweets/${docRefId}/image_${i}`);
-      await uploadString(imageRef, selectedFiles[i], "data_url");
-      const downloadURL = await getDownloadURL(imageRef);
-      imageUrls.push(downloadURL);
+      const file = selectedFiles[i];
+
+      // If the file is already a URL (starts with http), just add it to the array
+      if (file.startsWith('http')) {
+        imageUrls.push(file);
+      } else {
+        // Only upload new images (base64 data)
+        const imageRef = ref(storage, `tweets/${docRefId}/image_${i}`);
+        await uploadString(imageRef, file, "data_url");
+        const downloadURL = await getDownloadURL(imageRef);
+        imageUrls.push(downloadURL);
+      }
     }
 
     return imageUrls;
