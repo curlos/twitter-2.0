@@ -41,8 +41,6 @@ const Feed = () => {
       (snapshot) => {
         // Using all the tweets we get back set them into the "tweets" state so we can keep track of them all.
         setTweets(snapshot.docs);
-        // Using all the tweets from this query, we want to filter by certain parameters if they exist
-        setFilteredTweets(getFilteredTweets(router.query.query, snapshot.docs));
         // Now that the API call to the database is done, loading is finished.
         setLoading(false);
       }
@@ -109,7 +107,6 @@ const Feed = () => {
   useEffect(() => {
     setFilteredTweets(optimizedFilteredTweets);
   }, [optimizedFilteredTweets]);
-
 
   return (
     
