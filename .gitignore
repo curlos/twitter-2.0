@@ -41,3 +41,4 @@ firebase.json
 .env
 
 package-lock.json
+tsconfig.tsbuildinfo
