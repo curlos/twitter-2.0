@@ -6,7 +6,7 @@ import Input from './Input';
 import { useSession } from 'next-auth/react';
 import { onSnapshot, query, collection, orderBy } from '@firebase/firestore';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState } from '../atoms/atom';
+import { colorThemeState } from '../atoms/atom';
 import { useRouter } from 'next/router';
 import AuthReminder from './AuthReminder';
 import SortableTweetList from './SortableTweetList';
@@ -19,7 +19,6 @@ const Feed = () => {
 
   const { data: session } = useSession();
   const [tweets, setTweets] = useState([]);
-  const [isOpen] = useRecoilState(newTweetModalState);
   const [theme] = useRecoilState(colorThemeState);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +65,7 @@ const Feed = () => {
   return (
     
     <div className={`${theme} flex-grow sm:ml-[80px] xl:ml-[280px] w-text-lg border-r border-[#AAB8C2] dark:border-gray-700`}>
-      <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 ${!isOpen && 'z-50'}`}>
+      <div className={`bg-white dark:bg-black border-b border-[#AAB8C2]  dark:border-gray-700 p-3 sticky top-0 z-40`}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <h2 className="font-bold">{router.query.query ? `Search results for: ${router.query.query}` : 'Home'}</h2>
