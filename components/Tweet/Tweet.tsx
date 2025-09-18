@@ -196,9 +196,15 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             {parentTweet && parentTweetAuthor ? (
               <div className="text-[15px] text-gray-500">
                 Replying to
-                <Link href={`/profile/${author.tag}`}>
-                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@{parentTweetAuthor.tag}</span>
-                </Link>
+                <span
+                  className="ml-1 text-lightblue-400 cursor-pointer hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/profile/${parentTweetAuthor.tag}`);
+                  }}
+                >
+                  @{parentTweetAuthor.tag}
+                </span>
               </div>
             ) : null}
             <div className={`${pastTweet ? ' text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`} style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
@@ -382,9 +388,17 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               {parentTweet && parentTweetAuthor ? (
                 <div className="text-[15px] text-gray-500">
                   <span>Replying to</span>
-                  <Link href={`/profile/${author.tag}`}>
-                    <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@{parentTweetAuthor.tag}</span>
-                  </Link>
+                  <span
+                    className="ml-1 text-lightblue-400 cursor-pointer hover:underline"
+                    onClick={(e) => {
+                      console.log(`/profile/${parentTweetAuthor.tag}`)
+
+                      e.stopPropagation();
+                      router.push(`/profile/${parentTweetAuthor.tag}`);
+                    }}
+                  >
+                    @{parentTweetAuthor.tag}
+                  </span>
                 </div>
               ) : null}
 

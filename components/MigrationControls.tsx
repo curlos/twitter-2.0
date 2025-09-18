@@ -1,24 +1,50 @@
 import React, { useState } from 'react';
 import { testMigration } from '../utils/testTweetCountsMigration';
 import { migrateTweetCounts } from '../utils/runTweetCountsMigration';
+import { testUserMigration } from '../utils/testUserCountsMigration';
+import { migrateUserCounts } from '../utils/runUserCountsMigration';
 
-const MigrationTweetCountControls = () => {
+interface MigrationControlsProps {
+  type: 'tweetCounts' | 'userCounts';
+}
+
+const MigrationControls = ({ type }: MigrationControlsProps) => {
   const [isRunning, setIsRunning] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+
+  const getMigrationConfig = () => {
+    if (type === 'tweetCounts') {
+      return {
+        runFn: migrateTweetCounts,
+        testFn: testMigration,
+        entityName: 'tweets',
+        fields: 'count fields'
+      };
+    } else {
+      return {
+        runFn: migrateUserCounts,
+        testFn: testUserMigration,
+        entityName: 'users',
+        fields: 'follower/following count fields'
+      };
+    }
+  };
+
+  const config = getMigrationConfig();
 
   const handleRunMigration = async () => {
     if (isRunning) return;
 
-    if (!confirm('⚠️ Are you sure you want to run the migration? This will add/update count fields on all tweets.')) {
+    if (!confirm(`⚠️ Are you sure you want to run the migration? This will add/update ${config.fields} on all ${config.entityName}.`)) {
       return;
     }
 
     setIsRunning(true);
     try {
       console.log('🚀 Starting migration...');
-      const result = await migrateTweetCounts();
+      const result = await config.runFn();
       console.log('✅ Migration completed successfully!', result);
-      alert(`✅ Migration completed! ${result.totalUpdated} tweets updated, ${result.totalSkipped} skipped.`);
+      alert(`✅ Migration completed! ${result.totalUpdated} ${config.entityName} updated, ${result.totalSkipped} skipped.`);
     } catch (error) {
       console.error('❌ Migration failed:', error);
       alert('❌ Migration failed. Check console for details.');
@@ -33,7 +59,7 @@ const MigrationTweetCountControls = () => {
     setIsTesting(true);
     try {
       console.log('🔍 Running migration test...');
-      await testMigration();
+      await config.testFn();
       console.log('✅ Test completed. Check console output above.');
       alert('✅ Test completed! Check console for detailed results.');
     } catch (error) {
@@ -75,10 +101,10 @@ const MigrationTweetCountControls = () => {
         </button>
       </div>
       <p className="text-xs text-yellow-700 mt-2">
-        Test checks all count fields. Migration adds missing count fields to tweets.
+        Test checks all {config.fields}. Migration adds missing {config.fields} to {config.entityName}.
       </p>
     </div>
   );
 };
 
-export default MigrationTweetCountControls;
+export default MigrationControls;
