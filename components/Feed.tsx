@@ -5,15 +5,11 @@ import { db } from "../firebase";
 import Input from './Input';
 import { useSession } from 'next-auth/react';
 import { onSnapshot, query, collection, orderBy } from '@firebase/firestore';
-import Tweet from './Tweet/Tweet';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
-import TweetSkeletonLoader from './TweetSkeletonLoader';
-import { sortByNewest, sortByOldest, sortByMostLikes, sortByMostReplies, sortByMostBookmarks, sortByMostRetweets } from '../utils/sortTweets';
-import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
 import AuthReminder from './AuthReminder';
-import InfiniteScroll from './InfiniteScroll';
+import SortableTweetList from './SortableTweetList';
 
 /**
  * @description - List of tweets to be shown on the user's "feed" page (first page they arrive on essentially)
@@ -26,8 +22,6 @@ const Feed = () => {
   const [isOpen] = useRecoilState(newTweetModalState);
   const [theme] = useRecoilState(colorThemeState);
   const [loading, setLoading] = useState(true);
-  const [sortType, setSortType] = useState('Newest');
-  const [filteredTweets, setFilteredTweets] = useState([]);
 
   const router = useRouter();
 
@@ -48,65 +42,26 @@ const Feed = () => {
     return () => unsubscribe();
   }, []);
 
-  // Move useMemo after function definitions to avoid hoisting issues
-
   /**
-   * 
-   * @param {String} searchQuery - The string we get from the URL a query string (the query key is "query", so for example if the user wanted to filter by only tweets containing the word "NBA", then the query would look like this: "/?query=NBA")
-   * @param {Array<QueryDocumentSnapshot<T>>} tweets - The list of tweets we get back with the specific query parameters.
-   * @returns 
+   * @description - Filter tweets by search query
    */
   const getFilteredTweets = (searchQuery, tweets) => {
     if (searchQuery === '' || !searchQuery || !tweets) {
       return tweets;
     } else {
-      const filteredTweets = tweets.filter((tweet) => {
+      return tweets.filter((tweet) => {
         if (searchQuery && typeof searchQuery === 'string') {
           return tweet.data().text.toLowerCase().includes(searchQuery.toLowerCase());
         }
         return tweet;
       });
-      return filteredTweets;
     }
   };
 
-  /**
-   * @description - Get the sorted tweets by various criteria.
-   * @param {Array<QueryDocumentSnapshot<T>>} tweets - The list of tweets we get back with the specific query parameters.
-   * @returns {Array<QueryDocumentSnapshot<T>>} - The list of SORTED tweets.
-   */
-  const getSortedTweets = (tweets) => {
-    switch (sortType) {
-      case 'Newest':
-        return sortByNewest(tweets);
-      case 'Oldest':
-        return sortByOldest(tweets);
-      case 'Most Likes':
-        return sortByMostLikes(tweets);
-      case 'Most Replies':
-        return sortByMostReplies(tweets);
-      case 'Most Bookmarks':
-        return sortByMostBookmarks(tweets);
-      case 'Most Retweets':
-        return sortByMostRetweets(tweets);
-      default:
-        return sortByNewest(tweets);
-    }
-  };
-
-  /**
-   * @description - Get the filtered and sorted tweets using useMemo for performance optimization
-   * Only recalculates when tweets, sortType, or search query actually change
-   */
-  const optimizedFilteredTweets = useMemo(() => {
-    const filtered = getFilteredTweets(router.query.query, tweets);
-    return getSortedTweets(filtered);
-  }, [router.query.query, tweets, sortType]);
-
-  // Update state when optimized tweets change
-  useEffect(() => {
-    setFilteredTweets(optimizedFilteredTweets);
-  }, [optimizedFilteredTweets]);
+  // Get filtered tweets based on search query
+  const filteredTweets = useMemo(() => {
+    return getFilteredTweets(router.query.query, tweets);
+  }, [router.query.query, tweets]);
 
   return (
     
@@ -137,37 +92,14 @@ const Feed = () => {
         </div>
       )}
 
-      {/* Show the sort dropdown which will change the "sortType" when one of the options are selected. */}
-      <div>
-        <SortDropdown sortType={sortType} setSortType={setSortType} />
-      </div>
-
-      {/* Infinite scroll tweets */}
-      <InfiniteScroll
-        items={filteredTweets}
-        renderItem={(tweet) => (
-          <Tweet
-            key={tweet.id}
-            id={tweet.id}
-            tweetID={tweet.id}
-            tweet={{
-              ...tweet.data(),
-              tweetId: tweet.id
-            }}
-          />
-        )}
-        itemsPerPage={10}
+      {/* Sortable tweet list with all sorting functionality */}
+      <SortableTweetList
+        tweets={filteredTweets}
         loading={loading}
-        LoadingComponent={() => (
-          <>
-            {Array.from({ length: 10 }, (_, index) => (
-              <TweetSkeletonLoader key={index} />
-            ))}
-          </>
-        )}
+        emptyStateMessage="No tweets yet"
+        emptyStateSubtitle="When people post tweets, they'll show up here."
+        itemsPerPage={10}
       />
-
-      <div className="h-[60px]" />
     </div>
   );
 };
