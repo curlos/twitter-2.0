@@ -20,7 +20,7 @@ import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
 
-const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followers, following, followersYouFollow }) => {
+const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followers, followersYouFollow }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -101,7 +101,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
             query: { tag: author.tag || 't' }
           }}>
             <div className="space-x-1 cursor-pointer hover:underline">
-              <span className="text-black dark:text-white font-bold">{following.length}</span>
+              <span className="text-black dark:text-white font-bold">{author.followingCount ?? 0}</span>
               <span>Following</span>
             </div>
           </Link>
@@ -112,7 +112,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
             query: { tag: author.tag || 't' }
           }}>
             <div className="space-x-1 cursor-pointer hover:underline">
-              <span className="text-black dark:text-white font-bold">{followers.length}</span>
+              <span className="text-black dark:text-white font-bold">{author.followersCount ?? 0}</span>
               <span>Followers</span>
             </div>
           </Link>
@@ -167,7 +167,6 @@ const ProfilePage = () => {
   const [retweets, setRetweets] = useState([]);
   const [likes, setLikes] = useState([]);
   const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
   const [followersYouFollow, setFollowersYouFollow] = useState([]);
 
   const [followed, setFollowed] = useState(false);
@@ -232,22 +231,40 @@ const ProfilePage = () => {
     }
   }, [db, id, loading, filter]);
 
+  // Check if current user is following this profile (efficient single document check)
   useEffect(() => {
-    if (!loading) {
+    if (!loading && session?.user?.uid && authorID) {
+      const checkFollowStatus = async () => {
+        try {
+          const followDoc = await getDocs(query(
+            collection(db, 'users', authorID, 'followers'),
+            where('followedBy', '==', session.user.uid)
+          ));
+          setFollowed(!followDoc.empty);
+        } catch (error) {
+          console.error('Error checking follow status:', error);
+          setFollowed(false);
+        }
+      };
+      checkFollowStatus();
+    } else {
+      setFollowed(false);
+    }
+  }, [db, authorID, loading, session?.user?.uid]);
+
+  // Only fetch followers collection when logged in AND viewing someone else's profile (for "Followed by" logic)
+  useEffect(() => {
+    if (!loading && session?.user?.uid && authorID && session.user.tag !== String(id)) {
       const unsubscribeFollowers = onSnapshot(collection(db, 'users', authorID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
       return () => unsubscribeFollowers();
+    } else {
+      setFollowers([]);
     }
-  }, [db, id, loading]);
+  }, [db, id, loading, session?.user?.uid, authorID]);
 
+  // Only fetch "Followed by" data when logged in AND viewing someone else's profile
   useEffect(() => {
-    if (!loading) {
-      const unsubscribeFollowing = onSnapshot(collection(db, 'users', authorID, 'following'), (snapshot) => setFollowing(snapshot.docs));
-      return () => unsubscribeFollowing();
-    }
-  }, [db, id, loading]);
-
-  useEffect(() => {
-    if (!loading && session && session.user && author) {
+    if (!loading && session?.user?.uid && author && session.user.tag !== String(id) && followers.length > 0) {
       const fetchFollowersYouFollow = async () => {
         try {
           // First get the list of users the current session user is following
@@ -293,12 +310,11 @@ const ProfilePage = () => {
       const interval = setInterval(fetchFollowersYouFollow, 30000);
 
       return () => clearInterval(interval);
+    } else {
+      setFollowersYouFollow([]);
     }
-  }, [db, id, loading, session, followers, author]);
+  }, [db, id, loading, session?.user?.uid, followers, author]);
 
-  useEffect(() => {
-    setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
-  }, [followers]);
 
   const isUserFollowing = (user, followers) => {
     const result = followers.every((follower) => {
@@ -349,7 +365,6 @@ const ProfilePage = () => {
               followed={followed}
               handleEditOrFollow={handleEditOrFollow}
               followers={followers}
-              following={following}
               followersYouFollow={followersYouFollow}
             />
 
