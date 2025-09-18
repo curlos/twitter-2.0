@@ -43,11 +43,11 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                 >
 
                   {/* When this clicked, the list of tweets will be sorted by the NEWEST ones. */}
-                  <div className="bg-white dark:bg-black rounded-md divide-gray-400  dark:divide-gray-700 rounded-b-none" onClick={() => setSortType('Newest')}>
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400  dark:divide-gray-700 rounded-b-none rounded-t-none" onClick={() => setSortType('Newest')}>
                     <Menu.Item>
                       {({ active }) => (
                         <div
-                          className={`w-full rounded-md rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
+                          className={`w-full rounded-md rounded-b-none rounded-t-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
                         >
                           Newest
                         </div>
@@ -56,13 +56,65 @@ export const SortDropdown = ({ sortType, setSortType }: Props) => {
                   </div>
 
                   {/* When this clicked, the list of tweets will be sorted by the OLDEST ones. */}
-                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none" onClick={() => setSortType('Oldest')}>
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none rounded-b-none" onClick={() => setSortType('Oldest')}>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          className={`w-full rounded-md rounded-t-none rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
+                        >
+                          Oldest
+                        </div>
+                      )}
+                    </Menu.Item>
+                  </div>
+
+                  {/* When this clicked, the list of tweets will be sorted by MOST LIKES. */}
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none rounded-b-none" onClick={() => setSortType('Most Likes')}>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          className={`w-full rounded-md rounded-t-none rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
+                        >
+                          Most Likes
+                        </div>
+                      )}
+                    </Menu.Item>
+                  </div>
+
+                  {/* When this clicked, the list of tweets will be sorted by MOST REPLIES. */}
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none rounded-b-none" onClick={() => setSortType('Most Replies')}>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          className={`w-full rounded-md rounded-t-none rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
+                        >
+                          Most Replies
+                        </div>
+                      )}
+                    </Menu.Item>
+                  </div>
+
+                  {/* When this clicked, the list of tweets will be sorted by MOST BOOKMARKS. */}
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none rounded-b-none" onClick={() => setSortType('Most Bookmarks')}>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          className={`w-full rounded-md rounded-t-none rounded-b-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
+                        >
+                          Most Bookmarks
+                        </div>
+                      )}
+                    </Menu.Item>
+                  </div>
+
+                  {/* When this clicked, the list of tweets will be sorted by MOST RETWEETS. */}
+                  <div className="bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700 rounded-t-none" onClick={() => setSortType('Most Retweets')}>
                     <Menu.Item>
                       {({ active }) => (
                         <div
                           className={`w-full rounded-md rounded-t-none px-4 py-3 text-sm leading-5 text-left hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer`}
                         >
-                          Oldest
+                          Most Retweets
                         </div>
                       )}
                     </Menu.Item>

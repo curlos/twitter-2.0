@@ -9,7 +9,7 @@ import Tweet from './Tweet/Tweet';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, newTweetModalState } from '../atoms/atom';
 import TweetSkeletonLoader from './TweetSkeletonLoader';
-import { sortByNewest, sortByOldest } from '../utils/sortTweets';
+import { sortByNewest, sortByOldest, sortByMostLikes, sortByMostReplies, sortByMostBookmarks, sortByMostRetweets } from '../utils/sortTweets';
 import { SortDropdown } from './SortDropdown';
 import { useRouter } from 'next/router';
 import AuthReminder from './AuthReminder';
@@ -73,9 +73,9 @@ const Feed = () => {
   };
 
   /**
-   * @description - Get the sorted tweets either by oldest or newest.
+   * @description - Get the sorted tweets by various criteria.
    * @param {Array<QueryDocumentSnapshot<T>>} tweets - The list of tweets we get back with the specific query parameters.
-   * @returns {Array<QueryDocumentSnapshot<T>>} - The list of SORTED tweets (either by newest or oldest).
+   * @returns {Array<QueryDocumentSnapshot<T>>} - The list of SORTED tweets.
    */
   const getSortedTweets = (tweets) => {
     switch (sortType) {
@@ -83,6 +83,14 @@ const Feed = () => {
         return sortByNewest(tweets);
       case 'Oldest':
         return sortByOldest(tweets);
+      case 'Most Likes':
+        return sortByMostLikes(tweets);
+      case 'Most Replies':
+        return sortByMostReplies(tweets);
+      case 'Most Bookmarks':
+        return sortByMostBookmarks(tweets);
+      case 'Most Retweets':
+        return sortByMostRetweets(tweets);
       default:
         return sortByNewest(tweets);
     }
