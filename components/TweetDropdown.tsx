@@ -4,8 +4,9 @@ import { newTweetModalState, editTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
-import { collection, doc, DocumentData, getDoc, onSnapshot } from "@firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, query, where } from "@firebase/firestore";
 import { db } from "../firebase";
 import { useFollow } from "../utils/useFollow";
 
@@ -22,8 +23,8 @@ interface Props {
  */
 export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [_user, setUser] = useState<DocumentData>();
-  const [followers, setFollowers] = useState<DocumentData>();
   const [followed, setFollowed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
@@ -57,37 +58,26 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     };
   }, [authorId]);
 
+  // Check if current user is following this user (efficient single document check)
   useEffect(() => {
-    // onSnapshot is a Firestore method that sets up a real-time listener on a document or collection.
-    // When the document or collection changes, onSnapshot calls a callback function with a snapshot of the updated data.
-    // Here, the snapshot is being used to set the state of followers using the setFollowers function.
-
-    // collection(db, 'users', authorId, 'followers') is getting a reference to the 'followers' subcollection
-    // of the docuent with ID authorId in the 'users' collection.
-    // This can be read as "the 'followers' of the user with ID authorId".
-    const unsubscribe = onSnapshot(collection(db, 'users', authorId, 'followers'), (snapshot) =>
-      // Set the followers of the author whose tweet is being clicked on to show the dropdown.
-      setFollowers(snapshot.docs)
-    );
-
-    // The effect depends on db, authorId, and loading.
-    // This means that the code inside the effect will re-run whenever any of these three value changes.
-    // db is the Firestore database.
-    // authorId is the ID of the author whose followers we're interested in.
-    // loading is not used inside the effect, but its changes still cause the effect to re-run.
-    return () => unsubscribe();
-  }, [db, authorId, loading]);
-
-  useEffect(() => {
-    // If we've managed to get the followers for this tweet's author
-    if (followers) {
-      // Check if the currently logged in user (if any) is following the author of this tweet and set the status here. If they follow the author of this tweet, then "followed" = true, else, "followed" = false.
-      setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
+    if (!loading && session?.user?.uid && authorId) {
+      const checkFollowStatus = async () => {
+        try {
+          const followDoc = await getDocs(query(
+            collection(db, 'users', authorId, 'followers'),
+            where('followedBy', '==', session.user.uid)
+          ));
+          setFollowed(!followDoc.empty);
+        } catch (error) {
+          console.error('Error checking follow status:', error);
+          setFollowed(false);
+        }
+      };
+      checkFollowStatus();
+    } else {
+      setFollowed(false);
     }
-
-    // TODO - Not sure we really loading here as NO API call is made. Might be able to remove but will have to test it out first.
-    setLoading(false);
-  }, [followers]);
+  }, [db, authorId, loading, session?.user?.uid]);
 
 
   /**
@@ -95,6 +85,24 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
    * @returns {Object || undefined}
    */
   const handleFollow = useFollow({ session, followed, db, userID: authorId });
+
+  const handleFollowClick = async () => {
+    if (!session) {
+      return;
+    }
+
+    // Update follow state immediately for better UX (optimistic update)
+    const newFollowedState = !followed;
+    setFollowed(newFollowedState);
+
+    try {
+      await handleFollow();
+    } catch (error) {
+      console.error('Error updating follow:', error);
+      // Revert follow state on error
+      setFollowed(followed);
+    }
+  };
 
   // TODO: Currently, when a user that is NOT logged in clicks the three dot button to show more actions for the tweet, the user will see an empty box. That doesn't seem correct. Need to take a look at how the actual site does it. Probably will need to redirect them to the "/auth" page in some manner as the point of this site is to get as many users as possible.
   return (
@@ -125,9 +133,9 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                 >
 
                   <div className="py-1 bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700">
-                    {/* Only show this if the tweet DOES NOT belong to the currently logged in user (if any) */}
-                    {!loading && session && session.user && author.tag !== session.user.tag ? (
-                      <Menu.Item onClick={handleFollow}>
+                    {/* Only show this if the tweet DOES NOT belong to the currently logged in user (if any) AND we're not on this user's profile page */}
+                    {!loading && session && session.user && author.tag !== session.user.tag && router.query.id !== author.tag ? (
+                      <Menu.Item onClick={handleFollowClick}>
                         {({ active }) => (
                           <div
                             className={`bg-white dark:bg-black text-black dark:text-white w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-900 z-50`}

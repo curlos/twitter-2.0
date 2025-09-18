@@ -1,5 +1,5 @@
 import { BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, deleteDoc, doc, DocumentData, getDoc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +20,6 @@ const MediumUser = ({ userID }: Props) => {
 
   const { data: session } = useSession();
   const [user, setUser] = useState<DocumentData>();
-  const [followers, setFollowers] = useState<DocumentData>();
   const [followed, setFollowed] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -42,24 +41,52 @@ const MediumUser = ({ userID }: Props) => {
     };
   }, [userID]);
 
+  // Check if current user is following this user (efficient single document check)
   useEffect(() => {
-    // Get the followers of this user
-    const unsubscribe = onSnapshot(collection(db, 'users', userID, 'followers'), (snapshot) => setFollowers(snapshot.docs));
-    return () => unsubscribe();
-  }, [db, userID, loading]);
-
-  useEffect(() => {
-    if (followers) {
-      // Find out if the currently logged in user (if any) is FOLLOWING this user.
-      setFollowed(followers.findIndex((follower) => follower.id === session?.user.uid) !== -1);
+    if (!loading && session?.user?.uid && userID) {
+      const checkFollowStatus = async () => {
+        try {
+          const followDoc = await getDocs(query(
+            collection(db, 'users', userID, 'followers'),
+            where('followedBy', '==', session.user.uid)
+          ));
+          setFollowed(!followDoc.empty);
+        } catch (error) {
+          console.error('Error checking follow status:', error);
+          setFollowed(false);
+        }
+      };
+      checkFollowStatus();
+    } else {
+      setFollowed(false);
     }
-  }, [followers]);
+  }, [db, userID, loading, session?.user?.uid]);
 
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   const handleFollow = useFollow({ session, followed, db, userID });
+
+  const handleFollowClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!session) {
+      return;
+    }
+
+    // Update follow state immediately for better UX (optimistic update)
+    const newFollowedState = !followed;
+    setFollowed(newFollowedState);
+
+    try {
+      await handleFollow();
+    } catch (error) {
+      console.error('Error updating follow:', error);
+      // Revert follow state on error
+      setFollowed(followed);
+    }
+  };
 
   return (
     loading ? <MediumUserSkeletonLoader /> : (
@@ -85,10 +112,7 @@ const MediumUser = ({ userID }: Props) => {
             </div>
 
             {!session || userID !== session.user.uid ? (
-              <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={(e) => {
-                e.stopPropagation();
-                handleFollow();
-              }}>{followed ? 'Following' : 'Follow'}</div>
+              <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={handleFollowClick}>{followed ? 'Following' : 'Follow'}</div>
             ) : (
               // If the user is not found (meaning their account has been deleted), then don't render anything.
               null
