@@ -1,4 +1,4 @@
-import { DocumentData, query, collection, where, getDocs } from "@firebase/firestore";
+import { DocumentData, query, collection, where, getDocs, doc, getDoc } from "@firebase/firestore";
 import { BadgeCheckIcon, UserGroupIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,8 +7,7 @@ import { db } from "../firebase";
 import AppLayout from "./Layout/AppLayout";
 import PageHeader from "./Layout/PageHeader";
 import ContentContainer from "./Layout/ContentContainer";
-import MediumUser from "./MediumUser";
-import InfiniteScroll from "./InfiniteScroll";
+import SortableUserList from "./SortableUserList";
 
 /**
  * @description - Renders the content for either the "/followers/${tag}" OR "/following/${tag}" pages.
@@ -49,13 +48,29 @@ const FollowersOrFollowing = () => {
     }
 
     const queryFollowersSnapshot = await getDocs(queryAccounts);
-    setAccounts(queryFollowersSnapshot.docs);
+
+    // Fetch user data for each follower/following for sorting purposes
+    const accountsWithUserData = await Promise.all(
+      queryFollowersSnapshot.docs.map(async (accountDoc) => {
+        const userRef = doc(db, "users", accountDoc.id);
+        const userSnapshot = await getDoc(userRef);
+
+        const accountData = accountDoc.data() as any;
+        return {
+          id: accountDoc.id,
+          ...(accountData || {}), // follower document data (includes followedAt)
+          userData: userSnapshot.data() // actual user data (includes followersCount, followingCount)
+        };
+      })
+    );
+
+    setAccounts(accountsWithUserData);
     setLoading(false);
   };
 
   return (
     <AppLayout title={`${tag}'s Followers`}>
-      <ContentContainer loading={loading}>
+      <ContentContainer>
         {author && (
           <>
             <PageHeader
@@ -101,30 +116,14 @@ const FollowersOrFollowing = () => {
             </div>
 
             {/* Go through the list of the user's "followers" and render them. This will show basic information about each user (profile pic, name, username, bio) and a button that allows the user to quickly click "follow" to follow or unfollow them.  */}
-            {accounts.length > 0 ? (
-              <InfiniteScroll
-                items={accounts}
-                renderItem={(account) => {
-                  const key = account.id;
-                  const userID = account.id;
-
-                  return (
-                    <MediumUser key={key} userID={userID} />
-                  );
-                }}
-                itemsPerPage={10}
-                loading={loading}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-                <UserGroupIcon className="h-16 w-16 mb-4 text-gray-400" />
-                {urlContainsFollowers ? (
-                  <p className="text-xl">No followers</p>
-                ) : (
-                  <p className="text-xl">Not following anyone</p>
-                )}
-              </div>
-            )}
+            <SortableUserList
+              users={accounts}
+              loading={loading}
+              emptyStateMessage={urlContainsFollowers ? "No followers" : "Not following anyone"}
+              emptyStateSubtitle={urlContainsFollowers ? "This user has no followers yet." : "This user isn't following anyone yet."}
+              emptyStateIcon={UserGroupIcon}
+              itemsPerPage={10}
+            />
           </>
         )}
       </ContentContainer>

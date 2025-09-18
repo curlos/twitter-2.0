@@ -1,49 +1,28 @@
 import { BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, doc, DocumentData, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, DocumentData, getDocs, query, where } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { useFollow } from '../utils/useFollow';
-import MediumUserSkeletonLoader from './MediumUserSkeletonLoader';
 
 interface Props {
   userID: string,
-
+  user: DocumentData,
 }
 
 /**
  * @description - Renders basic information about a user which includes their profile pic, name, username, and their bio. Meant to be viewed in a list of users where you would see basic information about all these users such as when you check the followers of an account.
  * @returns {React.FC}
  */
-const MediumUser = ({ userID }: Props) => {
+const MediumUser = ({ userID, user }: Props) => {
 
   const { data: session } = useSession();
-  const [user, setUser] = useState<DocumentData>();
   const [followed, setFollowed] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    // Find the user in the "users" collection
-    const docRef = doc(db, "users", userID);
-
-    getDoc(docRef).then((snap) => {
-      if (isMounted) {
-        setUser(snap.data());
-        setLoading(false);
-      }
-    });
-
-    // We'll need different information for different users so this would be called everytime the ID of the user we need information from changes.
-    return () => {
-      isMounted = false;
-    };
-  }, [userID]);
 
   // Check if current user is following this user (efficient single document check)
   useEffect(() => {
-    if (!loading && session?.user?.uid && userID) {
+    if (session?.user?.uid && userID) {
       const checkFollowStatus = async () => {
         try {
           const followDoc = await getDocs(query(
@@ -60,7 +39,7 @@ const MediumUser = ({ userID }: Props) => {
     } else {
       setFollowed(false);
     }
-  }, [db, userID, loading, session?.user?.uid]);
+  }, [userID, session?.user?.uid]);
 
   /**
    *
@@ -89,8 +68,7 @@ const MediumUser = ({ userID }: Props) => {
   };
 
   return (
-    loading ? <MediumUserSkeletonLoader /> : (
-      user ? (
+    user ? (
         <Link href={`/profile/${user.tag}`}>
           <div className="p-3 flex justify-between items-center text-base cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
             <div className="flex gap-2">
@@ -122,7 +100,6 @@ const MediumUser = ({ userID }: Props) => {
           </div>
         </Link>
       ) : null
-    )
   );
 };
 
