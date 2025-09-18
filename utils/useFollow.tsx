@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { doc, deleteDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, writeBatch, increment } from 'firebase/firestore';
 
 /**
  * @description - Handles what happens when a user wants to follow or unfollow someone.
@@ -18,26 +18,33 @@ export const useFollow = ({ session, followed, db, userID }) => {
             };
         }
 
-        // If they click the button and they are FOLLOWING the author of the tweet, then they will UNFOLLOW the author of the tweet.
-        if (followed) {
-            // REMOVE the currently logged in user from the the tweet's author's "followers" list
-            await deleteDoc(doc(db, "users", userID, "followers", String(session.user.uid)));
-            // REMOVE the current author of this tweet from the currently logged in user's "following" list
-            await deleteDoc(doc(db, "users", String(session.user.uid), "following", userID));
-        } else {
-            // Else if they click the button and they are NOT FOLLOWING the author of the tweet, then they will FOLLOW the author of the tweet.
+        try {
+            const batch = writeBatch(db);
 
-            // ADD the currently logged in user as a follower in the tweet's author's "followers" list
-            await setDoc(doc(db, "users", userID, "followers", String(session.user.uid)), {
-                followedAt: serverTimestamp(),
-                followedBy: session.user.uid
-            });
+            if (followed) {
+                // Unfollow: remove documents and decrement counts
+                batch.delete(doc(db, "users", userID, "followers", String(session.user.uid)));
+                batch.delete(doc(db, "users", String(session.user.uid), "following", userID));
+                batch.update(doc(db, "users", userID), { followersCount: increment(-1) });
+                batch.update(doc(db, "users", String(session.user.uid)), { followingCount: increment(-1) });
+            } else {
+                // Follow: add documents and increment counts
+                batch.set(doc(db, "users", userID, "followers", String(session.user.uid)), {
+                    followedAt: serverTimestamp(),
+                    followedBy: session.user.uid
+                });
+                batch.set(doc(db, "users", String(session.user.uid), "following", userID), {
+                    followedAt: serverTimestamp(),
+                    followedBy: session.user.uid
+                });
+                batch.update(doc(db, "users", userID), { followersCount: increment(1) });
+                batch.update(doc(db, "users", String(session.user.uid)), { followingCount: increment(1) });
+            }
 
-            // ADD the current author of this tweet into the currently logged in user's "following" list
-            await setDoc(doc(db, "users", String(session.user.uid), "following", userID), {
-                followedAt: serverTimestamp(),
-                followedBy: session.user.uid
-            });
+            await batch.commit();
+        } catch (error) {
+            console.error('Error updating follow:', error);
+            throw error;
         }
     }, [session, followed, db, userID]);
 };

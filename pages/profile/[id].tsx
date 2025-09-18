@@ -20,7 +20,7 @@ import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
 
-const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followers, followersYouFollow }) => {
+const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followersYouFollow }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -330,13 +330,33 @@ const ProfilePage = () => {
    */
   const handleFollow = useFollow({ session, followed, db, userID: authorID });
 
-  const handleEditOrFollow = () => {
+  const handleEditOrFollow = async () => {
     if (!session) {
       Router.push('/auth');
       return;
     }
 
-    session.user.tag === String(id) ? setSettingsModalOpen(true) : handleFollow();
+    if (session.user.tag === String(id)) {
+      setSettingsModalOpen(true);
+    } else {
+      // Update follow state immediately for better UX (optimistic update)
+      const newFollowedState = !followed;
+      setFollowed(newFollowedState);
+
+      try {
+        await handleFollow();
+        // Refetch author data to get updated follower/following counts from Firebase
+        const userQuery = query(collection(db, "users"), where('tag', '==', id));
+        const userQuerySnapshot = await getDocs(userQuery);
+        if (!userQuerySnapshot.empty) {
+          setAuthor(userQuerySnapshot.docs[0].data());
+        }
+      } catch (error) {
+        console.error('Error updating follow:', error);
+        // Revert follow state on error
+        setFollowed(followed);
+      }
+    }
   };
 
   return (
@@ -364,7 +384,6 @@ const ProfilePage = () => {
               id={id}
               followed={followed}
               handleEditOrFollow={handleEditOrFollow}
-              followers={followers}
               followersYouFollow={followersYouFollow}
             />
 
