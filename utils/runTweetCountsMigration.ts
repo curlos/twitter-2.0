@@ -47,27 +47,14 @@ export const migrateTweetCounts = async () => {
 
       for (const tweetDoc of tweetsSnapshot.docs) {
         const tweetId = tweetDoc.id;
-        const tweetData = tweetDoc.data();
-
-        // Check which counts are missing
-        const needsLikes = tweetData.likesCount === undefined;
-        const needsRetweets = tweetData.retweetsCount === undefined;
-        const needsReplies = tweetData.repliesCount === undefined;
-        const needsBookmarks = tweetData.bookmarksCount === undefined;
-
-        if (!needsLikes && !needsRetweets && !needsReplies && !needsBookmarks) {
-          console.log(`⏭️  Tweet ${tweetId} already has all counts, skipping`);
-          totalSkipped++;
-          continue;
-        }
 
         try {
           // Only fetch the counts we need
           const fetchPromises = [];
-          if (needsLikes) fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'likes')));
-          if (needsRetweets) fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'retweets')));
-          if (needsReplies) fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'replies')));
-          if (needsBookmarks) fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'bookmarks')));
+          fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'likes')));
+          fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'retweets')));
+          fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'replies')));
+          fetchPromises.push(getDocs(collection(db, 'tweets', tweetId, 'bookmarks')));
 
           const results = await Promise.all(fetchPromises);
 
@@ -75,26 +62,21 @@ export const migrateTweetCounts = async () => {
           const updateData: any = {};
           let logParts = [];
 
-          if (needsLikes) {
-            const likesCount = results[resultIndex++].docs.length;
-            updateData.likesCount = likesCount;
-            logParts.push(`likes=${likesCount}`);
-          }
-          if (needsRetweets) {
-            const retweetsCount = results[resultIndex++].docs.length;
-            updateData.retweetsCount = retweetsCount;
-            logParts.push(`retweets=${retweetsCount}`);
-          }
-          if (needsReplies) {
-            const repliesCount = results[resultIndex++].docs.length;
-            updateData.repliesCount = repliesCount;
-            logParts.push(`replies=${repliesCount}`);
-          }
-          if (needsBookmarks) {
-            const bookmarksCount = results[resultIndex++].docs.length;
-            updateData.bookmarksCount = bookmarksCount;
-            logParts.push(`bookmarks=${bookmarksCount}`);
-          }
+          const likesCount = results[resultIndex++].docs.length;
+          updateData.likesCount = likesCount;
+          logParts.push(`likes=${likesCount}`);
+
+          const retweetsCount = results[resultIndex++].docs.length;
+          updateData.retweetsCount = retweetsCount;
+          logParts.push(`retweets=${retweetsCount}`);
+
+          const repliesCount = results[resultIndex++].docs.length;
+          updateData.repliesCount = repliesCount;
+          logParts.push(`replies=${repliesCount}`);
+
+          const bookmarksCount = results[resultIndex++].docs.length;
+          updateData.bookmarksCount = bookmarksCount;
+          logParts.push(`bookmarks=${bookmarksCount}`);
 
           // Update tweet with only the missing counts
           const tweetRef = doc(db, 'tweets', tweetId);
