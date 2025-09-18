@@ -50,7 +50,7 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
   // Effect hook for loading the author of the main tweet
   useEffect(() => {
     let isMounted = true;
-    if (tweet) {
+    if (tweet?.userID) {
       setLoading(true);
       const docRef = doc(db, "users", tweet.userID);
       getDoc(docRef).then((snap) => {
@@ -64,12 +64,12 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
     return () => {
       isMounted = false;
     };
-  }, [db, id, tweet]);
+  }, [tweet?.userID]);
 
   // Effect hook for loading the parent tweet, if any
   useEffect(() => {
     let isMounted = true;
-    if (tweet && tweet.parentTweet && tweet.parentTweet !== "") {
+    if (tweet?.parentTweet && tweet.parentTweet !== "") {
       const docRef = doc(db, "tweets", String(tweet.parentTweet));
       getDoc(docRef).then((snap) => {
         if (isMounted) {
@@ -80,7 +80,7 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
     return () => {
       isMounted = false;
     };
-  }, [db, id, tweet]);
+  }, [tweet?.parentTweet]);
 
   // Effect hook for loading the author of the parent tweet
   useEffect(() => {

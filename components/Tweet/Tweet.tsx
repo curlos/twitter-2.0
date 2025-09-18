@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState } from '../../atoms/atom';
-import { deleteDoc, doc } from '@firebase/firestore';
+import { doc, writeBatch, increment } from '@firebase/firestore';
 import { db } from '../../firebase';
 import { TweetDropdown } from '../TweetDropdown';
 import { FaRetweet } from 'react-icons/fa';
@@ -45,22 +45,25 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const showImageModal = selectedImageIndex !== null;
   const router = useRouter();
 
-  // Use the custom hook for tweet data management
+  // Use the optimized custom hook for tweet data management
   const {
-    likes,
-    retweets,
-    bookmarks,
-    replies,
+    likesCount,
+    retweetsCount,
+    bookmarksCount,
+    repliesCount,
     liked,
     retweeted,
     bookmarked,
+    setLiked,
+    setRetweeted,
+    setBookmarked,
     parentTweet,
     parentTweetAuthor,
     authorId,
     author,
     retweetedBy,
     loading
-  } = useTweetData(id, tweet, tweetID);
+  } = useTweetData(id, tweet, tweetID, tweetPage);
 
   /**
    * @description - Handles a tweet being deleted. Will only be deleted if the author of the tweet is the one attempting to delete it.
@@ -79,7 +82,26 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
     // Will only delete the tweet if the person attempting to delete is the author of the tweet.
     if (isAuthorOfTweet) {
-      deleteDoc(doc(db, 'tweets', id)).then(() => router.push('/'));
+      try {
+        const batch = writeBatch(db);
+
+        // Delete the tweet
+        batch.delete(doc(db, 'tweets', id));
+
+        // If this is a reply, decrement parent tweet's repliesCount
+        if (tweet.parentTweet && tweet.parentTweet !== "") {
+          batch.update(doc(db, 'tweets', tweet.parentTweet), {
+            repliesCount: increment(-1)
+          });
+
+          // Also remove from parent's replies subcollection
+          batch.delete(doc(db, 'tweets', tweet.parentTweet, 'replies', id));
+        }
+
+        await batch.commit();
+      } catch (error) {
+        console.error('Error deleting tweet:', error);
+      }
     }
   };
 
@@ -269,16 +291,19 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             <TweetActions
               id={id}
               tweet={tweet}
-              replies={replies}
-              retweets={retweets}
-              likes={likes}
-              bookmarks={bookmarks}
+              likesCount={likesCount}
+              retweetsCount={retweetsCount}
+              bookmarksCount={bookmarksCount}
+              repliesCount={repliesCount}
               liked={liked}
               retweeted={retweeted}
               bookmarked={bookmarked}
               session={session}
               setTweetBeingRepliedToId={setTweetBeingRepliedToId}
               setIsOpen={setIsOpen}
+              onLikeChange={setLiked}
+              onRetweetChange={setRetweeted}
+              onBookmarkChange={setBookmarked}
             />
           )}
         </div>
@@ -469,17 +494,16 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               </div>
 
               {/* Row of stats for each different action: Replies, Retweets, Likes - Hidden for past tweets */}
-              {/* TODO: Add bookmarks here. Maybe take a look at adding views as well. That's much more optional though. */}
               {!pastTweet && (
                 <div className="flex space-x-4 py-4">
                   <div className="space-x-1">
-                    <span className="font-bold">{replies.length}</span>
+                    <span className="font-bold">{repliesCount}</span>
                     <span className="text-gray-500">Replies</span>
                   </div>
 
                   <div className="space-x-1">
                     <NumberFlow
-                      value={retweets.length}
+                      value={retweetsCount}
                       className="font-bold"
                     />
                     <span className="text-gray-500">Retweets</span>
@@ -487,7 +511,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
                   <div className="space-x-1">
                     <NumberFlow
-                      value={likes.length}
+                      value={likesCount}
                       className="font-bold"
                     />
                     <span className="text-gray-500">Likes</span>
@@ -495,7 +519,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
                   <div className="space-x-1">
                     <NumberFlow
-                      value={bookmarks.length}
+                      value={bookmarksCount}
                       className="font-bold"
                     />
                     <span className="text-gray-500">Bookmarks</span>
@@ -508,10 +532,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 <TweetActions
                   id={id}
                   tweet={tweet}
-                  replies={replies}
-                  retweets={retweets}
-                  likes={likes}
-                  bookmarks={bookmarks}
+                  likesCount={likesCount}
+                  retweetsCount={retweetsCount}
+                  bookmarksCount={bookmarksCount}
+                  repliesCount={repliesCount}
                   liked={liked}
                   retweeted={retweeted}
                   bookmarked={bookmarked}
@@ -519,6 +543,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   setTweetBeingRepliedToId={setTweetBeingRepliedToId}
                   setIsOpen={setIsOpen}
                   fullSize={true}
+                  onLikeChange={setLiked}
+                  onRetweetChange={setRetweeted}
+                  onBookmarkChange={setBookmarked}
                 />
               )}
             </div>

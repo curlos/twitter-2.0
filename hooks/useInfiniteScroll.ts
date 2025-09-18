@@ -10,7 +10,6 @@ interface UseInfiniteScrollReturn<T> {
   displayedItems: T[];
   loadingMore: boolean;
   hasMore: boolean;
-  resetPagination: () => void;
 }
 
 export const useInfiniteScroll = <T>({
@@ -29,10 +28,17 @@ export const useInfiniteScroll = <T>({
     setLoadingMore(false);
   }, [items, page, itemsPerPage]);
 
-  // Reset pagination when items change
+  // Reset pagination only when items length significantly changes
   useEffect(() => {
-    setPage(1);
-  }, [items]);
+    const currentLength = items.length;
+    const displayedLength = displayedItems.length;
+
+    // Only reset if we have significantly fewer items than displayed
+    // This handles cases like filtering/sorting but not minor updates
+    if (displayedLength > currentLength) {
+      setPage(1);
+    }
+  }, [items.length]);
 
   // Infinite scroll handler
   useEffect(() => {
@@ -49,16 +55,11 @@ export const useInfiniteScroll = <T>({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [displayedItems.length, items.length, loadingMore, triggerDistance]);
 
-  const resetPagination = () => {
-    setPage(1);
-  };
-
   const hasMore = displayedItems.length < items.length;
 
   return {
     displayedItems,
     loadingMore,
     hasMore,
-    resetPagination
   };
 };

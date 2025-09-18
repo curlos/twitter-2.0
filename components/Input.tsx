@@ -9,8 +9,9 @@ import {
   collection,
   doc,
   serverTimestamp,
-  setDoc,
   updateDoc,
+  writeBatch,
+  increment,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -101,9 +102,19 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     });
 
     if (replyModal) {
-      await setDoc(doc(db, "tweets", tweetBeingRepliedToId, "replies", docRef.id), {
+      const batch = writeBatch(db);
+
+      // Add to replies subcollection
+      batch.set(doc(db, "tweets", tweetBeingRepliedToId, "replies", docRef.id), {
         name: session.user.name,
       });
+
+      // Increment repliesCount on parent tweet
+      batch.update(doc(db, "tweets", tweetBeingRepliedToId), {
+        repliesCount: increment(1)
+      });
+
+      await batch.commit();
     }
 
     if (selectedFiles.length > 0) {

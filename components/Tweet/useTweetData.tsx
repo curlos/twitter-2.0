@@ -6,16 +6,24 @@ import { IAuthor } from "../../utils/types";
 
 /**
  * Custom hook to manage tweet data and related state
+ * Now optimized to use count properties instead of fetching full subcollections
  */
-const useTweetData = (id: string, tweet: any, tweetID: string) => {
+const useTweetData = (_id: string, tweet: any, tweetID: string, isDetailPage = false) => {
   const { data: session } = useSession();
-  const [likes, setLikes] = useState([]);
-  const [retweets, setRetweets] = useState([]);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [replies, setReplies] = useState([]);
+
+  // Count properties from tweet document (efficient)
+  const likesCount = tweet?.likesCount || 0;
+  const retweetsCount = tweet?.retweetsCount || 0;
+  const bookmarksCount = tweet?.bookmarksCount || 0;
+  const repliesCount = tweet?.repliesCount || 0;
+
+  // User interaction states
   const [liked, setLiked] = useState(false);
   const [retweeted, setRetweeted] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+
+  // Only fetch replies for detail pages (where we need to show the list)
+  const [replies, setReplies] = useState([]);
   const [parentTweet, setParentTweet] = useState<DocumentData>();
   const [parentTweetAuthor, setParentTweetAuthor] = useState<DocumentData>();
   const [authorId, setAuthorId] = useState<string>();
@@ -23,49 +31,44 @@ const useTweetData = (id: string, tweet: any, tweetID: string) => {
   const [retweetedBy, setRetweetedBy] = useState<DocumentData>();
   const [loading, setLoading] = useState(true);
 
-  // Get REPLIES
+  // Only fetch replies for detail pages (where we need to show the list)
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, 'tweets', String(tweetID), 'replies'),
-      (snapshot) => setReplies(snapshot.docs));
-    return () => unsubscribe();
-  }, [tweetID]);
+    if (isDetailPage) {
+      const unsubscribe = onSnapshot(
+        collection(db, 'tweets', String(tweetID), 'replies'),
+        (snapshot) => setReplies(snapshot.docs));
+      return () => unsubscribe();
+    }
+  }, [tweetID, isDetailPage]);
 
-  // Get LIKES
+  // Check user interaction status (efficient single document checks)
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'likes'), (snapshot) => setLikes(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
+    if (!session?.user?.uid || !tweetID) return;
 
-  // Get RETWEETS
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'retweets'), (snapshot) => setRetweets(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
+    const checkUserInteractions = async () => {
+      try {
+        // Check all user interactions in parallel
+        const [likeDoc, retweetDoc, bookmarkDoc] = await Promise.all([
+          getDoc(doc(db, 'tweets', tweetID, 'likes', session.user.uid)),
+          getDoc(doc(db, 'tweets', tweetID, 'retweets', session.user.uid)),
+          getDoc(doc(db, 'tweets', tweetID, 'bookmarks', session.user.uid))
+        ]);
 
-  // Get BOOKMARKS
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'tweets', tweetID, 'bookmarks'), (snapshot) => setBookmarks(snapshot.docs));
-    return () => unsubscribe();
-  }, [id, tweetID]);
+        setLiked(likeDoc.exists());
+        setRetweeted(retweetDoc.exists());
+        setBookmarked(bookmarkDoc.exists());
+      } catch (error) {
+        console.error('Error checking user interactions:', error);
+      }
+    };
 
-  // Check if the logged in user (if any) has liked this tweet
-  useEffect(() => {
-    setLiked(likes.findIndex((like) => like.id === session?.user.uid) !== -1);
-  }, [likes, session?.user.uid]);
-
-  // Check if the logged in user (if any) has retweeted this tweet
-  useEffect(() => {
-    setRetweeted(retweets.findIndex((retweet) => retweet.id === session?.user.uid) !== -1);
-  }, [retweets, session?.user.uid]);
-
-  // Check if the logged in user (if any) has bookmarked this tweet
-  useEffect(() => {
-    setBookmarked(bookmarks.findIndex((bookmark) => bookmark.id === session?.user.uid) !== -1);
-  }, [bookmarks, session?.user.uid]);
+    checkUserInteractions();
+  }, [session?.user?.uid, tweetID]);
 
   // Get the author of the tweet
   useEffect(() => {
+    if (!tweet.userID) return;
+
     let isMounted = true;
     const docRef = doc(db, "users", tweet.userID);
     getDoc(docRef).then((snap) => {
@@ -78,7 +81,7 @@ const useTweetData = (id: string, tweet: any, tweetID: string) => {
     return () => {
       isMounted = false;
     };
-  }, [id, tweet.userID]);
+  }, [tweet.userID]);
 
   // Get the PARENT tweet (Only if the current tweet is a reply to another tweet, the parent tweet)
   useEffect(() => {
@@ -94,7 +97,7 @@ const useTweetData = (id: string, tweet: any, tweetID: string) => {
     return () => {
       isMounted = false;
     };
-  }, [id, tweet.parentTweet]);
+  }, [tweet.parentTweet]);
 
   // Get the AUTHOR of the PARENT TWEET (IF it exists AND the current tweet is a REPLY)
   useEffect(() => {
@@ -115,7 +118,7 @@ const useTweetData = (id: string, tweet: any, tweetID: string) => {
     return () => {
       isMounted = false;
     };
-  }, [id, parentTweet]);
+  }, [parentTweet]);
 
   // Get retweeted by user info
   useEffect(() => {
@@ -135,13 +138,22 @@ const useTweetData = (id: string, tweet: any, tweetID: string) => {
   }, [tweet.retweetedBy]);
 
   return {
-    likes,
-    retweets,
-    bookmarks,
-    replies,
+    // Count properties (efficient)
+    likesCount,
+    retweetsCount,
+    bookmarksCount,
+    repliesCount,
+    // User interaction states
     liked,
     retweeted,
     bookmarked,
+    // State setters for immediate UI updates
+    setLiked,
+    setRetweeted,
+    setBookmarked,
+    // Reply documents (only for detail pages)
+    replies,
+    // Other tweet data
     parentTweet,
     parentTweetAuthor,
     authorId,

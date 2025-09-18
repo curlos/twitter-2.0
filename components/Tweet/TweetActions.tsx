@@ -1,6 +1,6 @@
-import { deleteDoc, doc, setDoc, serverTimestamp } from "@firebase/firestore";
+import { doc, serverTimestamp, increment, writeBatch } from "@firebase/firestore";
 import NumberFlow from "@number-flow/react";
-import { useRouter, Router } from "next/router";
+import { useRouter } from "next/router";
 import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { RiHeart3Line, RiHeart3Fill } from "react-icons/ri";
 import { db } from "../../firebase";
@@ -8,10 +8,10 @@ import { db } from "../../firebase";
 interface TweetActionsProps {
   id: string;
   tweet: any;
-  replies: any[];
-  retweets: any[];
-  likes: any[];
-  bookmarks: any[];
+  likesCount: number;
+  retweetsCount: number;
+  bookmarksCount: number;
+  repliesCount: number;
   liked: boolean;
   retweeted: boolean;
   bookmarked: boolean;
@@ -19,6 +19,10 @@ interface TweetActionsProps {
   setTweetBeingRepliedToId: (id: string) => void;
   setIsOpen: (open: boolean) => void;
   fullSize?: boolean;
+  // Callbacks to update parent state immediately
+  onLikeChange?: (liked: boolean) => void;
+  onRetweetChange?: (retweeted: boolean) => void;
+  onBookmarkChange?: (bookmarked: boolean) => void;
 }
 
 /**
@@ -27,91 +31,154 @@ interface TweetActionsProps {
 const TweetActions = ({
   id,
   tweet,
-  replies,
-  retweets,
-  likes,
-  bookmarks,
+  likesCount,
+  retweetsCount,
+  bookmarksCount,
+  repliesCount,
   liked,
   retweeted,
   bookmarked,
   session,
   setTweetBeingRepliedToId,
   setIsOpen,
-  fullSize = false
+  fullSize = false,
+  onLikeChange,
+  onRetweetChange,
+  onBookmarkChange
 }: TweetActionsProps) => {
   const router = useRouter();
 
   /**
    * @description - Handles what happens when a user clicks the "like" button on a tweet.
+   * Now includes atomic count updates for performance
    */
   const likeTweet = async () => {
     if (!session) {
-      Router.push('/auth');
+      router.push('/auth');
       return;
     }
 
-    if (liked) {
-      await deleteDoc(doc(db, "tweets", id, "likes", session.user.uid));
-      await deleteDoc(doc(db, "users", session.user.uid, "likes", id));
-    } else {
-      await setDoc(doc(db, "tweets", id, "likes", session.user.uid), {
-        name: session.user.name,
-        likedAt: serverTimestamp(),
-        likedBy: session.user.uid
-      });
-      await setDoc(doc(db, "users", session.user.uid, "likes", id), {
-        ...tweet,
-        likedAt: serverTimestamp(),
-        likedBy: session.user.uid
-      });
+    const newLikedState = !liked;
+
+    // Update UI immediately for better UX
+    onLikeChange?.(newLikedState);
+
+    try {
+      const batch = writeBatch(db);
+
+      if (liked) {
+        // Unlike: remove documents and decrement count
+        batch.delete(doc(db, "tweets", id, "likes", session.user.uid));
+        batch.delete(doc(db, "users", session.user.uid, "likes", id));
+        batch.update(doc(db, "tweets", id), { likesCount: increment(-1) });
+      } else {
+        // Like: add documents and increment count
+        batch.set(doc(db, "tweets", id, "likes", session.user.uid), {
+          name: session.user.name,
+          likedAt: serverTimestamp(),
+          likedBy: session.user.uid
+        });
+        batch.set(doc(db, "users", session.user.uid, "likes", id), {
+          ...tweet,
+          likedAt: serverTimestamp(),
+          likedBy: session.user.uid
+        });
+        batch.update(doc(db, "tweets", id), { likesCount: increment(1) });
+      }
+
+      await batch.commit();
+    } catch (error) {
+      console.error('Error updating like:', error);
+      // Revert UI state on error
+      onLikeChange?.(liked);
     }
   };
 
   /**
    * @description - Handles what happens when a user clicks the "bookmark" button on a tweet.
+   * Now includes atomic count updates for performance
    */
   const bookmarkTweet = async () => {
     if (!session) {
-      Router.push('/auth');
+      router.push('/auth');
       return;
     }
 
-    if (bookmarked) {
-      await deleteDoc(doc(db, "tweets", id, "bookmarks", session.user.uid));
-      await deleteDoc(doc(db, "users", session.user.uid, "bookmarks", id));
-    } else {
-      await setDoc(doc(db, "tweets", id, "bookmarks", session.user.uid), {
-        userID: session.user.uid
-      });
-      await setDoc(doc(db, "users", session.user.uid, "bookmarks", id), {
-        tweetID: id
-      });
+    const newBookmarkedState = !bookmarked;
+
+    // Update UI immediately for better UX
+    onBookmarkChange?.(newBookmarkedState);
+
+    try {
+      const batch = writeBatch(db);
+
+      if (bookmarked) {
+        // Remove bookmark: delete documents and decrement count
+        batch.delete(doc(db, "tweets", id, "bookmarks", session.user.uid));
+        batch.delete(doc(db, "users", session.user.uid, "bookmarks", id));
+        batch.update(doc(db, "tweets", id), { bookmarksCount: increment(-1) });
+      } else {
+        // Add bookmark: create documents and increment count
+        batch.set(doc(db, "tweets", id, "bookmarks", session.user.uid), {
+          userID: session.user.uid
+        });
+        batch.set(doc(db, "users", session.user.uid, "bookmarks", id), {
+          tweetID: id
+        });
+        batch.update(doc(db, "tweets", id), { bookmarksCount: increment(1) });
+      }
+
+      await batch.commit();
+    } catch (error) {
+      console.error('Error updating bookmark:', error);
+      // Revert UI state on error
+      onBookmarkChange?.(bookmarked);
     }
   };
 
   /**
    * @description - Handles what happens when a user clicks the "retweet" button on a tweet.
+   * Now includes atomic count updates for performance
    */
   const retweetTweet = async () => {
     if (!session) {
-      Router.push('/auth');
+      router.push('/auth');
       return;
     }
 
-    if (retweeted) {
-      await deleteDoc(doc(db, "tweets", id, "retweets", session.user.uid));
-      await deleteDoc(doc(db, "users", session.user.uid, "retweets", id));
-    } else {
-      await setDoc(doc(db, "tweets", id, "retweets", session.user.uid), {
-        name: session.user.name,
-        retweetedAt: serverTimestamp(),
-        retweetedBy: session.user.uid
-      });
-      await setDoc(doc(db, "users", session.user.uid, "retweets", id), {
-        ...tweet,
-        retweetedAt: serverTimestamp(),
-        retweetedBy: session.user.uid
-      });
+    const newRetweetedState = !retweeted;
+
+    // Update UI immediately for better UX
+    onRetweetChange?.(newRetweetedState);
+
+    try {
+      const batch = writeBatch(db);
+
+      if (retweeted) {
+        // Remove retweet: delete documents and decrement count
+        batch.delete(doc(db, "tweets", id, "retweets", session.user.uid));
+        batch.delete(doc(db, "users", session.user.uid, "retweets", id));
+        batch.update(doc(db, "tweets", id), { retweetsCount: increment(-1) });
+      } else {
+        // Add retweet: create documents and increment count
+        batch.set(doc(db, "tweets", id, "retweets", session.user.uid), {
+          name: session.user.name,
+          retweetedAt: serverTimestamp(),
+          retweetedBy: session.user.uid
+        });
+        batch.set(doc(db, "users", session.user.uid, "retweets", id), {
+          ...tweet,
+          retweetedAt: serverTimestamp(),
+          retweetedBy: session.user.uid
+        });
+        batch.update(doc(db, "tweets", id), { retweetsCount: increment(1) });
+      }
+
+      await batch.commit();
+    } catch (error) {
+      console.error('Error updating retweet:', error);
+      // Revert UI state on error
+      onRetweetChange?.(retweeted);
     }
   };
 
@@ -189,7 +256,7 @@ const TweetActions = ({
       <div className="flex-1 items-center flex">
         <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
           <FaRegComment className="h-[18px] w-[18px] group-hover:text-blue-500 transition-colors duration-200" />
-          <div className="group-hover:text-blue-500 transition-colors duration-200">{replies.length}</div>
+          <div className="group-hover:text-blue-500 transition-colors duration-200">{repliesCount}</div>
         </div>
       </div>
 
@@ -202,7 +269,7 @@ const TweetActions = ({
             <FaRetweet className="h-[18px] w-[18px] text-green-400" />
           )}
           <NumberFlow
-            value={retweets.length}
+            value={retweetsCount}
             className={`${retweeted ? "text-green-400" : "text-gray-500 group-hover:text-green-400"} transition-colors duration-200`}
           />
         </div>
@@ -217,7 +284,7 @@ const TweetActions = ({
             <RiHeart3Fill className="h-[18px] w-[18px] text-red-500" />
           )}
           <NumberFlow
-            value={likes.length}
+            value={likesCount}
             className={`${liked ? "text-red-500" : "text-gray-500 group-hover:text-red-500"} transition-colors duration-200`}
           />
         </div>
@@ -232,7 +299,7 @@ const TweetActions = ({
             <FaRegBookmark className="h-[16px] w-[16px] group-hover:text-yellow-500 transition-colors duration-200" />
           )}
           <NumberFlow
-            value={bookmarks.length}
+            value={bookmarksCount}
             className={`${bookmarked ? "text-yellow-500" : "text-gray-500 group-hover:text-yellow-500"} transition-colors duration-200`}
           />
         </div>
