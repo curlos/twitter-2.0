@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { sortByNewest } from '../utils/sortTweets';
 import { IAuthor } from '../utils/types';
-import Tweet from './Tweet/Tweet';
 import { ChatAltIcon } from '@heroicons/react/outline';
-import InfiniteScroll from './InfiniteScroll';
+import SortableTweetList from './SortableTweetList';
+import Tweet from './Tweet/Tweet';
 
 interface Props {
   author: IAuthor,
@@ -42,7 +42,7 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
 
   const allTweets = getSortedTweets(tweets, retweets);
 
-  const getFilteredTweets = () => {
+  const filteredTweets = useMemo(() => {
     switch (filter) {
       case 'Tweets':
         return allTweets.filter((tweet) => {
@@ -63,9 +63,7 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
       default:
         return allTweets;
     }
-  };
-
-  const filteredTweets = getFilteredTweets();
+  }, [allTweets, likes, filter]);
 
   const getEmptyStateMessage = () => {
     switch (filter) {
@@ -82,39 +80,34 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
     }
   };
 
-  return (
-    <div>
-      {filteredTweets.length > 0 ? (
-        <InfiniteScroll
-          items={filteredTweets}
-          renderItem={(tweet) => {
-            const tweetData = tweet.data();
-            // Create unique key that includes retweet status to avoid duplicate key warnings
-            const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
+  // Custom render function to handle retweet keys
+  const customRenderItem = (tweet: any) => {
+    const tweetData = tweet.data();
+    // Create unique key that includes retweet status to avoid duplicate key warnings
+    const uniqueKey = `${tweet.id}-${tweet.isRetweet ? 'retweet' : 'original'}`;
 
-            return (
-              <Tweet
-                key={uniqueKey}
-                id={tweet.id}
-                tweet={{
-                  ...tweetData,
-                  tweetId: tweet.id
-                }}
-                tweetID={tweet.id}
-              />
-            );
-          }}
-          itemsPerPage={10}
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-          <ChatAltIcon className="h-12 w-12 mb-4" />
-          <p className="text-xl font-semibold">{getEmptyStateMessage()}</p>
-          <p className="text-gray-400 mt-2">When you post, they'll show up here.</p>
-        </div>
-      )}
-      <div className="h-[60px]" />
-    </div>
+    return (
+      <Tweet
+        key={uniqueKey}
+        id={tweet.id}
+        tweet={{
+          ...tweetData,
+          tweetId: tweet.id
+        }}
+        tweetID={tweet.id}
+      />
+    );
+  };
+
+  return (
+    <SortableTweetList
+      tweets={filteredTweets}
+      emptyStateMessage={getEmptyStateMessage()}
+      emptyStateSubtitle="When you post, they'll show up here."
+      emptyStateIcon={ChatAltIcon}
+      customRenderItem={customRenderItem}
+      itemsPerPage={10}
+    />
   );
 };
 
