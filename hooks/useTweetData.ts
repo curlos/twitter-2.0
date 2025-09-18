@@ -68,18 +68,14 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
 
   // Effect hook for loading the parent tweet, if any
   useEffect(() => {
-    let isMounted = true;
     if (tweet?.parentTweet && tweet.parentTweet !== "") {
-      const docRef = doc(db, "tweets", String(tweet.parentTweet));
-      getDoc(docRef).then((snap) => {
-        if (isMounted) {
-          setParentTweet(snap);
-        }
+      const unsubscribe = onSnapshot(doc(db, "tweets", String(tweet.parentTweet)), (snap) => {
+        setParentTweet(snap);
       });
+      return () => unsubscribe();
+    } else {
+      setParentTweet(null);
     }
-    return () => {
-      isMounted = false;
-    };
   }, [tweet?.parentTweet]);
 
   // Effect hook for loading the author of the parent tweet
