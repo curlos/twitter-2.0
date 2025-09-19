@@ -274,9 +274,16 @@ const ProfilePage = () => {
                       setRetweetedTweets(Array.from(tweetDocsMap.values()));
                     }
                   } else {
-                    // Tweet was deleted, remove from map
+                    // Tweet was deleted, remove from map and still count as "loaded" for completion tracking
                     tweetDocsMap.delete(tweetId);
-                    setRetweetedTweets(Array.from(tweetDocsMap.values()));
+
+                    // Track this as loaded even though the tweet doesn't exist
+                    if (retweetsLoading) {
+                      loadedTweets.add(tweetId);
+                      checkAllLoaded();
+                    } else {
+                      setRetweetedTweets(Array.from(tweetDocsMap.values()));
+                    }
                   }
                 });
                 newListeners.push(unsubscribeTweet);
