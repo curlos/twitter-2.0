@@ -3,8 +3,8 @@ import {
   UserIcon,
   DotsHorizontalIcon,
   LogoutIcon,
-  SunIcon,
-  MoonIcon
+  LoginIcon,
+  CogIcon
 } from "@heroicons/react/outline";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
@@ -52,24 +52,6 @@ const SidenavDrawer = () => {
               </div>
             </Link>
 
-            {theme === 'dark' ? (
-              <div className="cursor-pointer flex gap-4" onClick={() => {
-                setTheme('light');
-                localStorage.theme = 'light';
-              }}>
-                <SunIcon className="h-7 w-7 dark:text-white" />
-                <div>Light Mode</div>
-              </div>
-            ) : (
-              <div className="cursor-pointer flex gap-4" onClick={() => {
-                setTheme('dark');
-                localStorage.theme = 'dark';
-              }}>
-                <MoonIcon className="h-[30px] w-[30px] dark:text-white" />
-                <div>Dark Mode</div>
-              </div>
-            )}
-
             {/* Only show if the user is logged in. */}
             {session && session.user && (
               <Link href="/bookmarks">
@@ -101,6 +83,38 @@ const SidenavDrawer = () => {
                 <div className="text-black dark:text-white">Logout</div>
               </div>
             )}
+
+            {/* Only show if the user is NOT logged in. */}
+            {!session && (
+              <Link href="/auth">
+                <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
+                  <LoginIcon className="h-7 w-7" />
+                  Login
+                </div>
+              </Link>
+            )}
+
+            {/* Only show if the user is NOT logged in. */}
+            {!session && (
+              <Link href="/auth">
+                <div className="flex items-center gap-4 cursor-pointer" onClick={() => {
+                  setIsOpen(false);
+                  // Navigate to auth page with signup mode
+                  window.location.href = '/auth';
+                }}>
+                  <UserIcon className="h-7 w-7" />
+                  Signup
+                </div>
+              </Link>
+            )}
+
+            {/* Settings - show for both logged in and non-logged in users */}
+            <Link href="/settings">
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
+                <CogIcon className="h-7 w-7" />
+                Settings
+              </div>
+            </Link>
           </div>
 
           {/* Only show if the user is logged in. */}

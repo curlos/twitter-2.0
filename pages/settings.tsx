@@ -2,14 +2,12 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState } from '../atoms/atom';
-import { useAuthRedirect } from '../hooks/useAuthRedirect';
 import AppLayout from '../components/Layout/AppLayout';
 import PageHeader from '../components/Layout/PageHeader';
 import ContentContainer from '../components/Layout/ContentContainer';
 import { SunIcon, MoonIcon, MailIcon, LockClosedIcon, ChevronDownIcon } from '@heroicons/react/outline';
 
 const Settings = () => {
-  useAuthRedirect();
   const { data: session, update } = useSession();
 
   const [hasPassword, setHasPassword] = useState(false);
@@ -46,22 +44,25 @@ const Settings = () => {
                 <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div>
                     <div className="font-medium">Theme</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</div>
+                    <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</div>
                   </div>
 
                   <ThemeToggle />
                 </div>
               </div>
 
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">Account</h3>
+              {/* Only show Account section if user is logged in */}
+              {session && session.user && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Account</h3>
 
-                <div className="space-y-4">
-                  <EmailAccordion session={session} update={update} />
+                  <div className="space-y-4">
+                    <EmailAccordion session={session} update={update} />
 
-                  {hasPassword && <PasswordAccordion />}
+                    {hasPassword && <PasswordAccordion />}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
       </ContentContainer>
