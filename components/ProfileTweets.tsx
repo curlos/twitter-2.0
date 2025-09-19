@@ -54,7 +54,8 @@ const ProfileTweets = ({ tweets, retweets, likes, filter }: Props) => {
         return allTweets;
       case 'Media':
         return allTweets.filter((tweet) => {
-          if (tweet.data().image) {
+          const tweetData = tweet.data();
+          if (tweetData.image || (tweetData.images && tweetData.images.length > 0)) {
             return tweet;
           }
         });
