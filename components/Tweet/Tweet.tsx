@@ -296,7 +296,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
           {!pastTweet && (
             <TweetActions
               id={id}
-              tweet={tweet}
               likesCount={likesCount}
               retweetsCount={retweetsCount}
               bookmarksCount={bookmarksCount}
@@ -545,7 +544,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               {!pastTweet && (
                 <TweetActions
                   id={id}
-                  tweet={tweet}
                   likesCount={likesCount}
                   retweetsCount={retweetsCount}
                   bookmarksCount={bookmarksCount}

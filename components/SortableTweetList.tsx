@@ -60,14 +60,14 @@ const SortableTweetList = ({
    */
   const sortedTweetIds = useMemo(() => {
     const sorted = getSortedTweets(tweets);
-    return sorted.map(tweet => tweet.id);
+    return sorted.map(tweet => tweet.uniqueId || tweet.id);
   }, [tweets.length, sortType]);
 
   /**
    * @description - Get current tweet data in sorted order using stable IDs
    */
   const optimizedSortedTweets = useMemo(() => {
-    const tweetMap = new Map(tweets.map(tweet => [tweet.id, tweet]));
+    const tweetMap = new Map(tweets.map(tweet => [tweet.uniqueId || tweet.id, tweet]));
     return sortedTweetIds.map(id => tweetMap.get(id)).filter(Boolean);
   }, [tweets, sortedTweetIds]);
 

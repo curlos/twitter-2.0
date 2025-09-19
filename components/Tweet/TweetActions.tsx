@@ -7,7 +7,6 @@ import { db } from "../../firebase";
 
 interface TweetActionsProps {
   id: string;
-  tweet: any;
   likesCount: number;
   retweetsCount: number;
   bookmarksCount: number;
@@ -30,7 +29,6 @@ interface TweetActionsProps {
  */
 const TweetActions = ({
   id,
-  tweet,
   likesCount,
   retweetsCount,
   bookmarksCount,
@@ -79,7 +77,7 @@ const TweetActions = ({
           likedBy: session.user.uid
         });
         batch.set(doc(db, "users", session.user.uid, "likes", id), {
-          ...tweet,
+          tweetId: id,
           likedAt: serverTimestamp(),
           likedBy: session.user.uid
         });
@@ -167,7 +165,7 @@ const TweetActions = ({
           retweetedBy: session.user.uid
         });
         batch.set(doc(db, "users", session.user.uid, "retweets", id), {
-          ...tweet,
+          tweetId: id,
           retweetedAt: serverTimestamp(),
           retweetedBy: session.user.uid
         });

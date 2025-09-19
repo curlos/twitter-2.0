@@ -9,7 +9,7 @@ import AppLayout from '../../components/Layout/AppLayout';
 import PageHeader from '../../components/Layout/PageHeader';
 import ContentContainer from '../../components/Layout/ContentContainer';
 import { BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, orderBy, query, where, documentId } from 'firebase/firestore';
+import { collection, orderBy, query, where, documentId, doc } from 'firebase/firestore';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
@@ -166,6 +166,10 @@ const ProfilePage = () => {
   const [tweets, setTweets] = useState([]);
   const [retweets, setRetweets] = useState([]);
   const [likes, setLikes] = useState([]);
+  const [likedTweets, setLikedTweets] = useState([]);
+  const [retweetedTweets, setRetweetedTweets] = useState([]);
+  const [likedTweetListeners, setLikedTweetListeners] = useState([]);
+  const [retweetedTweetListeners, setRetweetedTweetListeners] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [followersYouFollow, setFollowersYouFollow] = useState([]);
 
@@ -203,30 +207,124 @@ const ProfilePage = () => {
         setTweetsLoading(false);
       });
 
-      // Convert retweets and likes to periodic updates (less critical)
-      const fetchRetweetsAndLikes = async () => {
-        try {
-          const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
-          const retweetsSnapshot = await getDocs(retweetsQuery);
-          setRetweets(retweetsSnapshot.docs);
+      // Real-time listeners for retweets and likes collections
+      const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
+      const unsubscribeRetweets = onSnapshot(retweetsQuery, async (snapshot) => {
+        setRetweets(snapshot.docs);
 
-          const likesQuery = query(collection(db, 'users', authorID, 'likes'));
-          const likesSnapshot = await getDocs(likesQuery);
-          setLikes(likesSnapshot.docs);
-        } catch (error) {
-          console.error('Error fetching retweets/likes:', error);
+        // Clean up previous listeners before setting up new ones
+        cleanupRetweetedTweetListeners();
+
+        // Fetch actual tweets from the tweetIds in retweets and set up real-time listeners
+        const retweetsDocs = snapshot.docs;
+        if (retweetsDocs.length > 0) {
+          try {
+              // Set up real-time listeners for each retweeted tweet
+              const newListeners = [];
+              const tweetDocsMap = new Map();
+
+              retweetsDocs.forEach(retweetDoc => {
+                const retweetDocData = retweetDoc.data()
+                const tweetId = retweetDocData?.tweetId || retweetDoc.id;
+
+                const tweetDoc = doc(db, "tweets", tweetId);
+                const unsubscribeTweet = onSnapshot(tweetDoc, (tweetSnapshot) => {
+                  if (tweetSnapshot.exists()) {
+                    // Create a modified snapshot that includes retweet data in the .data() method
+                    const modifiedSnapshot = {
+                      ...tweetSnapshot,
+                      data: () => ({
+                        ...tweetSnapshot.data(),
+                        ...retweetDocData // This will include retweetedBy, retweetedAt, etc.
+                      }),
+                      id: tweetId
+                    };
+                    tweetDocsMap.set(tweetId, modifiedSnapshot);
+                    // Update retweetedTweets with the current state of all listened tweets
+                    setRetweetedTweets(Array.from(tweetDocsMap.values()));
+                  } else {
+                    // Tweet was deleted, remove from map
+                    tweetDocsMap.delete(tweetId);
+                    setRetweetedTweets(Array.from(tweetDocsMap.values()));
+                  }
+                });
+                newListeners.push(unsubscribeTweet);
+              });
+
+              setRetweetedTweetListeners(newListeners);
+            } catch (error) {
+              console.error('Error setting up retweeted tweet listeners:', error);
+              setRetweetedTweets([]);
+            }
+        } else {
+          setRetweetedTweets([]);
         }
+      });
+
+      // Clean up previous tweet listeners
+      const cleanupLikedTweetListeners = () => {
+        likedTweetListeners.forEach(unsubscribe => unsubscribe());
+        setLikedTweetListeners([]);
       };
 
-      // Initial fetch
-      fetchRetweetsAndLikes();
+      const cleanupRetweetedTweetListeners = () => {
+        retweetedTweetListeners.forEach(unsubscribe => unsubscribe());
+        setRetweetedTweetListeners([]);
+      };
 
-      // Periodic updates every 60 seconds for retweets/likes
-      const interval = setInterval(fetchRetweetsAndLikes, 60000);
+      const likesQuery = query(collection(db, 'users', authorID, 'likes'));
+      const unsubscribeLikes = onSnapshot(likesQuery, async (snapshot) => {
+        setLikes(snapshot.docs);
+
+        // Clean up previous listeners before setting up new ones
+        cleanupLikedTweetListeners();
+
+        // Fetch actual tweets from the tweetIds in likes and set up real-time listeners
+        const likesDocs = snapshot.docs;
+        if (likesDocs.length > 0) {
+          const tweetIds = likesDocs.map(doc => doc.data().tweetId).filter(Boolean);
+
+          if (tweetIds.length > 0) {
+            try {
+              // Set up real-time listeners for each liked tweet
+              const newListeners = [];
+              const tweetDocsMap = new Map();
+
+              tweetIds.forEach(tweetId => {
+                const tweetDoc = doc(db, "tweets", tweetId);
+                const unsubscribeTweet = onSnapshot(tweetDoc, (tweetSnapshot) => {
+                  if (tweetSnapshot.exists()) {
+                    tweetDocsMap.set(tweetId, tweetSnapshot);
+                    // Update likedTweets with the current state of all listened tweets
+                    setLikedTweets(Array.from(tweetDocsMap.values()));
+                  } else {
+                    // Tweet was deleted, remove from map
+                    tweetDocsMap.delete(tweetId);
+                    setLikedTweets(Array.from(tweetDocsMap.values()));
+                  }
+                });
+                newListeners.push(unsubscribeTweet);
+              });
+
+              setLikedTweetListeners(newListeners);
+            } catch (error) {
+              console.error('Error setting up liked tweet listeners:', error);
+              setLikedTweets([]);
+            }
+          } else {
+            setLikedTweets([]);
+          }
+        } else {
+          setLikedTweets([]);
+        }
+      });
 
       return () => {
         unsubscribeTweets();
-        clearInterval(interval);
+        unsubscribeRetweets();
+        unsubscribeLikes();
+        cleanupLikedTweetListeners();
+        cleanupRetweetedTweetListeners();
       };
     }
   }, [db, id, loading, filter]);
@@ -399,7 +497,7 @@ const ProfilePage = () => {
                 ))}
               </div>
             ) : (
-              <ProfileTweets author={author} tweets={tweets} retweets={retweets} likes={likes} filter={filter} />
+              <ProfileTweets author={author} tweets={tweets} retweetedTweets={retweetedTweets} likedTweets={likedTweets} filter={filter} />
             )}
           </>
         )}
