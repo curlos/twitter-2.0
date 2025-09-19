@@ -177,7 +177,17 @@ const ProfilePage = () => {
 
   const [followed, setFollowed] = useState(false);
   const router = useRouter();
-  const { id } = router.query;
+  const { id, tab } = router.query;
+
+  // Initialize filter from query parameter
+  useEffect(() => {
+    if (tab && typeof tab === 'string') {
+      const validTabs = ['Tweets', 'Tweets & Replies', 'Media', 'Likes'];
+      if (validTabs.includes(tab)) {
+        setFilter(tab);
+      }
+    }
+  }, [tab]);
 
   useEffect(() => {
     if (!id) return; // Wait for router to populate id
@@ -499,6 +509,19 @@ const ProfilePage = () => {
     }
   };
 
+  const handleTabChange = (newTab) => {
+    setFilter(newTab);
+
+    // Update URL with query parameter for non-default tabs
+    if (newTab === 'Tweets') {
+      // Remove tab query parameter for default tab
+      router.push(`/profile/${id}`, undefined, { shallow: true });
+    } else {
+      // Add tab query parameter for non-default tabs
+      router.push(`/profile/${id}?tab=${encodeURIComponent(newTab)}`, undefined, { shallow: true });
+    }
+  };
+
   return (
     <AppLayout title={author ? `${author.name} (@${author.tag}) / Twitter 2.0` : "Profile / Twitter 2.0"}>
       <ContentContainer loading={loading}>
@@ -527,7 +550,7 @@ const ProfilePage = () => {
               followersYouFollow={followersYouFollow}
             />
 
-            <FilterTabs filter={filter} setFilter={setFilter} />
+            <FilterTabs filter={filter} setFilter={handleTabChange} />
 
             <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
             />
