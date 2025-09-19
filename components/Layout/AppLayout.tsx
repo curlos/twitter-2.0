@@ -1,14 +1,14 @@
 import React from 'react';
 import Head from 'next/head';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState } from '../../atoms/atom';
+import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState, authModalState } from '../../atoms/atom';
 import Sidebar from '../Sidebar';
 import Widgets from '../Widgets';
 import MobileBottomNavBar from '../MobileBottomNavBar';
 import { NewTweetModal } from '../NewTweetModal';
 import { SearchModal } from '../SearchModal';
-import EditProfileModal from '../EditProfileModal';
 import SidenavDrawer from '../SidenavDrawer';
+import { AuthModal } from '../AuthModal';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -27,6 +27,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
+  const [isAuthModalOpen, _setIsAuthModalOpen] = useRecoilState(authModalState);
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -43,6 +44,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
+        {isAuthModalOpen && <AuthModal />}
 
         <MobileBottomNavBar />
       </main>

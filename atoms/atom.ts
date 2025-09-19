@@ -64,3 +64,9 @@ export const editTweetState = createSafeAtom({
     tweetId: ''
   }
 });
+
+// Used to detect if the "Auth" modal is open. This modal appears when non-logged in users try to perform actions that require authentication.
+export const authModalState = createSafeAtom({
+  key: "authModalState",
+  default: false,
+});

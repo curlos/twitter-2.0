@@ -1,9 +1,10 @@
 import { doc, serverTimestamp, increment, writeBatch } from "@firebase/firestore";
 import NumberFlow from "@number-flow/react";
-import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
 import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { RiHeart3Line, RiHeart3Fill } from "react-icons/ri";
 import { db } from "../../firebase";
+import { authModalState } from "../../atoms/atom";
 
 interface TweetActionsProps {
   id: string;
@@ -44,7 +45,7 @@ const TweetActions = ({
   onRetweetChange,
   onBookmarkChange
 }: TweetActionsProps) => {
-  const router = useRouter();
+  const [_isAuthModalOpen, setIsAuthModalOpen] = useRecoilState(authModalState);
 
   /**
    * @description - Handles what happens when a user clicks the "like" button on a tweet.
@@ -52,7 +53,7 @@ const TweetActions = ({
    */
   const likeTweet = async () => {
     if (!session) {
-      router.push('/auth');
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -98,7 +99,7 @@ const TweetActions = ({
    */
   const bookmarkTweet = async () => {
     if (!session) {
-      router.push('/auth');
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -140,7 +141,7 @@ const TweetActions = ({
    */
   const retweetTweet = async () => {
     if (!session) {
-      router.push('/auth');
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -187,7 +188,7 @@ const TweetActions = ({
     e.stopPropagation();
 
     if (!session) {
-      router.push('/auth');
+      setIsAuthModalOpen(true);
       return;
     }
 
