@@ -28,21 +28,6 @@ const MobileBottomNavBar: React.FC = () => {
         <FaSearch className="h-6 w-6 cursor-pointer" onClick={() => setSearchModalOpen(true)} />
       </div>
 
-      {/* Clicking this will toggle between either 'light' mode or 'dark' mode depending on which mode you're currently on. */}
-      <div className="flex-1 flex justify-center">
-        {theme === 'dark' ? (
-          <SunIcon className="cursor-pointer h-[30px] w-[30px] dark:text-white" onClick={() => {
-            setTheme('light');
-            localStorage.theme = 'light';
-          }} />
-        ) : (
-          <MoonIcon className="cursor-pointer h-[30px] w-[30px] dark:text-white" onClick={() => {
-            setTheme('dark');
-            localStorage.theme = 'dark';
-          }} />
-        )}
-      </div>
-
       {/* This is the settings icon. When it's clicked, it will open the "Sidenav" so the user can see all the full detailed stuff that couldn't fit on this MobileBottomNavBar. */}
       <div className="flex-1 flex justify-center">
         <CogIcon className="h-7 w-7 cursor-pointer" onClick={() => setSidenavOpen(true)} />
