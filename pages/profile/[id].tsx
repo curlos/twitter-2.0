@@ -170,6 +170,8 @@ const ProfilePage = () => {
   const [retweetedTweets, setRetweetedTweets] = useState([]);
   const [likedTweetListeners, setLikedTweetListeners] = useState([]);
   const [retweetedTweetListeners, setRetweetedTweetListeners] = useState([]);
+  const [retweetsLoading, setRetweetsLoading] = useState(true);
+  const [likesLoading, setLikesLoading] = useState(true);
   const [followers, setFollowers] = useState([]);
   const [followersYouFollow, setFollowersYouFollow] = useState([]);
 
@@ -196,6 +198,8 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!loading) {
       setTweetsLoading(true);
+      setRetweetsLoading(true);
+      setLikesLoading(true);
 
       // Keep tweets real-time (core Twitter experience)
       const tweetsQuery = query(collection(db, "tweets"),
@@ -222,6 +226,16 @@ const ProfilePage = () => {
               // Set up real-time listeners for each retweeted tweet
               const newListeners = [];
               const tweetDocsMap = new Map();
+              const loadedTweets = new Set();
+
+              const totalCount = retweetsDocs.length;
+
+              const checkAllLoaded = () => {
+                if (loadedTweets.size === totalCount) {
+                  setRetweetedTweets(Array.from(tweetDocsMap.values()));
+                  setRetweetsLoading(false);
+                }
+              };
 
               retweetsDocs.forEach(retweetDoc => {
                 const retweetDocData = retweetDoc.data()
@@ -240,8 +254,15 @@ const ProfilePage = () => {
                       id: tweetId
                     };
                     tweetDocsMap.set(tweetId, modifiedSnapshot);
-                    // Update retweetedTweets with the current state of all listened tweets
-                    setRetweetedTweets(Array.from(tweetDocsMap.values()));
+
+                    // Track initial loading progress
+                    if (retweetsLoading) {
+                      loadedTweets.add(tweetId);
+                      checkAllLoaded();
+                    } else {
+                      // After initial load, update immediately for real-time changes
+                      setRetweetedTweets(Array.from(tweetDocsMap.values()));
+                    }
                   } else {
                     // Tweet was deleted, remove from map
                     tweetDocsMap.delete(tweetId);
@@ -258,6 +279,7 @@ const ProfilePage = () => {
             }
         } else {
           setRetweetedTweets([]);
+          setRetweetsLoading(false);
         }
       });
 
@@ -289,14 +311,31 @@ const ProfilePage = () => {
               // Set up real-time listeners for each liked tweet
               const newListeners = [];
               const tweetDocsMap = new Map();
+              const loadedTweets = new Set();
+
+              const totalCount = tweetIds.length;
+
+              const checkAllLoaded = () => {
+                if (loadedTweets.size === totalCount) {
+                  setLikedTweets(Array.from(tweetDocsMap.values()));
+                  setLikesLoading(false);
+                }
+              };
 
               tweetIds.forEach(tweetId => {
                 const tweetDoc = doc(db, "tweets", tweetId);
                 const unsubscribeTweet = onSnapshot(tweetDoc, (tweetSnapshot) => {
                   if (tweetSnapshot.exists()) {
                     tweetDocsMap.set(tweetId, tweetSnapshot);
-                    // Update likedTweets with the current state of all listened tweets
-                    setLikedTweets(Array.from(tweetDocsMap.values()));
+
+                    // Track initial loading progress
+                    if (likesLoading) {
+                      loadedTweets.add(tweetId);
+                      checkAllLoaded();
+                    } else {
+                      // After initial load, update immediately for real-time changes
+                      setLikedTweets(Array.from(tweetDocsMap.values()));
+                    }
                   } else {
                     // Tweet was deleted, remove from map
                     tweetDocsMap.delete(tweetId);
@@ -310,12 +349,15 @@ const ProfilePage = () => {
             } catch (error) {
               console.error('Error setting up liked tweet listeners:', error);
               setLikedTweets([]);
+              setLikesLoading(false);
             }
           } else {
             setLikedTweets([]);
+            setLikesLoading(false);
           }
         } else {
           setLikedTweets([]);
+          setLikesLoading(false);
         }
       });
 
@@ -327,7 +369,7 @@ const ProfilePage = () => {
         cleanupRetweetedTweetListeners();
       };
     }
-  }, [db, id, loading, filter]);
+  }, [db, id, loading]);
 
   // Check if current user is following this profile (efficient single document check)
   useEffect(() => {
@@ -490,7 +532,7 @@ const ProfilePage = () => {
             <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
             />
 
-            {tweetsLoading ? (
+            {tweetsLoading || retweetsLoading || likesLoading ? (
               <div>
                 {Array.from({ length: 10 }, (_, index) => (
                   <TweetSkeletonLoader key={index} />
