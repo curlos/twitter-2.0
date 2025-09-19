@@ -544,9 +544,7 @@ const ProfilePage = () => {
               subtitle={`${tweets.length} Tweets`}
               showBackButton={true}
               backPath="/"
-            >
-              <AuthReminder />
-            </PageHeader>
+            />
 
             <ProfileHeader
               author={author}
