@@ -3,12 +3,14 @@ import { useRecoilState } from "recoil";
 import { newTweetModalState, editTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
+import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
 import { collection, doc, DocumentData, getDoc, getDocs, query, where } from "@firebase/firestore";
 import { db } from "../firebase";
 import { useFollow } from "../utils/useFollow";
+import DropdownMenuItem from "./DropdownMenuItem";
 
 interface Props {
   tweet: ITweet,
@@ -132,52 +134,62 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                   className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
                 >
 
-                  <div className="py-1 bg-white dark:bg-black rounded-md divide-gray-400 dark:divide-gray-700">
-                    {/* Only show this if the tweet DOES NOT belong to the currently logged in user (if any) AND we're not on this user's profile page */}
-                    {!loading && session && session.user && author.tag !== session.user.tag && router.query.id !== author.tag ? (
-                      <Menu.Item onClick={handleFollowClick}>
-                        {({ active }) => (
-                          <div
-                            className={`bg-white dark:bg-black text-black dark:text-white w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer hover:bg-gray-900 z-50`}
-                          >
-                            {/* After we get the data from firebase, either 'Follow' or 'Unfollow' will be shown depending on if the logged in user (if any) is currently in the list of followers of the tweet's author. */}
-                            {!followed ? `Follow` : 'Unfollow'} @{author.tag}
-                          </div>
-                        )}
-                      </Menu.Item>
-                    ) : null}
+                  <div className="bg-white dark:bg-black rounded-md">
+                    {/* General actions group - available to all users */}
+                    <div className="py-1">
+                      {/* Follow/Unfollow - only show this if the tweet DOES NOT belong to the currently logged in user (if any) AND we're not on this user's profile page */}
+                      {!loading && session && session.user && author.tag !== session.user.tag && router.query.id !== author.tag && (
+                        <DropdownMenuItem
+                          icon={!followed ? UserAddIcon : UserRemoveIcon}
+                          text={!followed ? `Follow @${author.tag}` : `Unfollow @${author.tag}`}
+                          onClick={handleFollowClick}
+                          className="text-gray-400"
+                        />
+                      )}
 
-                    {/* This option will only be shown if the tweet belongs to the currently logged in user (meaning if it belongs to the same person who clicked to show the dropdown). If the "Edit" button here is clicked, then the user will be prompted with the Edit Tweet flow where they will be shown a modal with the current tweet's text and/or image (s). */}
-                    {session && session.user && author.tag === session.user.tag && (
-                      <Menu.Item onClick={() => {
-                        setIsOpen(true);
-                        setEditTweetInfo({
-                          image: tweet?.image || '',
-                          images: tweet?.images || [],
-                          ...tweet
-                        });
-                      }}>
-                        {({ active }) => (
-                          <div
-                            className={`bg-white dark:bg-black w-full px-4 py-2 text-sm leading-5 text-left text-gray-400 hover:bg-gray-900 cursor-pointer`}
-                          >
-                            Edit
-                          </div>
-                        )}
-                      </Menu.Item>
-                    )}
+                      {/* Version History - available to all users, only show if tweet has been edited */}
+                      {tweet?.versionHistory && tweet.versionHistory.length > 0 && (
+                        <DropdownMenuItem
+                          icon={ClockIcon}
+                          text="View version history"
+                          onClick={() => {
+                            router.push(`/tweet/${tweet.tweetId}/history`);
+                          }}
+                          className="text-gray-400"
+                        />
+                      )}
+                    </div>
 
-                    {/* This option will only be shown if the tweet belongs to the currently logged in user (meaning if it belongs to the same person who clicked to show the dropdown). If the "Delete" button here is clicked, then the tweet will be deleted. */}
+                    {/* Edit and Delete options - only shown if the tweet belongs to the currently logged in user */}
                     {session && session.user && author.tag === session.user.tag && (
-                      <Menu.Item onClick={deleteTweet}>
-                        {({ active }) => (
-                          <div
-                            className={`bg-white dark:bg-black w-full px-4 py-2 text-sm leading-5 text-left text-red-500 hover:bg-gray-900 cursor-pointer`}
-                          >
-                            Delete
-                          </div>
-                        )}
-                      </Menu.Item>
+                      <>
+                        {/* Divider */}
+                        <div className="border-b border-gray-200 dark:border-gray-700"></div>
+
+                        {/* Edit and Delete Group */}
+                        <div className="py-1">
+                          <DropdownMenuItem
+                            icon={PencilIcon}
+                            text="Edit"
+                            onClick={() => {
+                              setIsOpen(true);
+                              setEditTweetInfo({
+                                image: tweet?.image || '',
+                                images: tweet?.images || [],
+                                ...tweet
+                              });
+                            }}
+                            className="text-gray-400"
+                          />
+
+                          <DropdownMenuItem
+                            icon={TrashIcon}
+                            text="Delete"
+                            onClick={deleteTweet}
+                            className="text-red-500"
+                          />
+                        </div>
+                      </>
                     )}
 
                   </div>
