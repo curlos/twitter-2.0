@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { newTweetModalState, editTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
-import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon } from "@heroicons/react/outline";
+import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
@@ -106,6 +106,21 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     }
   };
 
+  const handleCopyTweetText = async () => {
+    try {
+      await navigator.clipboard.writeText(tweet.text);
+    } catch (error) {
+      console.error('Failed to copy tweet text:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = tweet.text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  };
+
   // TODO: Currently, when a user that is NOT logged in clicks the three dot button to show more actions for the tweet, the user will see an empty box. That doesn't seem correct. Need to take a look at how the actual site does it. Probably will need to redirect them to the "/auth" page in some manner as the point of this site is to get as many users as possible.
   return (
     <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
@@ -146,6 +161,14 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                           className="text-gray-400"
                         />
                       )}
+
+                      {/* Copy tweet text - available to all users */}
+                      <DropdownMenuItem
+                        icon={ClipboardCopyIcon}
+                        text="Copy tweet text"
+                        onClick={handleCopyTweetText}
+                        className="text-gray-400"
+                      />
 
                       {/* Version History - available to all users, only show if tweet has been edited */}
                       {tweet?.versionHistory && tweet.versionHistory.length > 0 && (
