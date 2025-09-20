@@ -10,8 +10,8 @@ import SidebarLink from "./SidebarLink";
 import ProfileButton from "./ProfileButton";
 import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
-import { colorThemeState, newTweetModalState, searchModalState, sidenavState } from "../atoms/atom";
-import Router, { useRouter } from "next/router";
+import { colorThemeState, newTweetModalState, searchModalState, authModalState } from "../atoms/atom";
+import { useRouter } from "next/router";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
 import { BsTwitter } from "react-icons/bs";
 
@@ -25,6 +25,7 @@ const Sidebar = () => {
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [theme, setTheme] = useRecoilState(colorThemeState);
   const [_searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
+  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 
@@ -71,7 +72,7 @@ const Sidebar = () => {
 
         <button className="hidden xl:flex justify-center items-center bg-lightblue-500 text-white rounded-full px-6 py-4 w-full font-semibold text-lg" onClick={() => {
           if (!session) {
-            Router.push('/auth');
+            setAuthModalOpen(true);
             return;
           }
           setIsOpen(true);
@@ -82,7 +83,7 @@ const Sidebar = () => {
         {/* This is for mobile which by default will show the blue feather to post a tweet. I could remove it if the user is not logged in but for the purpose of the site, I think it'd be better to leave it there and link to the auth page if the user wants to tweet. */}
         <div className="text-white bg-lightblue-400 flex justify-center items-center rounded-full p-4 xl:hidden cursor-pointer" onClick={() => {
           if (!session) {
-            Router.push('/auth');
+            setAuthModalOpen(true);
             return;
           }
           setIsOpen(true);

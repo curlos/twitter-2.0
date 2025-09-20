@@ -1,10 +1,10 @@
 import { getDocs, onSnapshot } from '@firebase/firestore';
 import { useSession } from 'next-auth/react';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { db } from "../../firebase";
 import { useRecoilState } from 'recoil';
-import { editProfileModalState } from '../../atoms/atom';
+import { editProfileModalState, authModalState } from '../../atoms/atom';
 import AppLayout from '../../components/Layout/AppLayout';
 import PageHeader from '../../components/Layout/PageHeader';
 import ContentContainer from '../../components/Layout/ContentContainer';
@@ -15,7 +15,6 @@ import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
 import TweetSkeletonLoader from '../../components/TweetSkeletonLoader';
 import Link from 'next/link';
-import AuthReminder from '../../components/AuthReminder';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
@@ -158,6 +157,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
 const ProfilePage = () => {
   const { data: session } = useSession();
   const [isSettingsModalOpen, setSettingsModalOpen] = useRecoilState(editProfileModalState);
+  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [loading, setLoading] = useState(true);
   const [tweetsLoading, setTweetsLoading] = useState(true);
   const [filter, setFilter] = useState('Tweets');
@@ -489,7 +489,7 @@ const ProfilePage = () => {
 
   const handleEditOrFollow = async () => {
     if (!session) {
-      Router.push('/auth');
+      setAuthModalOpen(true);
       return;
     }
 

@@ -7,13 +7,11 @@ import { doc, serverTimestamp, writeBatch, increment } from 'firebase/firestore'
  */
 export const useFollow = ({ session, followed, db, userID }) => {
     return useCallback(async () => {
-        // If there's no "session", then the user is not logged in, meaning we should redirect them back to the feed page. Not really sure why they need to be redirected to that home page. Realistically, if they click this button, they should ACTUALLY be redirected to the "/auth" page to get them to signup. This goes for a bunch of other functions as well.
-        // TODO: Redirect to "/auth" page
         if (!session) {
             return {
                 redirect: {
                     permanent: false,
-                    destination: '/'
+                    destination: '/auth'
                 }
             };
         }

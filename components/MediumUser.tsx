@@ -3,6 +3,8 @@ import { collection, DocumentData, getDocs, query, where } from 'firebase/firest
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { authModalState } from '../atoms/atom';
 import { db } from '../firebase';
 import { useFollow } from '../utils/useFollow';
 
@@ -19,6 +21,7 @@ const MediumUser = ({ userID, user }: Props) => {
 
   const { data: session } = useSession();
   const [followed, setFollowed] = useState(false);
+  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
 
   // Check if current user is following this user (efficient single document check)
   useEffect(() => {
@@ -51,6 +54,7 @@ const MediumUser = ({ userID, user }: Props) => {
     e.stopPropagation();
 
     if (!session) {
+      setAuthModalOpen(true);
       return;
     }
 

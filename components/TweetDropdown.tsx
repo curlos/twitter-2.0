@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { newTweetModalState, editTweetState } from "../atoms/atom";
+import { newTweetModalState, editTweetState, authModalState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
@@ -31,6 +31,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [loading, setLoading] = useState(true);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
 
   useEffect(() => {
     let isMounted = true;
@@ -90,6 +91,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
 
   const handleFollowClick = async () => {
     if (!session) {
+      setAuthModalOpen(true);
       return;
     }
 
@@ -121,7 +123,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     }
   };
 
-  // TODO: Currently, when a user that is NOT logged in clicks the three dot button to show more actions for the tweet, the user will see an empty box. That doesn't seem correct. Need to take a look at how the actual site does it. Probably will need to redirect them to the "/auth" page in some manner as the point of this site is to get as many users as possible.
   return (
     <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
       <div className="relative inline-block text-left">

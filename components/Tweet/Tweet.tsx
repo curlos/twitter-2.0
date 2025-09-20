@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState } from '../../atoms/atom';
+import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState, authModalState } from '../../atoms/atom';
 import { doc, writeBatch, increment } from '@firebase/firestore';
 import { db } from '../../firebase';
 import { TweetDropdown } from '../TweetDropdown';
@@ -39,6 +39,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
+  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   // Derive showImageModal from selectedImageIndex
@@ -72,9 +73,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const deleteTweet = async (e: React.FormEvent) => {
     e.stopPropagation();
 
-    // If the user is not logged in, then redirect them to the auth page.
+    // If the user is not logged in, then show the auth modal.
     if (!session) {
-      router.push('/auth');
+      setAuthModalOpen(true);
       return;
     }
 
