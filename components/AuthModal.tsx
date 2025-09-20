@@ -15,9 +15,14 @@ export const AuthModal = () => {
     setIsOpen(false);
   };
 
-  const handleAuthRedirect = () => {
+  const handleLoginRedirect = () => {
     setIsOpen(false);
     router.push('/auth');
+  };
+
+  const handleSignUpRedirect = () => {
+    setIsOpen(false);
+    router.push('/auth?sign-up=true');
   };
 
   return (
@@ -67,14 +72,14 @@ export const AuthModal = () => {
 
                 <div className="space-y-3">
                   <button
-                    onClick={handleAuthRedirect}
+                    onClick={handleSignUpRedirect}
                     className="w-full bg-lightblue-500 hover:bg-lightblue-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200"
                   >
                     Sign Up
                   </button>
 
                   <button
-                    onClick={handleAuthRedirect}
+                    onClick={handleLoginRedirect}
                     className="w-full border border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900 font-semibold py-3 px-6 rounded-full transition-colors duration-200"
                   >
                     Log In

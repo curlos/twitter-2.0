@@ -3,13 +3,14 @@ import Image from 'next/image';
 import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
 import { getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import AnimatedButton from '../components/AnimatedButton';
 import Spinner from '../components/Spinner';
 import { IProvider } from '../utils/types';
 
 const Auth = () => {
-
-  const [signUp, setSignUp] = useState(false);
+  const router = useRouter();
+  const signUp = router.query['sign-up'] === 'true';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -215,9 +216,9 @@ const Auth = () => {
               })
           )}
 
-          {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { setSignUp(true); setError(''); }}>Sign up</a></div>}
+          {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { router.push('/auth?sign-up=true'); setError(''); }}>Sign Up</a></div>}
 
-          {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { setSignUp(false); setError(''); }}>Sign in</a></div>}
+          {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { router.push('/auth'); setError(''); }}>Sign In</a></div>}
         </div>
       </div>
     </div>

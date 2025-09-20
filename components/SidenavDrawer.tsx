@@ -96,14 +96,10 @@ const SidenavDrawer = () => {
 
             {/* Only show if the user is NOT logged in. */}
             {!session && (
-              <Link href="/auth">
-                <div className="flex items-center gap-4 cursor-pointer" onClick={() => {
-                  setIsOpen(false);
-                  // Navigate to auth page with signup mode
-                  window.location.href = '/auth';
-                }}>
+              <Link href="/auth?sign-up=true">
+                <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
                   <UserIcon className="h-7 w-7" />
-                  Signup
+                  Sign Up
                 </div>
               </Link>
             )}
