@@ -17,7 +17,7 @@ const AuthReminder = () => {
   return (
     <div className="flex gap-3 py-3">
       <Link href="/auth">
-        <div className="flex-1 text-center bg-lightblue-500 text-white rounded-full p-1 cursor-pointer">Log in</div>
+        <div className="flex-1 text-center bg-lightblue-500 text-white rounded-full p-1 cursor-pointer">Log In</div>
       </Link>
 
       <Link href="/auth?sign-up=true">
