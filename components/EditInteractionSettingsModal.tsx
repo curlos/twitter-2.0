@@ -147,7 +147,7 @@ export const EditInteractionSettingsModal = () => {
                 <div className="pb-5 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-black dark:text-white mb-3">Quote settings</h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-700 dark:text-gray-300">Allow quote posts</span>
+                    <span className="text-gray-700 dark:text-gray-300">Allow quote tweets</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
