@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { newTweetModalState, editTweetState, authModalState } from "../atoms/atom";
+import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
-import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
+import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
@@ -32,6 +32,8 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const [_editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
   const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
+  const [_editInteractionSettingsModalOpen, setEditInteractionSettingsModalOpen] = useRecoilState(editInteractionSettingsModalState);
+  const [_editInteractionSettingsTweet, setEditInteractionSettingsTweet] = useRecoilState(editInteractionSettingsTweetState);
 
   useEffect(() => {
     let isMounted = true;
@@ -194,7 +196,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                         <div className="py-1">
                           <DropdownMenuItem
                             icon={PencilIcon}
-                            text="Edit"
+                            text="Edit tweet"
                             onClick={() => {
                               setIsOpen(true);
                               setEditTweetInfo({
@@ -206,9 +208,24 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                             className="text-gray-400"
                           />
 
+                          {/* Edit interaction settings - requires logged in user and tweet ownership */}
+                          <DropdownMenuItem
+                            icon={CogIcon}
+                            text="Edit interaction settings"
+                            onClick={() => {
+                              setEditInteractionSettingsTweet({
+                                tweetId: tweet.tweetId,
+                                allowQuotes: tweet.allowQuotes ?? true,
+                                allowRepliesFrom: tweet.allowRepliesFrom ?? ['everybody']
+                              });
+                              setEditInteractionSettingsModalOpen(true);
+                            }}
+                            className="text-gray-400"
+                          />
+
                           <DropdownMenuItem
                             icon={TrashIcon}
-                            text="Delete"
+                            text="Delete tweet"
                             onClick={deleteTweet}
                             className="text-red-500"
                           />

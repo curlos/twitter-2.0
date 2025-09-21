@@ -70,3 +70,19 @@ export const authModalState = createSafeAtom({
   key: "authModalState",
   default: false,
 });
+
+// Used to detect if the "Edit Interaction Settings" modal is open. This modal allows users to edit who can interact with their tweets.
+export const editInteractionSettingsModalState = createSafeAtom({
+  key: "editInteractionSettingsModalState",
+  default: false,
+});
+
+// Used to store the tweet data for editing interaction settings.
+export const editInteractionSettingsTweetState = createSafeAtom({
+  key: "editInteractionSettingsTweetState",
+  default: {
+    tweetId: '',
+    allowQuotes: true,
+    allowRepliesFrom: ['everybody'] // can be 'everybody', 'following', 'followers', or combinations
+  }
+});

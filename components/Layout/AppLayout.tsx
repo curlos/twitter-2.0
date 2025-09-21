@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState, authModalState } from '../../atoms/atom';
+import { colorThemeState, newTweetModalState, searchModalState, editProfileModalState, sidenavState, authModalState, editInteractionSettingsModalState } from '../../atoms/atom';
 import Sidebar from '../Sidebar';
 import Widgets from '../Widgets';
 import MobileBottomNavBar from '../MobileBottomNavBar';
@@ -9,6 +9,7 @@ import { NewTweetModal } from '../NewTweetModal';
 import { SearchModal } from '../SearchModal';
 import SidenavDrawer from '../SidenavDrawer';
 import { AuthModal } from '../AuthModal';
+import { EditInteractionSettingsModal } from '../EditInteractionSettingsModal';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const [isSearchModalOpen, _setIsSearchModalOpen] = useRecoilState(searchModalState);
   const [isSidenavOpen, _setIsSidenavOpen] = useRecoilState(sidenavState);
   const [isAuthModalOpen, _setIsAuthModalOpen] = useRecoilState(authModalState);
+  const [isEditInteractionSettingsModalOpen, _setIsEditInteractionSettingsModalOpen] = useRecoilState(editInteractionSettingsModalState);
 
   return (
     <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen`}>
@@ -45,6 +47,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {isSearchModalOpen && <SearchModal />}
         {isSidenavOpen && <SidenavDrawer />}
         {isAuthModalOpen && <AuthModal />}
+        {isEditInteractionSettingsModalOpen && <EditInteractionSettingsModal />}
 
         <MobileBottomNavBar />
       </main>
