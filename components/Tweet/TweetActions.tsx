@@ -5,6 +5,7 @@ import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/
 import { RiHeart3Line, RiHeart3Fill } from "react-icons/ri";
 import { db } from "../../firebase";
 import { authModalState } from "../../atoms/atom";
+import RetweetDropdown from "../RetweetDropdown";
 
 interface TweetActionsProps {
   id: string;
@@ -201,9 +202,8 @@ const TweetActions = ({
     likeTweet();
   };
 
-  const handleRetweet = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    retweetTweet();
+  const handleQuote = () => {
+    console.log('Quote tweet functionality coming soon');
   };
 
   const handleBookmark = (e: React.MouseEvent) => {
@@ -220,13 +220,15 @@ const TweetActions = ({
         </div>
 
         {/* Retweet button */}
-        <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleRetweet}>
-          {!retweeted ? (
-            <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
-          ) : (
-            <FaRetweet className="h-6 w-6 text-green-400" />
-          )}
-        </div>
+        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote}>
+          <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group">
+            {!retweeted ? (
+              <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
+            ) : (
+              <FaRetweet className="h-6 w-6 text-green-400" />
+            )}
+          </div>
+        </RetweetDropdown>
 
         {/* Like Button */}
         <div className="p-2 rounded-full hover:bg-red-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleLike}>
@@ -261,17 +263,19 @@ const TweetActions = ({
 
       {/* Retweet button */}
       <div className="flex-1 items-center flex">
-        <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleRetweet}>
-          {!retweeted ? (
-            <FaRetweet className="h-[18px] w-[18px] group-hover:text-green-400 transition-colors duration-200" />
-          ) : (
-            <FaRetweet className="h-[18px] w-[18px] text-green-400" />
-          )}
-          <NumberFlow
-            value={retweetsCount}
-            className={`${retweeted ? "text-green-400" : "text-gray-500 group-hover:text-green-400"} transition-colors duration-200`}
-          />
-        </div>
+        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote}>
+          <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group">
+            {!retweeted ? (
+              <FaRetweet className="h-[18px] w-[18px] group-hover:text-green-400 transition-colors duration-200" />
+            ) : (
+              <FaRetweet className="h-[18px] w-[18px] text-green-400" />
+            )}
+            <NumberFlow
+              value={retweetsCount}
+              className={`${retweeted ? "text-green-400" : "text-gray-500 group-hover:text-green-400"} transition-colors duration-200`}
+            />
+          </div>
+        </RetweetDropdown>
       </div>
 
       {/* Like button */}
