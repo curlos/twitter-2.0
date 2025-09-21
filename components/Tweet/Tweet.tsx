@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { newTweetModalState, tweetBeingRepliedToIdState, colorThemeState, authModalState } from '../../atoms/atom';
+import { colorThemeState, authModalState } from '../../atoms/atom';
 import { doc, writeBatch, increment } from '@firebase/firestore';
 import { db } from '../../firebase';
 import { TweetDropdown } from '../TweetDropdown';
@@ -36,10 +36,8 @@ interface Props {
  */
 const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
   const { data: session } = useSession();
-  const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
-  const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
+  const setAuthModalOpen = useSetRecoilState(authModalState);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   // Derive showImageModal from selectedImageIndex
@@ -305,8 +303,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               retweeted={retweeted}
               bookmarked={bookmarked}
               session={session}
-              setTweetBeingRepliedToId={setTweetBeingRepliedToId}
-              setIsOpen={setIsOpen}
               onLikeChange={setLiked}
               onRetweetChange={setRetweeted}
               onBookmarkChange={setBookmarked}
@@ -553,8 +549,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   retweeted={retweeted}
                   bookmarked={bookmarked}
                   session={session}
-                  setTweetBeingRepliedToId={setTweetBeingRepliedToId}
-                  setIsOpen={setIsOpen}
                   fullSize={true}
                   onLikeChange={setLiked}
                   onRetweetChange={setRetweeted}
