@@ -19,7 +19,9 @@ const MobileBottomNavBar: React.FC = () => {
       {/* Will redirect back home to the user's feed. */}
       <div className="flex-1 flex justify-center">
         <Link href={`/`}>
-          <FaHome className="h-6 w-6 cursor-pointer" />
+          <span>
+            <FaHome className="h-6 w-6 cursor-pointer" />
+          </span>
         </Link>
       </div>
 
