@@ -66,6 +66,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
     isQuoteTweet
   } = useTweetData(id, tweet, tweetID, tweetPage);
 
+  const replyingToDeletedTweet = tweet?.parentTweet && ((!parentTweet || !parentTweet.data()) && !isQuoteTweet)
+
   /**
    * @description - Handles a tweet being deleted. Will only be deleted if the author of the tweet is the one attempting to delete it.
    * @param {React.FormEvent} e 
@@ -206,7 +208,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
           {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
           <div className="pb-1">
-            {parentTweet && parentTweetAuthor && !isQuoteTweet ? (
+            {parentTweet && parentTweetAuthor && !isQuoteTweet && (
               <div className="text-[15px] text-gray-500">
                 Replying to
                 <span
@@ -219,7 +221,17 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   @{parentTweetAuthor.tag}
                 </span>
               </div>
-            ) : null}
+            )}
+
+            {replyingToDeletedTweet && (
+              <div className="text-xl w-full">
+                <div className="text-[15px] text-gray-500">
+                  <span>Replying to</span>
+                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">@deleted</span>
+                </div>
+              </div>
+            )}
+
             <div className={`${pastTweet ? ' text-gray-500' : ''} ${getLongestWord().length > 26 ? 'break-all' : 'break-words'}`} style={{ whiteSpace: 'pre-line' }}>{tweet.text}</div>
             {(tweet.images && tweet.images.length > 0) ? (
               <div className="pt-3">
@@ -333,7 +345,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
     </div>
   );
 
-
   return (
     <>
       {/* In this component, there are two ways a tweet will be shown:
@@ -390,7 +401,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
             {/* This will be shown if the parent tweet has been deleted. */}
             {/* TODO: I thought earlier that maybe this wasn't taken care of but it seems like I did. Will have to confirm. */}
-            {parentTweet && !parentTweet.data() && !isQuoteTweet && (
+            {replyingToDeletedTweet && (
               <div className="text-xl w-full">
                 <div className="text-[15px] text-gray-500">
                   <span>Replying to</span>
@@ -407,8 +418,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   <span
                     className="ml-1 text-lightblue-400 cursor-pointer hover:underline"
                     onClick={(e) => {
-                      console.log(`/profile/${parentTweetAuthor.tag}`)
-
                       e.stopPropagation();
                       router.push(`/profile/${parentTweetAuthor.tag}`);
                     }}

@@ -14,6 +14,7 @@ const TweetPage = () => {
     // Use shared hook for tweet data
     const { tweet, tweetID, author, replies, parentTweet, loading, isQuoteTweet } = useTweetData(isEditing);
 
+    const replyingToDeletedTweet = tweet?.parentTweet && ((!parentTweet || !parentTweet.data()) && !isQuoteTweet)
 
     return (
         <AppLayout
@@ -29,7 +30,7 @@ const TweetPage = () => {
                     <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />
                 )}
 
-                {parentTweet && !parentTweet.data() && (
+                {replyingToDeletedTweet && (
                     <DeletedTweet />
                 )}
 
