@@ -519,20 +519,22 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               </div>
             )}
 
-            <div className="divide-y divide-gray-500">
-              <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {
-                if (editedTweet) {
-                  router.push(`/tweet/${id}/history`);
-                }
-              }}>
-                {/* If the tweet has been edited, the last edited time will be displayed and if the link is clicked, the user will be redirected to the tweet version history page. */}
-                {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
-                <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
-                  {editedTweet && <div className="text-gray-500">Last edited</div>}
-                  <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
-                  <div className="text-gray-500 font-bold">·</div>
-                  <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
-                </span>
+            <div className="divide-y divide-gray-700">
+              <div className="flex items-center gap-1">
+                <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {
+                  if (editedTweet) {
+                    router.push(`/tweet/${id}/history`);
+                  }
+                }}>
+                  {/* If the tweet has been edited, the last edited time will be displayed and if the link is clicked, the user will be redirected to the tweet version history page. */}
+                  {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500 mr-1" />}
+                  <span className={`flex gap-1 border-b border-transparent${editedTweet ? ' hover:border-gray-500' : ''}`}>
+                    {editedTweet && <div className="text-gray-500">Last edited</div>}
+                    <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('LT') : 'Just now'}</div>
+                    <div className="text-gray-500 font-bold">·</div>
+                    <div className="text-gray-500">{tweet.timestamp?.seconds ? moment(tweet.timestamp.seconds * 1000).format('ll') : 'Today'}</div>
+                  </span>
+                </div>
 
                 <div className="text-gray-500 font-bold">·</div>
                 <div className="text-gray-500">Twitter for Web</div>
