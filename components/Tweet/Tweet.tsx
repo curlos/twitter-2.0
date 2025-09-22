@@ -16,6 +16,7 @@ import TweetActions from './TweetActions';
 import useTweetData from './useTweetData';
 import ImageModal from '../ImageModal';
 import { PhotographIcon } from '@heroicons/react/solid';
+import ParentTweet from '../ParentTweet';
 
 interface Props {
   id: string,
@@ -61,7 +62,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
     authorId,
     author,
     retweetedBy,
-    loading
+    loading,
+    isQuoteTweet
   } = useTweetData(id, tweet, tweetID, tweetPage);
 
   /**
@@ -89,13 +91,25 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
         // If this is a reply, decrement parent tweet's repliesCount
         if (tweet.parentTweet && tweet.parentTweet !== "") {
-          batch.update(doc(db, 'tweets', tweet.parentTweet), {
-            repliesCount: increment(-1)
-          });
+          if (tweet.isQuoteTweet) {
+            batch.update(doc(db, 'tweets', tweet.parentTweet), {
+              quotesCount: increment(-1)
+            });
 
-          // Also remove from parent's replies subcollection
-          batch.delete(doc(db, 'tweets', tweet.parentTweet, 'replies', id));
+            // Also remove from parent's quotes subcollection
+            batch.delete(doc(db, 'tweets', tweet.parentTweet, 'quotes', id));
+          // Otherwise, this is a "reply" tweet.
+          } else {
+            batch.update(doc(db, 'tweets', tweet.parentTweet), {
+              repliesCount: increment(-1)
+            });
+
+            // Also remove from parent's replies subcollection
+            batch.delete(doc(db, 'tweets', tweet.parentTweet, 'replies', id));
+          }
         }
+
+        
 
         await batch.commit();
       } catch (error) {
@@ -192,7 +206,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
           {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
           <div className="pb-1">
-            {parentTweet && parentTweetAuthor ? (
+            {parentTweet && parentTweetAuthor && !isQuoteTweet ? (
               <div className="text-[15px] text-gray-500">
                 Replying to
                 <span
@@ -290,6 +304,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               </div>
             )}
           </div>
+          
+          {isQuoteTweet && tweet.parentTweet && (
+            <div className="mt-3">
+              <ParentTweet tweetBeingRepliedToId={tweet.parentTweet} isQuoteTweet={true} />
+            </div>
+          )}
 
           {/* Action buttons - Hidden for past tweets */}
           {!pastTweet && (
@@ -370,7 +390,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
             {/* This will be shown if the parent tweet has been deleted. */}
             {/* TODO: I thought earlier that maybe this wasn't taken care of but it seems like I did. Will have to confirm. */}
-            {parentTweet && !parentTweet.data() && (
+            {parentTweet && !parentTweet.data() && !isQuoteTweet && (
               <div className="text-xl w-full">
                 <div className="text-[15px] text-gray-500">
                   <span>Replying to</span>
@@ -381,7 +401,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
             <div className="text-xl pt-3 w-full">
               {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
-              {parentTweet && parentTweetAuthor ? (
+              {parentTweet && parentTweetAuthor && !isQuoteTweet ? (
                 <div className="text-[15px] text-gray-500">
                   <span>Replying to</span>
                   <span
@@ -483,6 +503,12 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 </div>
               )}
             </div>
+
+            {isQuoteTweet && tweet.parentTweet && (
+              <div className="mt-3">
+                <ParentTweet tweetBeingRepliedToId={tweet.parentTweet} isQuoteTweet={true} />
+              </div>
+            )}
 
             <div className="divide-y divide-gray-500">
               <div className={`flex gap-1 py-4 ${editedTweet ? 'cursor-pointer' : ''}`} onClick={() => {

@@ -159,7 +159,8 @@ const useTweetData = (_id: string, tweet: any, tweetID: string, isDetailPage = f
     authorId,
     author,
     retweetedBy,
-    loading
+    loading,
+    isQuoteTweet: tweet?.isQuoteTweet
   };
 };
 

@@ -12,7 +12,7 @@ const TweetPage = () => {
     const [isEditing, setIsEditing] = useState(false);
 
     // Use shared hook for tweet data
-    const { tweet, tweetID, author, replies, parentTweet, loading } = useTweetData(isEditing);
+    const { tweet, tweetID, author, replies, parentTweet, loading, isQuoteTweet } = useTweetData(isEditing);
 
 
     return (
@@ -25,7 +25,7 @@ const TweetPage = () => {
                     <SparklesIcon className="h-5 w-5" />
                 </PageHeader>
 
-                {parentTweet && parentTweet.data() && (
+                {parentTweet && parentTweet.data() && !isQuoteTweet && (
                     <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />
                 )}
 

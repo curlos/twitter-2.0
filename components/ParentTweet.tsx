@@ -2,26 +2,33 @@ import { doc, DocumentData, getDoc, onSnapshot } from 'firebase/firestore';
 import moment from 'moment';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { tweetBeingRepliedToIdState } from '../atoms/atom';
+import { useRouter } from 'next/router';
 import { db } from '../firebase';
 import { ITweet } from '../utils/types';
 import { PhotographIcon } from '@heroicons/react/solid';
 
-interface Props {
-  fromModal: boolean;
+interface ParentTweetProps {
+  tweetBeingRepliedToId: string;
+  isQuoteTweet: boolean;
+  fromTweetModal?: boolean;
 }
 
 /**
  * @description - When someone is replying to a tweet, they will see the tweet they are replying to in a modal with all the basic information about the tweet (author's profile pic, name, username, date posted, text, and image).
  * @returns {React.FC}
  */
-const ParentTweet = ({ fromModal }: Props) => {
-
-  const [tweetBeingRepliedToId, _setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
+const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = false }: ParentTweetProps) => {
   const [tweet, setTweet] = useState<ITweet>();
   const [author, setAuthor] = useState<DocumentData>();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleTweetClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!fromTweetModal && isQuoteTweet) {
+      router.push(`/tweet/${tweetBeingRepliedToId}`);
+    }
+  };
 
   useEffect(() => {
     // If there's a tweetId, it must mean that the new tweet being drafted is replying to an EXISTING tweet so we need to go into the database and find all the information about this existing tweet.
@@ -59,10 +66,12 @@ const ParentTweet = ({ fromModal }: Props) => {
   return (
     !loading ? (
       tweet && author ? (
-        <div className="flex p-3 space-x-2 pb-0 h-full">
+        <div
+          className={`flex p-3 space-x-2 h-full ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-900 cursor-pointer' : ''}`}
+          onClick={handleTweetClick}
+        >
           <div className="min-w-[55px] h-full">
             <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
-            {/* <span className="border-r-2 border-[#AAB8C2]  dark:border-gray-700 absolute ml-[27px] h-[100%]" /> */}
           </div>
 
           {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}
@@ -152,13 +161,15 @@ const ParentTweet = ({ fromModal }: Props) => {
               )}
             </div>
 
-            <div className="my-3 text-gray-400">
-              Replying to <span className="text-lightblue-400">
-                <Link href={`/profile/${author.tag}`}>
-                  <span>@{author.tag}</span>
-                </Link>
-              </span>
-            </div>
+            {!isQuoteTweet && (
+              <div className="my-3 text-gray-400">
+                Replying to <span className="text-lightblue-400">
+                  <Link href={`/profile/${author.tag}`}>
+                    <span>@{author.tag}</span>
+                  </Link>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       ) : null

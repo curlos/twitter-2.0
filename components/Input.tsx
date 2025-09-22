@@ -24,8 +24,8 @@ import {
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
-import { useRecoilState } from 'recoil';
-import { newTweetModalState } from '../atoms/atom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { newTweetModalState, isQuoteTweetState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 import CircularProgress from './CircularProgress';
@@ -49,6 +49,7 @@ import SortableImageItem from './SortableImageItem';
 interface Props {
   editTweetInfo?: ITweet,
   replyModal?: boolean;
+  quoteTweetModal?: boolean;
   tweetBeingRepliedToId?: string,
   showEmojiState?: boolean,
   setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -60,7 +61,7 @@ interface Props {
  * @description - Renders a container for the user to create/edit a tweet. Deals with the content they put into the tweet such as the text, images and/or emojis. Shown at the top of the Feed and the NewTweetModal components.
  * @returns {React.FC}
  */
-const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing }: Props) => {
+const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing }: Props) => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
@@ -70,6 +71,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
   const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
   const [loading, setLoading] = useState(false);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
+  const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
   const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0 || editTweetInfo?.images?.length > 0));
 
   useEffect(() => {
@@ -93,13 +95,16 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
     setLoading(true);
 
-    const docRef = await addDoc(collection(db, 'tweets'), {
+    const newTweet = {
       userID: session.user.uid,
       text: input,
-      parentTweet: replyModal ? tweetBeingRepliedToId : '',
+      parentTweet: replyModal || quoteTweetModal ? tweetBeingRepliedToId : '',
+      isQuoteTweet: quoteTweetModal ? true : false,
       timestamp: serverTimestamp(),
       versionHistory: []
-    });
+    }
+
+    const docRef = await addDoc(collection(db, 'tweets'), newTweet);
 
     if (replyModal) {
       const batch = writeBatch(db);
@@ -112,6 +117,20 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       // Increment repliesCount on parent tweet
       batch.update(doc(db, "tweets", tweetBeingRepliedToId), {
         repliesCount: increment(1)
+      });
+
+      await batch.commit();
+    } else if (quoteTweetModal) {
+      const batch = writeBatch(db);
+
+      // Add to quotes subcollection
+      batch.set(doc(db, "tweets", tweetBeingRepliedToId, "quotes", docRef.id), {
+        name: session.user.name,
+      });
+
+      // Increment quotesCount on parent tweet
+      batch.update(doc(db, "tweets", tweetBeingRepliedToId), {
+        quotesCount: increment(1)
       });
 
       await batch.commit();
@@ -135,6 +154,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     setSelectedFiles([]);
     setShowEmojis(false);
     setIsOpen(false);
+    setIsQuoteTweet(false);
   };
 
   const editTweet = async () => {
@@ -211,6 +231,7 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
       setSelectedFiles([]);
       setShowEmojis(false);
       setIsOpen(false);
+      setIsQuoteTweet(false);
 
       // Clear the edit tweet info to prevent modal from reopening
       if (setEditTweetInfo) {
@@ -344,6 +365,11 @@ const Input = ({ editTweetInfo, replyModal, tweetBeingRepliedToId, showEmojiStat
     if (replyModal) {
       return {
         text: 'Reply',
+        function: sendTweet
+      };
+    } else if (quoteTweetModal) {
+      return {
+        text: 'Quote',
         function: sendTweet
       };
     } else if (isEditingTweet) {

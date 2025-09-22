@@ -40,7 +40,8 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
         orderBy("timestamp", "desc"),
       ),
       (snapshot) => {
-        setReplies(snapshot.docs);
+        const filteredReplies = snapshot.docs.filter(doc => !doc.data().isQuoteTweet);
+        setReplies(filteredReplies);
         setLoading(false);
       }
     );
@@ -106,6 +107,7 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
     replies,
     parentTweet,
     parentTweetAuthor,
-    loading
+    loading,
+    isQuoteTweet: tweet?.isQuoteTweet
   };
 };

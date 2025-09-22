@@ -86,3 +86,9 @@ export const editInteractionSettingsTweetState = createSafeAtom({
     allowRepliesFrom: ['everybody'] // can be 'everybody', 'following', 'followers', or combinations
   }
 });
+
+// Used to detect if we are currently quote tweeting. This helps track whether the user is creating a quote tweet.
+export const isQuoteTweetState = createSafeAtom({
+  key: "isQuoteTweetState",
+  default: false,
+});

@@ -52,7 +52,7 @@ const ProfileTweets = ({ tweets, retweetedTweets, likedTweets, filter }: Props) 
     switch (filter) {
       case 'Tweets':
         return allTweets.filter((tweet) => {
-          if (!tweet.data().parentTweet) {
+          if (!tweet.data().parentTweet || tweet.data().isQuoteTweet) {
             return tweet;
           }
         });

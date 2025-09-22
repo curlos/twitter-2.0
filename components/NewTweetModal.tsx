@@ -1,14 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState, isQuoteTweetState } from '../atoms/atom';
 import { XIcon } from '@heroicons/react/solid';
 import Input from './Input';
-import { onSnapshot } from '@firebase/firestore';
-import { doc } from 'firebase/firestore';
-import { db } from '../firebase';
 import ParentTweet from './ParentTweet';
-import { ITweet } from '../utils/types';
 
 interface Props {
   setIsEditing?: (editing: boolean) => void;
@@ -24,6 +20,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
   const [tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [isQuoteTweet, _setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -42,6 +39,10 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
       tweetId: ''
     });
   };
+
+  const renderInput = (isQuoteTweet) => (
+    <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== '' && !isQuoteTweet} quoteTweetModal={String(tweetBeingRepliedToId) !== '' && isQuoteTweet} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} />
+  )
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -79,10 +80,18 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
                 </div>
               </div>
 
-              {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
-              <ParentTweet fromModal={true} />
+              {isQuoteTweet && (
+                <div className="pt-3">
+                  {renderInput(true)}
+                </div>
+              )}
 
-              <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== ''} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} />
+              {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
+              <div className={isQuoteTweet ? "p-6" : ''}>
+                <ParentTweet tweetBeingRepliedToId={tweetBeingRepliedToId as string} isQuoteTweet={isQuoteTweet as boolean} fromTweetModal={true} />
+              </div>
+
+              {!isQuoteTweet && renderInput(false)}
 
               {/* Have to show this additional container below the input because for some reason this emoji picker library gets cut off by the container if it's too short. The minimum for comfortability purposes that I saw was "430px". */}
               {/* TODO: Find out if there's a way to display the emoji picker in the modal without extending the modal's container. If not, find a different library to use. */}

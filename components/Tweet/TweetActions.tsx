@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { RiHeart3Line, RiHeart3Fill } from "react-icons/ri";
 import { db } from "../../firebase";
-import { authModalState, tweetBeingRepliedToIdState, newTweetModalState } from "../../atoms/atom";
+import { authModalState, tweetBeingRepliedToIdState, newTweetModalState, isQuoteTweetState } from "../../atoms/atom";
 import RetweetDropdown from "../RetweetDropdown";
 
 interface TweetActionsProps {
@@ -45,6 +45,7 @@ const TweetActions = ({
   const [_isAuthModalOpen, setIsAuthModalOpen] = useRecoilState(authModalState);
   const setTweetBeingRepliedToId = useSetRecoilState(tweetBeingRepliedToIdState);
   const setIsOpen = useSetRecoilState(newTweetModalState);
+  const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
 
   /**
    * @description - Handles what happens when a user clicks the "like" button on a tweet.
@@ -193,6 +194,7 @@ const TweetActions = ({
 
     setTweetBeingRepliedToId(id);
     setIsOpen(true);
+    setIsQuoteTweet(false)
   };
 
   const handleLike = (e: React.MouseEvent) => {
@@ -201,7 +203,14 @@ const TweetActions = ({
   };
 
   const handleQuote = () => {
-    console.log('Quote tweet functionality coming soon');
+    if (!session) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    setTweetBeingRepliedToId(id);
+    setIsQuoteTweet(true);
+    setIsOpen(true);
   };
 
   const handleBookmark = (e: React.MouseEvent) => {
