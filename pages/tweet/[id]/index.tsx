@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import AppLayout from '../../../components/Layout/AppLayout';
 import PageHeader from '../../../components/Layout/PageHeader';
 import ContentContainer from '../../../components/Layout/ContentContainer';
-import { SparklesIcon } from '@heroicons/react/outline';
+import { SparklesIcon, ChatAltIcon } from '@heroicons/react/outline';
 import Tweet from '../../../components/Tweet/Tweet';
 import DeletedTweet from '../../../components/DeletedTweet';
 import SortableTweetList from '../../../components/SortableTweetList';
@@ -41,6 +41,7 @@ const TweetPage = () => {
                     tweets={replies}
                     emptyStateMessage="No replies yet"
                     emptyStateSubtitle="Be the first to reply!"
+                    emptyStateIcon={ChatAltIcon}
                 />
 
             </ContentContainer>
