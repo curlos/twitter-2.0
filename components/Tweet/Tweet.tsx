@@ -593,7 +593,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
               <div className="flex justify-end">
                 <button
-                  className="flex items-center gap-1 text-gray-500 hover:text-lightblue-500 transition-colors duration-200 py-2 hover:underline"
+                  className="flex items-center gap-1 text-gray-500 hover:text-lightblue-500 transition-colors duration-200 pt-2 hover:underline"
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/tweet/${id}/activity`);

@@ -5,6 +5,7 @@ import ContentContainer from '../../../components/Layout/ContentContainer';
 import { SparklesIcon } from '@heroicons/react/outline';
 import Tweet from '../../../components/Tweet/Tweet';
 import DeletedTweet from '../../../components/DeletedTweet';
+import SortableTweetList from '../../../components/SortableTweetList';
 import { useTweetData } from '../../../hooks/useTweetData';
 
 const TweetPage = () => {
@@ -36,17 +37,11 @@ const TweetPage = () => {
 
                 <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} tweetPage={true} />
 
-                {replies.map((tweetObj) => (
-                    <Tweet
-                        key={tweetObj.id}
-                        id={tweetObj.id}
-                        tweet={{
-                            ...tweetObj.data(),
-                            tweetId: tweetObj.id
-                        }}
-                        tweetID={tweetObj.id}
-                    />
-                ))}
+                <SortableTweetList
+                    tweets={replies}
+                    emptyStateMessage="No replies yet"
+                    emptyStateSubtitle="Be the first to reply!"
+                />
 
             </ContentContainer>
         </AppLayout>
