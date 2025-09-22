@@ -9,7 +9,7 @@ import AppLayout from '../../components/Layout/AppLayout';
 import PageHeader from '../../components/Layout/PageHeader';
 import ContentContainer from '../../components/Layout/ContentContainer';
 import { BadgeCheckIcon } from '@heroicons/react/solid';
-import { collection, orderBy, query, where, documentId, doc } from 'firebase/firestore';
+import { collection, orderBy, query, where, documentId } from 'firebase/firestore';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import ProfileTweets from '../../components/ProfileTweets';
 import moment from 'moment';
@@ -18,6 +18,15 @@ import Link from 'next/link';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
+
+// Utility function to split array into chunks of specified size
+const chunkArray = (array, chunkSize) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+};
 
 const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, followersYouFollow }) => {
   const [showImageModal, setShowImageModal] = useState(false);
@@ -224,8 +233,6 @@ const ProfilePage = () => {
       // Real-time listeners for retweets and likes collections
       const retweetsQuery = query(collection(db, 'users', authorID, 'retweets'));
       const unsubscribeRetweets = onSnapshot(retweetsQuery, async (snapshot) => {
-        setRetweets(snapshot.docs);
-
         // Clean up previous listeners before setting up new ones
         cleanupRetweetedTweetListeners();
 
@@ -233,60 +240,57 @@ const ProfilePage = () => {
         const retweetsDocs = snapshot.docs;
         if (retweetsDocs.length > 0) {
           try {
-              // Set up real-time listeners for each retweeted tweet
-              const newListeners = [];
-              const tweetDocsMap = new Map();
-              const loadedTweets = new Set();
-
-              const totalCount = retweetsDocs.length;
-
-              const checkAllLoaded = () => {
-                if (loadedTweets.size === totalCount) {
-                  setRetweetedTweets(Array.from(tweetDocsMap.values()));
-                  setRetweetsLoading(false);
-                }
-              };
+              // Create map of tweetId to retweet metadata
+              const retweetMetadata = new Map();
+              const tweetIds = [];
 
               retweetsDocs.forEach(retweetDoc => {
-                const retweetDocData = retweetDoc.data()
+                const retweetDocData = retweetDoc.data();
                 const tweetId = retweetDocData?.tweetId || retweetDoc.id;
+                retweetMetadata.set(tweetId, retweetDocData);
+                tweetIds.push(tweetId);
+              });
 
-                const tweetDoc = doc(db, "tweets", tweetId);
-                const unsubscribeTweet = onSnapshot(tweetDoc, (tweetSnapshot) => {
-                  if (tweetSnapshot.exists()) {
-                    // Create a modified snapshot that includes retweet data in the .data() method
-                    const modifiedSnapshot = {
-                      ...tweetSnapshot,
-                      data: () => ({
-                        ...tweetSnapshot.data(),
-                        ...retweetDocData // This will include retweetedBy, retweetedAt, etc.
-                      }),
-                      id: tweetId
-                    };
-                    tweetDocsMap.set(tweetId, modifiedSnapshot);
+              // Set up chunked real-time listeners for retweeted tweets
+              const chunks = chunkArray(tweetIds, 10);
+              const newListeners = [];
+              const chunkResults = new Map();
+              const totalChunks = chunks.length;
 
-                    // Track initial loading progress
-                    if (retweetsLoading) {
-                      loadedTweets.add(tweetId);
-                      checkAllLoaded();
-                    } else {
-                      // After initial load, update immediately for real-time changes
-                      setRetweetedTweets(Array.from(tweetDocsMap.values()));
+              chunks.forEach((chunk, chunkIndex) => {
+                const tweetsQuery = query(
+                  collection(db, "tweets"),
+                  where(documentId(), 'in', chunk)
+                );
+
+                const unsubscribeChunk = onSnapshot(tweetsQuery, (chunkSnapshot) => {
+                  // Create modified snapshots with retweet metadata
+                  const modifiedDocs = chunkSnapshot.docs.map(tweetSnapshot => ({
+                    ...tweetSnapshot,
+                    data: () => ({
+                      ...tweetSnapshot.data(),
+                      ...retweetMetadata.get(tweetSnapshot.id) // Include retweetedBy, retweetedAt, etc.
+                    }),
+                    id: tweetSnapshot.id
+                  }));
+
+                  chunkResults.set(chunkIndex, modifiedDocs);
+
+                  if (retweetsLoading) {
+                    // Initial load - wait for all chunks
+                    if (chunkResults.size === totalChunks) {
+                      const allTweets = Array.from(chunkResults.values()).flat();
+                      setRetweetedTweets(allTweets);
+                      setRetweetsLoading(false);
                     }
                   } else {
-                    // Tweet was deleted, remove from map and still count as "loaded" for completion tracking
-                    tweetDocsMap.delete(tweetId);
-
-                    // Track this as loaded even though the tweet doesn't exist
-                    if (retweetsLoading) {
-                      loadedTweets.add(tweetId);
-                      checkAllLoaded();
-                    } else {
-                      setRetweetedTweets(Array.from(tweetDocsMap.values()));
-                    }
+                    // After initial load - update immediately for real-time changes
+                    const allTweets = Array.from(chunkResults.values()).flat();
+                    setRetweetedTweets(allTweets);
                   }
                 });
-                newListeners.push(unsubscribeTweet);
+
+                newListeners.push(unsubscribeChunk);
               });
 
               setRetweetedTweetListeners(newListeners);
@@ -313,8 +317,6 @@ const ProfilePage = () => {
 
       const likesQuery = query(collection(db, 'users', authorID, 'likes'));
       const unsubscribeLikes = onSnapshot(likesQuery, async (snapshot) => {
-        setLikes(snapshot.docs);
-
         // Clean up previous listeners before setting up new ones
         cleanupLikedTweetListeners();
 
@@ -325,41 +327,36 @@ const ProfilePage = () => {
 
           if (tweetIds.length > 0) {
             try {
-              // Set up real-time listeners for each liked tweet
+              // Set up chunked real-time listeners for liked tweets
+              const chunks = chunkArray(tweetIds, 10);
               const newListeners = [];
-              const tweetDocsMap = new Map();
-              const loadedTweets = new Set();
+              const chunkResults = new Map();
+              const totalChunks = chunks.length;
 
-              const totalCount = tweetIds.length;
+              chunks.forEach((chunk, chunkIndex) => {
+                const tweetsQuery = query(
+                  collection(db, "tweets"),
+                  where(documentId(), 'in', chunk)
+                );
 
-              const checkAllLoaded = () => {
-                if (loadedTweets.size === totalCount) {
-                  setLikedTweets(Array.from(tweetDocsMap.values()));
-                  setLikesLoading(false);
-                }
-              };
+                const unsubscribeChunk = onSnapshot(tweetsQuery, (chunkSnapshot) => {
+                  chunkResults.set(chunkIndex, chunkSnapshot.docs);
 
-              tweetIds.forEach(tweetId => {
-                const tweetDoc = doc(db, "tweets", tweetId);
-                const unsubscribeTweet = onSnapshot(tweetDoc, (tweetSnapshot) => {
-                  if (tweetSnapshot.exists()) {
-                    tweetDocsMap.set(tweetId, tweetSnapshot);
-
-                    // Track initial loading progress
-                    if (likesLoading) {
-                      loadedTweets.add(tweetId);
-                      checkAllLoaded();
-                    } else {
-                      // After initial load, update immediately for real-time changes
-                      setLikedTweets(Array.from(tweetDocsMap.values()));
+                  if (likesLoading) {
+                    // Initial load - wait for all chunks
+                    if (chunkResults.size === totalChunks) {
+                      const allTweets = Array.from(chunkResults.values()).flat();
+                      setLikedTweets(allTweets);
+                      setLikesLoading(false);
                     }
                   } else {
-                    // Tweet was deleted, remove from map
-                    tweetDocsMap.delete(tweetId);
-                    setLikedTweets(Array.from(tweetDocsMap.values()));
+                    // After initial load - update immediately for real-time changes
+                    const allTweets = Array.from(chunkResults.values()).flat();
+                    setLikedTweets(allTweets);
                   }
                 });
-                newListeners.push(unsubscribeTweet);
+
+                newListeners.push(unsubscribeChunk);
               });
 
               setLikedTweetListeners(newListeners);
