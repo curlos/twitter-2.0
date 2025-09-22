@@ -14,6 +14,7 @@ interface SortableUserListProps {
   customRenderItem?: (user: any) => React.ReactNode;
   itemsPerPage?: number;
   className?: string;
+  showFollowerSortOptions?: boolean; // New prop to control which sort options to show
 }
 
 const SortableUserList = ({
@@ -24,9 +25,10 @@ const SortableUserList = ({
   emptyStateIcon: EmptyIcon,
   customRenderItem,
   itemsPerPage = 10,
-  className = ''
+  className = '',
+  showFollowerSortOptions = false
 }: SortableUserListProps) => {
-  const [sortType, setSortType] = useState('Newest Followers');
+  const [sortType, setSortType] = useState(showFollowerSortOptions ? 'Newest Followers' : 'No Sorting');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   const getSortedUsers = (usersToSort: any[]) => {
@@ -39,8 +41,10 @@ const SortableUserList = ({
         return sortByMostFollowers(usersToSort);
       case 'Most Following':
         return sortByMostFollowing(usersToSort);
+      case 'No Sorting':
+        return usersToSort; // Return original order without sorting
       default:
-        return sortByNewestFollowers(usersToSort);
+        return showFollowerSortOptions ? sortByNewestFollowers(usersToSort) : usersToSort;
     }
   };
 
@@ -80,13 +84,15 @@ const SortableUserList = ({
 
   return (
     <div className={className}>
-      <div className="mb-4">
-        <SortDropdown
-          sortType={sortType}
-          setSortType={setSortType}
-          options={['Newest Followers', 'Oldest Followers', 'Most Followers', 'Most Following']}
-        />
-      </div>
+      {showFollowerSortOptions && (
+        <div className="mb-4">
+          <SortDropdown
+            sortType={sortType}
+            setSortType={setSortType}
+            options={['Newest Followers', 'Oldest Followers', 'Most Followers', 'Most Following']}
+          />
+        </div>
+      )}
 
       {filteredUsers.length > 0 ? (
         <InfiniteScroll

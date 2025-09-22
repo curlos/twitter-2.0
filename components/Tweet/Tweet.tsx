@@ -15,7 +15,7 @@ import Link from 'next/link';
 import TweetActions from './TweetActions';
 import useTweetData from './useTweetData';
 import ImageModal from '../ImageModal';
-import { PhotographIcon } from '@heroicons/react/solid';
+import { PhotographIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import ParentTweet from '../ParentTweet';
 
 interface Props {
@@ -590,6 +590,19 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   onBookmarkChange={setBookmarked}
                 />
               )}
+
+              <div className="flex justify-end">
+                <button
+                  className="flex items-center gap-1 text-gray-500 hover:text-lightblue-500 transition-colors duration-200 py-2 hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/tweet/${id}/activity`);
+                  }}
+                >
+                  View quotes and activity
+                  <ChevronRightIcon className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         ) : null

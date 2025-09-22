@@ -123,6 +123,7 @@ const FollowersOrFollowing = () => {
               emptyStateSubtitle={urlContainsFollowers ? "This user has no followers yet." : "This user isn't following anyone yet."}
               emptyStateIcon={UserGroupIcon}
               itemsPerPage={10}
+              showFollowerSortOptions={true}
             />
           </>
         )}

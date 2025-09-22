@@ -30,7 +30,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-2 bg-white text-black dark:bg-black dark:text-white sticky top-0 z-[50]">
+    <div className="flex items-center space-x-4 border-b border-[#AAB8C2] dark:border-gray-700 p-3 px-5 bg-white text-black dark:bg-black dark:text-white sticky top-0 z-[50]">
       {showBackButton && (
         <div className="cursor-pointer mx-3" onClick={handleBackClick}>
           <ArrowLeftIcon className="h-6 w-6" />
