@@ -37,12 +37,20 @@ const TweetPage = () => {
 
                 <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} tweetPage={true} />
 
-                <SortableTweetList
-                    tweets={replies}
-                    emptyStateMessage="No replies yet"
-                    emptyStateSubtitle="Be the first to reply!"
-                    emptyStateIcon={ChatAltIcon}
-                />
+                {tweet?.hideReplies ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                        <ChatAltIcon className="h-12 w-12 mb-4" />
+                        <p className="text-xl font-semibold">Replies are hidden</p>
+                        <p className="text-gray-400 mt-2">The author has hidden replies to this tweet</p>
+                    </div>
+                ) : (
+                    <SortableTweetList
+                        tweets={replies}
+                        emptyStateMessage="No replies yet"
+                        emptyStateSubtitle="Be the first to reply!"
+                        emptyStateIcon={ChatAltIcon}
+                    />
+                )}
 
             </ContentContainer>
         </AppLayout>

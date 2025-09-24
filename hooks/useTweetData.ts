@@ -31,7 +31,10 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
 
   // Effect hook for loading the replies to the main tweet
   useEffect(() => {
-    if (!id || !getReplies) return;
+    if (!id || !getReplies || tweet?.hideReplies) {
+      setReplies([]);
+      return;
+    }
 
     const unsubscribe = onSnapshot(
       query(
@@ -46,7 +49,7 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
       }
     );
     return () => unsubscribe();
-  }, [db, id, getReplies]);
+  }, [db, id, getReplies, tweet?.hideReplies]);
 
   // Effect hook for loading the author of the main tweet
   useEffect(() => {

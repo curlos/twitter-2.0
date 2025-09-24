@@ -19,6 +19,7 @@ export interface ITweet {
   retweetedBy: string,
   tweetId: string;
   versionHistory?: Array<ITweet>;
+  hideReplies?: boolean;
 }
 
 export interface IAuthor {

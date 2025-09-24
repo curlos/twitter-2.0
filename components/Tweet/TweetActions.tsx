@@ -18,6 +18,7 @@ interface TweetActionsProps {
   bookmarked: boolean;
   session: any;
   fullSize?: boolean;
+  hideReplies?: boolean;
   // Callbacks to update parent state immediately
   onLikeChange?: (liked: boolean) => void;
   onRetweetChange?: (retweeted: boolean) => void;
@@ -38,6 +39,7 @@ const TweetActions = ({
   bookmarked,
   session,
   fullSize = false,
+  hideReplies = false,
   onLikeChange,
   onRetweetChange,
   onBookmarkChange
@@ -187,6 +189,11 @@ const TweetActions = ({
   const handleReplyToTweet = (e: React.MouseEvent) => {
     e.stopPropagation();
 
+    // Prevent replies if they are hidden
+    if (hideReplies) {
+      return;
+    }
+
     if (!session) {
       setIsAuthModalOpen(true);
       return;
@@ -222,8 +229,14 @@ const TweetActions = ({
     return (
       <div className="flex justify-between w-full text-gray-500 py-2 px-12">
         {/* Reply button */}
-        <div className="p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
-          <FaRegComment className="h-6 w-6 group-hover:text-blue-500 transition-colors duration-200" />
+        <div className={`p-2 rounded-full transition-colors duration-200 group ${
+          hideReplies
+            ? 'cursor-not-allowed opacity-50'
+            : 'hover:bg-blue-500/20 cursor-pointer'
+        }`} onClick={handleReplyToTweet}>
+          <FaRegComment className={`h-6 w-6 transition-colors duration-200 ${
+            hideReplies ? '' : 'group-hover:text-blue-500'
+          }`} />
         </div>
 
         {/* Retweet button */}
@@ -262,9 +275,17 @@ const TweetActions = ({
     <div className="flex justify-start w-full text-gray-500">
       {/* Reply/Comment button */}
       <div className="flex-1 items-center flex">
-        <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-blue-500/20 transition-colors duration-200 cursor-pointer group" onClick={handleReplyToTweet}>
-          <FaRegComment className="h-[18px] w-[18px] group-hover:text-blue-500 transition-colors duration-200" />
-          <div className="group-hover:text-blue-500 transition-colors duration-200">{repliesCount}</div>
+        <div className={`flex items-center space-x-2 p-2 rounded-full transition-colors duration-200 group ${
+          hideReplies
+            ? 'cursor-not-allowed opacity-50'
+            : 'hover:bg-blue-500/20 cursor-pointer'
+        }`} onClick={handleReplyToTweet}>
+          <FaRegComment className={`h-[18px] w-[18px] transition-colors duration-200 ${
+            hideReplies ? '' : 'group-hover:text-blue-500'
+          }`} />
+          <div className={`transition-colors duration-200 ${
+            hideReplies ? '' : 'group-hover:text-blue-500'
+          }`}>{repliesCount}</div>
         </div>
       </div>
 

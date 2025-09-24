@@ -3,11 +3,11 @@ import { useRecoilState } from "recoil";
 import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
-import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon } from "@heroicons/react/outline";
+import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
-import { collection, doc, DocumentData, getDoc, getDocs, query, where } from "@firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, query, where, updateDoc } from "@firebase/firestore";
 import { db } from "../firebase";
 import { useFollow } from "../utils/useFollow";
 import DropdownMenuItem from "./DropdownMenuItem";
@@ -125,6 +125,26 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     }
   };
 
+  const handleHideReplies = async () => {
+    if (!session) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    const isAuthorOfTweet = (authorId === session?.user?.uid);
+
+    if (!isAuthorOfTweet) return;
+
+    try {
+      const tweetRef = doc(db, 'tweets', tweet.tweetId);
+      await updateDoc(tweetRef, {
+        hideReplies: !tweet.hideReplies
+      });
+    } catch (error) {
+      console.error('Error updating hideReplies:', error);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
       <div className="relative inline-block text-left">
@@ -220,6 +240,14 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                               });
                               setEditInteractionSettingsModalOpen(true);
                             }}
+                            className="text-gray-400"
+                          />
+
+                          {/* Hide/Show All Replies - requires logged in user and tweet ownership */}
+                          <DropdownMenuItem
+                            icon={EyeOffIcon}
+                            text={tweet.hideReplies ? "Show all replies" : "Hide all replies"}
+                            onClick={handleHideReplies}
                             className="text-gray-400"
                           />
 
