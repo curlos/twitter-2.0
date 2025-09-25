@@ -7,10 +7,13 @@ export const sortByNewest = (tweetsToSort: DocumentData[]) => {
     const tweetOneData = tweetOne.data ? tweetOne.data() : tweetOne;
     const tweetTwoData = tweetTwo.data ? tweetTwo.data() : tweetTwo;
 
-    let timestampOne = tweetOneData.retweetedAt ? tweetOneData.retweetedAt.seconds : tweetOneData.timestamp?.seconds || 0;
+    let timestampOne = tweetOneData.retweetedAt ? tweetOneData.retweetedAt.seconds :
+      (tweetOneData.timestamp?.seconds ?? Number.MAX_SAFE_INTEGER);
 
-    let timestampTwo = tweetTwoData.retweetedAt ? tweetTwoData.retweetedAt.seconds : tweetTwoData.timestamp?.seconds || 0;
+    let timestampTwo = tweetTwoData.retweetedAt ? tweetTwoData.retweetedAt.seconds :
+      (tweetTwoData.timestamp?.seconds ?? Number.MAX_SAFE_INTEGER);
 
+    if (timestampOne === timestampTwo) return 0;
     return timestampOne > timestampTwo ? -1 : 1;
   });
 };
