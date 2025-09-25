@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
-import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon } from "@heroicons/react/outline";
+import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon, TranslateIcon } from "@heroicons/react/outline";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
@@ -145,6 +145,12 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
     }
   };
 
+  const handleTranslate = () => {
+    const encodedText = encodeURIComponent(tweet.text);
+    const translateUrl = `https://translate.google.com/?sl=auto&tl=en&text=${encodedText}`;
+    window.open(translateUrl, '_blank');
+  };
+
   return (
     <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
       <div className="relative inline-block text-left">
@@ -190,6 +196,14 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                         icon={ClipboardCopyIcon}
                         text="Copy tweet text"
                         onClick={handleCopyTweetText}
+                        className="text-gray-400"
+                      />
+
+                      {/* Translate tweet - available to all users */}
+                      <DropdownMenuItem
+                        icon={TranslateIcon}
+                        text="Translate"
+                        onClick={handleTranslate}
                         className="text-gray-400"
                       />
 
