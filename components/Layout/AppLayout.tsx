@@ -10,6 +10,7 @@ import { SearchModal } from '../SearchModal';
 import SidenavDrawer from '../SidenavDrawer';
 import { AuthModal } from '../AuthModal';
 import { EditInteractionSettingsModal } from '../EditInteractionSettingsModal';
+import { TweetSentAlert } from '../TweetSentAlert';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -49,6 +50,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {isAuthModalOpen && <AuthModal />}
         {isEditInteractionSettingsModalOpen && <EditInteractionSettingsModal />}
 
+        <TweetSentAlert />
         <MobileBottomNavBar />
       </main>
     </div>

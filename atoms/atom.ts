@@ -92,3 +92,13 @@ export const isQuoteTweetState = createSafeAtom({
   key: "isQuoteTweetState",
   default: false,
 });
+
+// Used to control the tweet sent alert that shows after creating/editing/retweeting a tweet
+export const tweetSentAlertState = createSafeAtom({
+  key: "tweetSentAlertState",
+  default: {
+    isVisible: false,
+    tweetId: '',
+    message: 'Your tweet was sent'
+  }
+});

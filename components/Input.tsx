@@ -28,7 +28,7 @@ import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { newTweetModalState, isQuoteTweetState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../atoms/atom';
+import { newTweetModalState, isQuoteTweetState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetSentAlertState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 import CircularProgress from './CircularProgress';
@@ -77,6 +77,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
   const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
   const setEditInteractionSettingsTweet = useSetRecoilState(editInteractionSettingsTweetState);
+  const setTweetSentAlert = useSetRecoilState(tweetSentAlertState);
   const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0 || editTweetInfo?.images?.length > 0));
 
   // Interaction settings state
@@ -211,6 +212,17 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
     setShowEmojis(false);
     setIsOpen(false);
     setIsQuoteTweet(false);
+
+    // Show success alert
+    const message = replyModal ? 'Your reply was sent' :
+                   quoteTweetModal ? 'Your quote tweet was sent' :
+                   'Your tweet was sent';
+
+    setTweetSentAlert({
+      isVisible: true,
+      tweetId: docRef.id,
+      message: message
+    });
   };
 
   const editTweet = async () => {
@@ -312,6 +324,13 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       if (setIsEditing) {
         setIsEditing(false);
       }
+
+      // Show success alert
+      setTweetSentAlert({
+        isVisible: true,
+        tweetId: currentTweet.tweetId,
+        message: 'Your tweet was updated'
+      });
     } catch (error) {
       // Make sure to disable editing mode even on error
       if (setIsEditing) {
