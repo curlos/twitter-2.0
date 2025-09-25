@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid, CogIcon as CogIconSolid } from "@heroicons/react/solid";
+import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid, CogIcon as CogIconSolid, NewspaperIcon as NewspaperIconSolid } from "@heroicons/react/solid";
 import {
   HomeIcon,
   BookmarkIcon,
   UserIcon,
-  CogIcon
+  CogIcon,
+  NewspaperIcon
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
 import ProfileButton from "./ProfileButton";
@@ -42,13 +43,15 @@ const Sidebar = () => {
       setActiveLink('profile');
     } else if (router.pathname.startsWith('/settings')) {
       setActiveLink('settings');
+    } else if (router.pathname.startsWith('/headlines')) {
+      setActiveLink('headlines');
     } else {
       setActiveLink('home');
     }
   }, [router.pathname]);
 
   return (
-    <div className={`${theme} hidden sm:flex flex-col fixed h-full px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
+    <div className={`${theme} hidden sm:flex flex-col sticky top-0 h-screen px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
       <div className="flex flex-col justify-start items-center xl:items-start space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <BsTwitter className="h-[30px] w-[30px] text-lightblue-500 dark:text-white" />
@@ -60,6 +63,8 @@ const Sidebar = () => {
           <FaSearch className="h-7 w-7 cursor-pointer" />
           <div className="hidden xl:block">Search</div>
         </div>
+
+        <SidebarLink text="News" Icon={NewspaperIcon} IconSolid={NewspaperIconSolid} active={activeLink === 'headlines'} />
 
         {session && session.user && <SidebarLink text="Bookmarks" Icon={BookmarkIcon} IconSolid={BookmarkIconSolid} active={activeLink === 'bookmarks'} />}
 

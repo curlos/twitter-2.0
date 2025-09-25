@@ -164,8 +164,6 @@ const TweetActivity = () => {
           <>
             <PageHeader
               title="Tweet Activity"
-              showBackButton={true}
-              backPath={`/tweet/${id}`}
             />
 
             {/* Original Tweet */}

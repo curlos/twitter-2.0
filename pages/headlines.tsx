@@ -26,11 +26,6 @@ const Headlines: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!session) {
-      router.push('/auth');
-      return;
-    }
-
     fetchHeadlines();
   }, [session, router]);
 
@@ -68,7 +63,7 @@ const Headlines: React.FC = () => {
 
   return (
     <AppLayout title="Headlines - Twitter 2.0">
-      <main className="flex-1 min-h-screen border-l border-r border-gray-200 dark:border-gray-800 sm:ml-[80px] xl:ml-[280px]">
+      <main className="flex-1 min-h-screen border-l border-r border-gray-200 dark:border-gray-800">
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 z-10">
           <div className="flex items-center px-4 py-3">

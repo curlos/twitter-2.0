@@ -539,8 +539,6 @@ const ProfilePage = () => {
                 </div>
               }
               subtitle={`${tweets.length} Tweets`}
-              showBackButton={true}
-              backPath="/"
             />
 
             <ProfileHeader

@@ -81,8 +81,6 @@ const FollowersOrFollowing = () => {
                 </div>
               }
               subtitle={`@${author.tag}`}
-              showBackButton={true}
-              backPath={`/profile/${author.tag}`}
             />
 
             {/* Can switch between the two URLs below:

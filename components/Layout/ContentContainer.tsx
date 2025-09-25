@@ -14,14 +14,14 @@ const ContentContainer: React.FC<ContentContainerProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="flex justify-center mt-4 flex-grow sm:ml-[80px] xl:ml-[280px] w-full">
+      <div className="flex justify-center mt-4 flex-grow w-full">
         <Spinner />
       </div>
     );
   }
 
   return (
-    <div className={`flex-grow sm:ml-[80px] xl:ml-[280px] text-lg border-r border-[#AAB8C2] dark:border-gray-700 ${className}`}>
+    <div className={`min-h-screen flex-grow text-lg border-r border-[#AAB8C2] dark:border-gray-700 ${className}`}>
       {children}
       <div className="h-[60px]" />
     </div>

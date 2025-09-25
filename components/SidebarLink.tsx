@@ -29,6 +29,8 @@ const SidebarLink = ({ text, Icon, IconSolid, active, tag }: Props) => {
         return `/bookmarks`;
       case 'Settings':
         return `/settings`;
+      case 'News':
+        return '/headlines'
       default:
         return '/';
     }

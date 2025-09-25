@@ -62,7 +62,7 @@ const Widgets = () => {
   };
 
   return (
-    <div className="hidden pl-3 py-2 space-y-5 2xl:block">
+    <div className="hidden px-3 py-2 space-y-5 lg:block">
       {/* User can type in something to search for a specific tweet on the site. */}
       <form onSubmit={handleSubmit} className="flex items-center w-[350px]">
         <div className="text-gray-500 bg-gray-100 dark:bg-gray-800 p-3 rounded-l-full cursor-pointer">
