@@ -72,15 +72,22 @@ const Widgets = () => {
       </form>
 
       {/* Displays the current, trending events of the day. Right now, will display ONLY video game news. */}
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
-        <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
+      {router.pathname !== '/headlines' && (
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
+          <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
 
-        {topHeadlines && topHeadlines.length > 0 && topHeadlines.slice(0, 5).map((news) => (
-          <SmallEvent key={news.url} news={news} />
-        ))}
+          {topHeadlines && topHeadlines.length > 0 && topHeadlines.slice(0, 5).map((news) => (
+            <SmallEvent key={news.url} news={news} />
+          ))}
 
-        <button className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3">Show more</button>
-      </div>
+          <button
+            className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3"
+            onClick={() => router.push('/headlines')}
+          >
+            Show more
+          </button>
+        </div>
+      )}
     </div>
   );
 };
