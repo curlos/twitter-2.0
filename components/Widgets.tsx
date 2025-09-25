@@ -2,7 +2,6 @@ import { SearchIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import SmallEvent from './SmallEvent';
-import SmallUser from './SmallUser';
 import { getTopHeadlines } from '../services/news.service';
 
 /**
