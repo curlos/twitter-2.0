@@ -61,8 +61,8 @@ export const EditInteractionSettingsModal = () => {
   // Initialize form data when modal opens
   useEffect(() => {
     if (isOpen && tweetData) {
-      setAllowQuotes((tweetData as any).allowQuotes);
-      setAllowRepliesFrom((tweetData as any).allowRepliesFrom);
+      setAllowQuotes((tweetData as any).allowQuotes ?? true);
+      setAllowRepliesFrom((tweetData as any).allowRepliesFrom ?? ['everybody']);
     }
   }, [isOpen, tweetData]);
 
@@ -76,6 +76,16 @@ export const EditInteractionSettingsModal = () => {
     } as any);
   };
 
+  const handleXClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    handleClose();
+  };
+
+  const handleDialogClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   const handleReplyOptionChange = (option: string, checked: boolean) => {
     if (checked) {
       // If "everybody" or "nobody" is selected, clear all other options
@@ -84,29 +94,36 @@ export const EditInteractionSettingsModal = () => {
       } else {
         // Remove "everybody" and "nobody" if another option is selected, then add the new option
         const newOptions = allowRepliesFrom.filter(opt => opt !== 'everybody' && opt !== 'nobody');
-        setAllowRepliesFrom([...newOptions, option]);
+        const finalOptions = [...newOptions, option];
+        setAllowRepliesFrom(finalOptions);
       }
     } else {
       // Remove the option
       const newOptions = allowRepliesFrom.filter(opt => opt !== option);
       // If no options left, default to "everybody"
-      setAllowRepliesFrom(newOptions.length > 0 ? newOptions : ['everybody']);
+      const finalOptions = newOptions.length > 0 ? newOptions : ['everybody'];
+      setAllowRepliesFrom(finalOptions);
     }
   };
 
   const handleSave = async () => {
     try {
-      if (!(tweetData as any).tweetId) {
-        console.error('No tweet ID found');
-        return;
-      }
+      const tweetId = (tweetData as any)?.tweetId;
 
-      const tweetRef = doc(db, 'tweets', (tweetData as any).tweetId);
-      await updateDoc(tweetRef, {
-        allowQuotes,
-        allowRepliesFrom
-      });
-      handleClose();
+      if (!tweetId || tweetId === '') {
+        if (tweetData?.handleSettingsChange) {
+          tweetData?.handleSettingsChange(allowQuotes, allowRepliesFrom);
+        }
+
+        handleClose();
+      } else {
+        const tweetRef = doc(db, 'tweets', tweetId);
+        await updateDoc(tweetRef, {
+          allowQuotes,
+          allowRepliesFrom
+        });
+        handleClose();
+      }
     } catch (error) {
       console.error('Error saving interaction settings:', error);
     }
@@ -114,7 +131,7 @@ export const EditInteractionSettingsModal = () => {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={handleClose}>
+      <Dialog as="div" className="fixed z-[60] inset-0 overflow-y-auto" onClose={handleClose}>
         <div className={`${theme} flex items-center justify-center min-h-screen p-2 lg:pt-4 lg:px-4 lg:pb-20 text-center sm:block sm:p-0`}>
           <Transition.Child
             as={Fragment}
@@ -141,12 +158,12 @@ export const EditInteractionSettingsModal = () => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw] p-6">
+            <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw] p-6" onClick={handleDialogClick}>
               {/* Header */}
               <div className="bg-white dark:bg-black pb-4 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-black dark:text-white">Edit interaction settings</h2>
-                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
+                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleXClick} />
                 </div>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">Customize who can interact with this post.</p>
               </div>

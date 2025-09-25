@@ -19,13 +19,16 @@ import {
   EmojiHappyIcon,
   PhotographIcon,
   XIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
+  GlobeIcon,
+  XCircleIcon,
+  UserGroupIcon
 } from "@heroicons/react/outline";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
 import { useSession } from 'next-auth/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { newTweetModalState, isQuoteTweetState } from '../atoms/atom';
+import { newTweetModalState, isQuoteTweetState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../atoms/atom';
 import Link from 'next/link';
 import { ITweet } from '../utils/types';
 import CircularProgress from './CircularProgress';
@@ -72,7 +75,59 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   const [loading, setLoading] = useState(false);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
+  const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
+  const setEditInteractionSettingsTweet = useSetRecoilState(editInteractionSettingsTweetState);
   const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0 || editTweetInfo?.images?.length > 0));
+
+  // Interaction settings state
+  const [allowQuotes, setAllowQuotes] = useState(editTweetInfo?.allowQuotes ?? true);
+  const [allowRepliesFrom, setAllowRepliesFrom] = useState<string[]>(editTweetInfo?.allowRepliesFrom ?? ['everybody']);
+
+  /**
+   * Get simplified reply status text and icon for new tweet
+   */
+  const getReplyStatus = () => {
+    if (allowRepliesFrom.includes('everybody')) {
+      return {
+        text: 'Everyone can reply',
+        icon: GlobeIcon
+      };
+    } else if (allowRepliesFrom.includes('nobody')) {
+      return {
+        text: 'Replies disabled',
+        icon: XCircleIcon
+      };
+    } else {
+      return {
+        text: 'Some people can reply',
+        icon: UserGroupIcon
+      };
+    }
+  };
+
+  /**
+   * Handle settings change callback from EditInteractionSettingsModal
+   */
+  const handleSettingsChange = (newAllowQuotes: boolean, newAllowRepliesFrom: string[]) => {
+    setAllowQuotes(newAllowQuotes);
+    setAllowRepliesFrom(newAllowRepliesFrom);
+  };
+
+  /**
+   * Handle click on interaction settings text to open edit modal
+   */
+  const handleInteractionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    setEditInteractionSettingsTweet({
+      tweetId: '', // Empty for new tweet
+      allowQuotes: allowQuotes,
+      allowRepliesFrom: allowRepliesFrom,
+      isNewTweet: true,
+      handleSettingsChange
+    } as any);
+    setEditInteractionSettingsModalOpen(true);
+  };
 
   useEffect(() => {
     if (isEditingTweet) {
@@ -86,7 +141,6 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
         setSelectedFile(editTweetInfo?.image);
         setSelectedFiles([]);
       }
-
     }
   }, [editTweetInfo]);
 
@@ -101,7 +155,9 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       parentTweet: replyModal || quoteTweetModal ? tweetBeingRepliedToId : '',
       isQuoteTweet: quoteTweetModal ? true : false,
       timestamp: serverTimestamp(),
-      versionHistory: []
+      versionHistory: [],
+      allowQuotes: allowQuotes,
+      allowRepliesFrom: allowRepliesFrom
     }
 
     const docRef = await addDoc(collection(db, 'tweets'), newTweet);
@@ -176,6 +232,8 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
     const hasNewImages = selectedFiles.length > 0 && selectedFiles.some(file => !file.startsWith('http'));
     const updatedObject: any = {
       timestamp: serverTimestamp(),
+      allowQuotes: allowQuotes,
+      allowRepliesFrom: allowRepliesFrom,
     };
 
     // If there's text in the tweet
@@ -446,6 +504,17 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
 
         {!loading && (
           <div>
+            {/* Interaction settings display - only show for new tweets, not edits */}
+            <div className="flex items-center gap-1 py-2 border-t border-[#AAB8C2] dark:border-gray-700">
+              <div
+                className="text-gray-500 hover:underline cursor-pointer flex items-center gap-1 text-sm"
+                onClick={handleInteractionClick}
+              >
+                {React.createElement(getReplyStatus().icon, { className: "h-4 w-4" })}
+                {getReplyStatus().text}
+              </div>
+            </div>
+
             <div className="flex justify-between items-center">
               <div className="flex space-x-3 text-lightblue-400 py-4">
                 <div className="icon cursor-pointer" onClick={() => filePickerRef.current.click()}>

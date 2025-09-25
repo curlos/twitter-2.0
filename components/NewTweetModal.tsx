@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { useRecoilState } from 'recoil';
-import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState, isQuoteTweetState } from '../atoms/atom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState, isQuoteTweetState, editInteractionSettingsModalState } from '../atoms/atom';
 import { XIcon } from '@heroicons/react/solid';
 import Input from './Input';
 import ParentTweet from './ParentTweet';
@@ -21,8 +21,13 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
   const [isQuoteTweet, _setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
+  const isEditInteractionModalOpen = useRecoilValue(editInteractionSettingsModalState);
 
   const handleClose = () => {
+    // Don't close if EditInteractionSettingsModal is open
+    if (isEditInteractionModalOpen) {
+      return;
+    }
     setIsOpen(false);
     // Need to set the tweetId as empty as well because if not then the next time the modal is open, it would be possible to see the tweet that was being replied to show up AGAIN even if you're drafting a completely new tweet that is NOT a reply.
     setTweetBeingRepliedToId('');
