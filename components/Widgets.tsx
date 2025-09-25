@@ -72,16 +72,6 @@ const Widgets = () => {
         <input placeholder="Search Twitter 2.0" value={searchQuery} className="bg-gray-100 dark:bg-gray-800 rounded-r-full p-3 w-[300px] focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)}></input>
       </form>
 
-      {/* Displays the recommended users to follow. */}
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4 w-[350[x]">
-        <h2 className="text-xl font-bold mb-4 p-3">Who to follow</h2>
-
-        <SmallUser />
-        <SmallUser />
-        <SmallUser />
-        <div className="p-1 w-full" />
-      </div>
-
       {/* Displays the current, trending events of the day. Right now, will display ONLY video game news. */}
       <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
         <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
