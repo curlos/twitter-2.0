@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import SmallEvent from './SmallEvent';
 import SmallUser from './SmallUser';
-import { getRecent } from '../services/videoGameNews.service';
+import { getTopHeadlines } from '../services/news.service';
 
 /**
  * @description - This is the RIGHT sidebar displayed on DESKTOP (or a screen big enough to hold it). This will show recommended users to follow as well as the trending events of the day. Those trending events are currently set as only video games but may change in the future.
@@ -12,8 +12,7 @@ import { getRecent } from '../services/videoGameNews.service';
 const Widgets = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [latestNews, setLatestNews] = useState([]);
-  const [numNewsShown, setNumNewsShown] = useState(4);
+  const [topHeadlines, setTopHeadlines] = useState([]);
 
   /**
    * @description - Handles the "Search" form's submission. When submitted, this will redirect the user to a list of tweets on their feed filtered by whatever query they typed in.
@@ -35,27 +34,27 @@ const Widgets = () => {
     }
   }, [router.query.query]);
 
-  // Make the call to get the latest news once. Currently this is ONLY video game news.
+  // Make the call to get the top headlines once.
   useEffect(() => {
-    getLatestNews();
+    getData();
   }, []);
 
   /**
-   * @description - Get the latest news to display on the "What's happening" section.
+   * @description - Get the top headlines to display on the "What's happening" section.
    */
-  const getLatestNews = async () => {
+  const getData = async () => {
     try {
-      const latestNewsInCache = sessionStorage.getItem('latestNews');
+      const topHeadlinesInCache = sessionStorage.getItem('topHeadlines');
 
-      // To reduce API calls (since their is a rate limit on this API), we will get the news from the sessionStorage if it's there.
-      if (latestNewsInCache) {
-        setLatestNews(JSON.parse(latestNewsInCache));
+      // To reduce API calls (since their is a rate limit on this API), we will get the headlines from the sessionStorage if it's there.
+      if (topHeadlinesInCache) {
+        setTopHeadlines(JSON.parse(topHeadlinesInCache));
       } else {
-        // Get's the latest news and sets it.
-        const data = await getRecent();
-        setLatestNews(data);
-        // Set the news in the cache for later retrieval if need be.
-        sessionStorage.setItem('latestNews', JSON.stringify(data));
+        // Get's the top headlines and sets it.
+        const data = await getTopHeadlines();
+        setTopHeadlines(data?.articles || []);
+        // Set the headlines in the cache for later retrieval if need be.
+        sessionStorage.setItem('topHeadlines', JSON.stringify(data?.articles || []));
       }
     } catch (error) {
       console.error(error);
@@ -76,18 +75,13 @@ const Widgets = () => {
       <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
         <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
 
-        {latestNews && latestNews.length > 0 && latestNews.slice(0, numNewsShown).map((news) => (
-          <SmallEvent news={news} />
+        {topHeadlines && topHeadlines.length > 0 && topHeadlines.slice(0, 5).map((news) => (
+          <SmallEvent key={news.url} news={news} />
         ))}
 
-        {/* ONLY 4 events will initially be shown but if the user clicks "Show more", then 4 more events will be added (for example, since they start off with 4 events, if they click "Show more" once, then 4 more events will be added so NOW they will see 8 events in total.)  */}
-        {numNewsShown <= latestNews.length && (
-          <div>
-            <button className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3" onClick={() => setNumNewsShown(numNewsShown + 4)}>Show more</button>
-          </div>
-        )}
+        <button className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3">Show more</button>
       </div>
-    </div >
+    </div>
   );
 };
 
