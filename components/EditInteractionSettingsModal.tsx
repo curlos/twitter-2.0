@@ -3,6 +3,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../atoms/atom';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
+import { doc, updateDoc } from '@firebase/firestore';
+import { db } from '../firebase';
 
 /**
  * Reusable button component for reply option selection
@@ -48,7 +50,7 @@ const ReplyOptionButton: React.FC<ReplyOptionButtonProps> = ({
  * @returns {React.FC}
  */
 export const EditInteractionSettingsModal = () => {
-  const [isOpen, setIsOpen] = useRecoilState(editInteractionSettingsModalState);
+  const [isOpen, setIsOpen] = useRecoilState(editInteractionSettingsModalState) as [boolean, (value: boolean) => void];
   const [tweetData, setTweetData] = useRecoilState(editInteractionSettingsTweetState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
 
@@ -59,8 +61,8 @@ export const EditInteractionSettingsModal = () => {
   // Initialize form data when modal opens
   useEffect(() => {
     if (isOpen && tweetData) {
-      setAllowQuotes(tweetData.allowQuotes);
-      setAllowRepliesFrom(tweetData.allowRepliesFrom);
+      setAllowQuotes((tweetData as any).allowQuotes);
+      setAllowRepliesFrom((tweetData as any).allowRepliesFrom);
     }
   }, [isOpen, tweetData]);
 
@@ -71,7 +73,7 @@ export const EditInteractionSettingsModal = () => {
       tweetId: '',
       allowQuotes: true,
       allowRepliesFrom: ['everybody']
-    });
+    } as any);
   };
 
   const handleReplyOptionChange = (option: string, checked: boolean) => {
@@ -92,14 +94,22 @@ export const EditInteractionSettingsModal = () => {
     }
   };
 
-  const handleSave = () => {
-    // TODO: Implement saving interaction settings to Firebase
-    console.log('Saving interaction settings:', {
-      tweetId: tweetData.tweetId,
-      allowQuotes,
-      allowRepliesFrom
-    });
-    handleClose();
+  const handleSave = async () => {
+    try {
+      if (!(tweetData as any).tweetId) {
+        console.error('No tweet ID found');
+        return;
+      }
+
+      const tweetRef = doc(db, 'tweets', (tweetData as any).tweetId);
+      await updateDoc(tweetRef, {
+        allowQuotes,
+        allowRepliesFrom
+      });
+      handleClose();
+    } catch (error) {
+      console.error('Error saving interaction settings:', error);
+    }
   };
 
   return (

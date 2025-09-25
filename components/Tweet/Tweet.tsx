@@ -3,8 +3,8 @@ import moment from 'moment';
 import { useSession } from 'next-auth/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
-import { colorThemeState, authModalState } from '../../atoms/atom';
-import { doc, writeBatch, increment } from '@firebase/firestore';
+import { colorThemeState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../../atoms/atom';
+import { doc, writeBatch, increment, getDoc } from '@firebase/firestore';
 import { db } from '../../firebase';
 import { TweetDropdown } from '../TweetDropdown';
 import { FaRetweet } from 'react-icons/fa';
@@ -15,8 +15,10 @@ import Link from 'next/link';
 import TweetActions from './TweetActions';
 import useTweetData from './useTweetData';
 import ImageModal from '../ImageModal';
-import { PhotographIcon, ChevronRightIcon } from '@heroicons/react/solid';
+import { PhotographIcon, ChevronRightIcon, GlobeIcon, XCircleIcon, UserGroupIcon } from '@heroicons/react/solid';
 import ParentTweet from '../ParentTweet';
+import ReplyInfoModal from './ReplyInfoModal';
+import DeleteTweetModal from './DeleteTweetModal';
 
 interface Props {
   id: string,
@@ -39,7 +41,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const { data: session } = useSession();
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const setAuthModalOpen = useSetRecoilState(authModalState);
+  const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
+  const setEditInteractionSettingsTweet = useSetRecoilState(editInteractionSettingsTweetState);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [showReplyInfoModal, setShowReplyInfoModal] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Derive showImageModal from selectedImageIndex
   const showImageModal = selectedImageIndex !== null;
@@ -69,8 +75,8 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const replyingToDeletedTweet = tweet?.parentTweet && ((!parentTweet || !parentTweet.data()) && !isQuoteTweet)
 
   /**
-   * @description - Handles a tweet being deleted. Will only be deleted if the author of the tweet is the one attempting to delete it.
-   * @param {React.FormEvent} e 
+   * @description - Shows the delete confirmation modal
+   * @param {React.FormEvent} e
    */
   const deleteTweet = async (e: React.FormEvent) => {
     e.stopPropagation();
@@ -83,18 +89,40 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
     const isAuthorOfTweet = (authorId === session?.user?.uid);
 
-    // Will only delete the tweet if the person attempting to delete is the author of the tweet.
+    // Will only show confirmation if the person is the author of the tweet.
     if (isAuthorOfTweet) {
-      try {
-        const batch = writeBatch(db);
+      setShowDeleteConfirmation(true);
+    }
+  };
 
-        // Delete the tweet
-        batch.delete(doc(db, 'tweets', id));
+  /**
+   * @description - Actually deletes the tweet after confirmation
+   */
+  const confirmDeleteTweet = async () => {
+    try {
+      // First check if the tweet document exists
+      const tweetRef = doc(db, 'tweets', id);
+      const tweetDoc = await getDoc(tweetRef);
 
-        // If this is a reply, decrement parent tweet's repliesCount
-        if (tweet.parentTweet && tweet.parentTweet !== "") {
+      if (!tweetDoc.exists()) {
+        console.log('Tweet already deleted or does not exist');
+        return;
+      }
+
+      const batch = writeBatch(db);
+
+      // Delete the tweet
+      batch.delete(tweetRef);
+
+      // If this is a reply, decrement parent tweet's repliesCount
+      if (tweet.parentTweet && tweet.parentTweet !== "") {
+        // Check if parent tweet exists before updating it
+        const parentTweetRef = doc(db, 'tweets', tweet.parentTweet);
+        const parentTweetDoc = await getDoc(parentTweetRef);
+
+        if (parentTweetDoc.exists()) {
           if (tweet.isQuoteTweet) {
-            batch.update(doc(db, 'tweets', tweet.parentTweet), {
+            batch.update(parentTweetRef, {
               quotesCount: increment(-1)
             });
 
@@ -102,7 +130,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             batch.delete(doc(db, 'tweets', tweet.parentTweet, 'quotes', id));
           // Otherwise, this is a "reply" tweet.
           } else {
-            batch.update(doc(db, 'tweets', tweet.parentTweet), {
+            batch.update(parentTweetRef, {
               repliesCount: increment(-1)
             });
 
@@ -110,13 +138,14 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             batch.delete(doc(db, 'tweets', tweet.parentTweet, 'replies', id));
           }
         }
-
-        
-
-        await batch.commit();
-      } catch (error) {
-        console.error('Error deleting tweet:', error);
       }
+
+      await batch.commit();
+
+      // Redirect to home page after successful deletion
+      router.push('/');
+    } catch (error) {
+      console.error('Error deleting tweet:', error);
     }
   };
 
@@ -152,6 +181,59 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
 
   // Check if the tweet has been edited at least once.
   const editedTweet = tweet?.versionHistory && tweet.versionHistory.length > 0;
+
+  /**
+   * Get simplified reply status text and icon
+   */
+  const getReplyStatus = () => {
+    const allowRepliesFrom = tweet?.allowRepliesFrom || ['everybody'];
+
+    // If replies are hidden, show as disabled regardless of other settings
+    if (tweet?.hideReplies) {
+      return {
+        text: 'Replies disabled',
+        icon: XCircleIcon
+      };
+    }
+
+    if (allowRepliesFrom.includes('everybody')) {
+      return {
+        text: 'Everyone can reply',
+        icon: GlobeIcon
+      };
+    } else if (allowRepliesFrom.includes('nobody')) {
+      return {
+        text: 'Replies disabled',
+        icon: XCircleIcon
+      };
+    } else {
+      return {
+        text: 'Some people can reply',
+        icon: UserGroupIcon
+      };
+    }
+  };
+
+
+  /**
+   * Handle click on interaction settings text
+   */
+  const handleInteractionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // If user is the author of the tweet, show edit modal
+    if (session?.user?.uid === authorId) {
+      setEditInteractionSettingsTweet({
+        tweetId: id,
+        allowQuotes: tweet?.allowQuotes ?? true,
+        allowRepliesFrom: tweet?.allowRepliesFrom ?? ['everybody']
+      } as any);
+      setEditInteractionSettingsModalOpen(true);
+    } else {
+      // Otherwise show info modal for non-authors
+      setShowReplyInfoModal(true);
+    }
+  };
 
   const renderTweetContent = () => (
     <div>
@@ -336,6 +418,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
               bookmarked={bookmarked}
               session={session}
               hideReplies={tweet?.hideReplies}
+              allowQuotes={tweet?.allowQuotes}
+              allowRepliesFrom={tweet?.allowRepliesFrom}
+              tweetAuthorId={authorId}
               onLikeChange={setLiked}
               onRetweetChange={setRetweeted}
               onBookmarkChange={setBookmarked}
@@ -538,7 +623,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                 </div>
 
                 <div className="text-gray-500 font-bold">·</div>
-                <div className="text-gray-500">Twitter for Web</div>
+                <div className="text-gray-500 hover:underline cursor-pointer flex items-center gap-1" onClick={handleInteractionClick}>
+                  {React.createElement(getReplyStatus().icon, { className: "h-4 w-4" })}
+                  {getReplyStatus().text}
+                </div>
               </div>
 
               {/* Row of stats for each different action: Replies, Retweets, Likes - Hidden for past tweets */}
@@ -589,6 +677,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                   session={session}
                   fullSize={true}
                   hideReplies={tweet?.hideReplies}
+                  allowQuotes={tweet?.allowQuotes}
+                  allowRepliesFrom={tweet?.allowRepliesFrom}
+                  tweetAuthorId={authorId}
                   onLikeChange={setLiked}
                   onRetweetChange={setRetweeted}
                   onBookmarkChange={setBookmarked}
@@ -618,6 +709,21 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
         images={tweet.images && tweet.images.length > 0 ? tweet.images : tweet.image ? [tweet.image] : []}
         initialIndex={selectedImageIndex ?? 0}
         onClose={handleCloseImageModal}
+      />
+
+      {/* Reply Info Modal */}
+      <ReplyInfoModal
+        isOpen={showReplyInfoModal}
+        onClose={() => setShowReplyInfoModal(false)}
+        allowRepliesFrom={tweet?.allowRepliesFrom}
+        hideReplies={tweet?.hideReplies}
+      />
+
+      {/* Delete Tweet Confirmation Modal */}
+      <DeleteTweetModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onConfirm={confirmDeleteTweet}
       />
     </>
   );

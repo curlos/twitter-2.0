@@ -1,8 +1,9 @@
-import { doc, serverTimestamp, increment, writeBatch } from "@firebase/firestore";
+import { doc, serverTimestamp, increment, writeBatch, getDoc } from "@firebase/firestore";
 import NumberFlow from "@number-flow/react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { RiHeart3Line, RiHeart3Fill } from "react-icons/ri";
+import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { authModalState, tweetBeingRepliedToIdState, newTweetModalState, isQuoteTweetState } from "../../atoms/atom";
 import RetweetDropdown from "../RetweetDropdown";
@@ -19,6 +20,10 @@ interface TweetActionsProps {
   session: any;
   fullSize?: boolean;
   hideReplies?: boolean;
+  // Interaction settings
+  allowQuotes?: boolean;
+  allowRepliesFrom?: string[];
+  tweetAuthorId?: string;
   // Callbacks to update parent state immediately
   onLikeChange?: (liked: boolean) => void;
   onRetweetChange?: (retweeted: boolean) => void;
@@ -40,6 +45,9 @@ const TweetActions = ({
   session,
   fullSize = false,
   hideReplies = false,
+  allowQuotes,
+  allowRepliesFrom,
+  tweetAuthorId,
   onLikeChange,
   onRetweetChange,
   onBookmarkChange
@@ -48,6 +56,80 @@ const TweetActions = ({
   const setTweetBeingRepliedToId = useSetRecoilState(tweetBeingRepliedToIdState);
   const setIsOpen = useSetRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
+
+  // State to track if user can reply/quote
+  const [canReply, setCanReply] = useState(true);
+  const [canQuote, setCanQuote] = useState(true);
+
+  // Check permissions when component mounts or session/settings change
+  useEffect(() => {
+    const checkPermissions = async () => {
+      if (!session) {
+        setCanReply(true);
+        setCanQuote(true);
+        return;
+      }
+
+      // Check quote permissions (synchronous)
+      const quoteAllowed = canUserQuote();
+      setCanQuote(quoteAllowed);
+
+      // Check reply permissions (asynchronous)
+      try {
+        const replyAllowed = await canUserReply();
+        setCanReply(replyAllowed);
+      } catch (error) {
+        console.error('Error checking reply permissions:', error);
+        setCanReply(true); // Default to allowing on error
+      }
+    };
+
+    checkPermissions();
+  }, [session, allowQuotes, allowRepliesFrom, tweetAuthorId]);
+
+  /**
+   * Check if current user can reply to this tweet based on allowRepliesFrom settings
+   */
+  const canUserReply = async (): Promise<boolean> => {
+    if (!session || !tweetAuthorId) return false;
+
+    // If allowRepliesFrom is undefined, default to allowing everyone
+    const replySettings = allowRepliesFrom || ['everybody'];
+
+    // If everybody can reply, allow it
+    if (replySettings.includes('everybody')) return true;
+
+    // If nobody can reply, block it
+    if (replySettings.includes('nobody')) return false;
+
+    // If current user is the tweet author, always allow
+    if (session.user.uid === tweetAuthorId) return true;
+
+    const currentUserId = session.user.uid;
+
+    // Check if user meets the reply criteria
+    const canReply = await Promise.all([
+      // Check if "following" is allowed and tweet author follows current user
+      replySettings.includes('following') ?
+        getDoc(doc(db, 'users', tweetAuthorId, 'following', currentUserId)).then(doc => doc.exists()) :
+        Promise.resolve(false),
+      // Check if "followers" is allowed and current user follows tweet author
+      replySettings.includes('followers') ?
+        getDoc(doc(db, 'users', currentUserId, 'following', tweetAuthorId)).then(doc => doc.exists()) :
+        Promise.resolve(false)
+    ]);
+
+    // User can reply if they meet any of the criteria
+    return canReply.some(Boolean);
+  };
+
+  /**
+   * Check if quotes are allowed for this tweet
+   */
+  const canUserQuote = (): boolean => {
+    // If allowQuotes is undefined, default to true (quotes allowed)
+    return allowQuotes !== false;
+  };
 
   /**
    * @description - Handles what happens when a user clicks the "like" button on a tweet.
@@ -186,11 +268,11 @@ const TweetActions = ({
   /**
    * @description - Opens a modal to reply to the current tweet.
    */
-  const handleReplyToTweet = (e: React.MouseEvent) => {
+  const handleReplyToTweet = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    // Prevent replies if they are hidden
-    if (hideReplies) {
+    // Prevent replies if they are hidden or not allowed
+    if (hideReplies || !canReply) {
       return;
     }
 
@@ -215,6 +297,11 @@ const TweetActions = ({
       return;
     }
 
+    // Check if quotes are allowed for this tweet
+    if (!canQuote) {
+      return;
+    }
+
     setTweetBeingRepliedToId(id);
     setIsQuoteTweet(true);
     setIsOpen(true);
@@ -230,17 +317,17 @@ const TweetActions = ({
       <div className="flex justify-between w-full text-gray-500 py-2 px-12">
         {/* Reply button */}
         <div className={`p-2 rounded-full transition-colors duration-200 group ${
-          hideReplies
+          hideReplies || !canReply
             ? 'cursor-not-allowed opacity-50'
             : 'hover:bg-blue-500/20 cursor-pointer'
         }`} onClick={handleReplyToTweet}>
           <FaRegComment className={`h-6 w-6 transition-colors duration-200 ${
-            hideReplies ? '' : 'group-hover:text-blue-500'
+            hideReplies || !canReply ? 'text-gray-400' : 'group-hover:text-blue-500'
           }`} />
         </div>
 
         {/* Retweet button */}
-        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote}>
+        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote} disableQuote={!canQuote}>
           <div className="p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group">
             {!retweeted ? (
               <FaRetweet className="h-6 w-6 group-hover:text-green-400 transition-colors duration-200" />
@@ -276,22 +363,22 @@ const TweetActions = ({
       {/* Reply/Comment button */}
       <div className="flex-1 items-center flex">
         <div className={`flex items-center space-x-2 p-2 rounded-full transition-colors duration-200 group ${
-          hideReplies
+          hideReplies || !canReply
             ? 'cursor-not-allowed opacity-50'
             : 'hover:bg-blue-500/20 cursor-pointer'
         }`} onClick={handleReplyToTweet}>
           <FaRegComment className={`h-[18px] w-[18px] transition-colors duration-200 ${
-            hideReplies ? '' : 'group-hover:text-blue-500'
+            hideReplies || !canReply ? 'text-gray-400' : 'group-hover:text-blue-500'
           }`} />
           <div className={`transition-colors duration-200 ${
-            hideReplies ? '' : 'group-hover:text-blue-500'
+            hideReplies || !canReply ? 'text-gray-400' : 'group-hover:text-blue-500'
           }`}>{repliesCount}</div>
         </div>
       </div>
 
       {/* Retweet button */}
       <div className="flex-1 items-center flex">
-        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote}>
+        <RetweetDropdown onRetweet={retweetTweet} onQuote={handleQuote} disableQuote={!canQuote}>
           <div className="flex items-center space-x-2 p-2 rounded-full hover:bg-green-500/20 transition-colors duration-200 cursor-pointer group">
             {!retweeted ? (
               <FaRetweet className="h-[18px] w-[18px] group-hover:text-green-400 transition-colors duration-200" />
