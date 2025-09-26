@@ -93,6 +93,10 @@ const useTweetData = (_id: string, tweet: any, tweetID: string, isDetailPage = f
           setParentTweet(snap);
         }
       });
+    } else {
+      if (isMounted) {
+        setParentTweet(undefined);
+      }
     }
     return () => {
       isMounted = false;
