@@ -17,7 +17,7 @@ const AnimatedButton = ({ handleAuth, provider, authName, signUp, disabled = fal
   return (
     <div className="w-full">
       <button
-        className={`relative inline-flex items-center justify-start px-6 py-3 mb-2 overflow-hidden font-medium transition-all bg-white rounded-full hover:bg-white group w-full ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`relative inline-flex items-center justify-start px-6 py-3 mb-2 overflow-hidden font-medium transition-all bg-white dark:bg-black rounded-full hover:bg-white group w-full ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={() => !disabled && handleAuth(provider)}
         disabled={disabled}
       >

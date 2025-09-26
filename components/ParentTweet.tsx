@@ -67,7 +67,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
     !loading ? (
       tweet && author ? (
         <div
-          className={`flex p-3 space-x-2 h-full ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-900 cursor-pointer' : ''}`}
+          className={`flex p-3 space-x-2 h-full ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer' : ''}`}
           onClick={handleTweetClick}
         >
           <div className="min-w-[55px] h-full">

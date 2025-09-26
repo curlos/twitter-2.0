@@ -472,7 +472,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                       <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                     </div>
                   </Link>
-                  <div className="text-gray-400 p-0 m-0">@{author.tag}</div>
+                  <Link href={`/profile/${author.tag}`}>
+                    <div className="text-gray-400 p-0 m-0 cursor-pointer hover:underline">@{author.tag}</div>
+                  </Link>
                 </div>
               </div>
 

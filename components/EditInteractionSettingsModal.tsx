@@ -30,7 +30,7 @@ const ReplyOptionButton: React.FC<ReplyOptionButtonProps> = ({
       className={`${fullWidth ? 'w-full' : ''} text-gray-500 relative p-2 rounded-lg text-left transition-all ${
         isSelected
           ? 'bg-lightblue-500/40'
-          : 'dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-800'
+          : 'dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-100 dark:bg-gray-800'
       }`}
     >
       <div className="flex items-center justify-between">

@@ -33,28 +33,32 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const [isEditInteractionSettingsModalOpen, _setIsEditInteractionSettingsModalOpen] = useRecoilState(editInteractionSettingsModalState);
 
   return (
-    <div className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen max-w-7xl mx-auto`}>
-      <Head>
-        <title>{title}</title>
-        <link rel="icon" href="/assets/twitter-logo.svg" />
-      </Head>
+    <div className={theme}>
+      <div className="bg-white text-black dark:bg-black dark:text-white min-h-screen min-w-screen">
+        <div className={`max-w-7xl mx-auto`}>
+          <Head>
+            <title>{title}</title>
+            <link rel="icon" href="/assets/twitter-logo.svg" />
+          </Head>
 
-      <main className={`${theme} bg-white text-black dark:bg-black dark:text-white min-h-screen flex`}>
-        <Sidebar />
-        <div className="flex-1">
-          {children}
+          <main className={`bg-white text-black dark:bg-black dark:text-white min-h-screen flex`}>
+            <Sidebar />
+            <div className="flex-1">
+              {children}
+            </div>
+            {showWidgets && <Widgets />}
+
+            {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
+            {isSearchModalOpen && <SearchModal />}
+            {isSidenavOpen && <SidenavDrawer />}
+            {isAuthModalOpen && <AuthModal />}
+            {isEditInteractionSettingsModalOpen && <EditInteractionSettingsModal />}
+
+            <TweetSentAlert />
+            <MobileBottomNavBar />
+          </main>
         </div>
-        {showWidgets && <Widgets />}
-
-        {isOpen && <NewTweetModal setIsEditing={setIsEditing} />}
-        {isSearchModalOpen && <SearchModal />}
-        {isSidenavOpen && <SidenavDrawer />}
-        {isAuthModalOpen && <AuthModal />}
-        {isEditInteractionSettingsModalOpen && <EditInteractionSettingsModal />}
-
-        <TweetSentAlert />
-        <MobileBottomNavBar />
-      </main>
+      </div>
     </div>
   );
 };

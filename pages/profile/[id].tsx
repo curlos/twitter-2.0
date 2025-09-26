@@ -552,7 +552,7 @@ const ProfilePage = () => {
 
             <FilterTabs filter={filter} setFilter={handleTabChange} />
 
-            <div className="w-full h-[1px] m-0 bg-gray-700 rounded-full"
+            <div className="w-full h-[1px] m-0 bg-gray-200 dark:bg-gray-700 rounded-full"
             />
 
             {tweetsLoading || retweetsLoading || likesLoading ? (

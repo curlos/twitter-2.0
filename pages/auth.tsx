@@ -4,6 +4,8 @@ import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
 import { getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useRecoilState } from 'recoil';
+import { colorThemeState } from '../atoms/atom';
 import AnimatedButton from '../components/AnimatedButton';
 import Spinner from '../components/Spinner';
 import { IProvider } from '../utils/types';
@@ -11,6 +13,7 @@ import { IProvider } from '../utils/types';
 const Auth = () => {
   const router = useRouter();
   const signUp = router.query['sign-up'] === 'true';
+  const [theme, setTheme] = useRecoilState(colorThemeState);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -27,6 +30,10 @@ const Auth = () => {
     };
     fetchProviders();
   }, []);
+
+  useEffect(() => {
+    setTheme(localStorage.getItem('theme') || 'dark');
+  }, [setTheme]);
 
   const handleAuth = async (provider: IProvider) => {
     setLoading(true);
@@ -117,7 +124,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-screen max-w-full">
+    <div className={`${theme} text-black dark:text-white flex min-h-screen w-screen max-w-full`}>
       <Head>
         <title>Login to Twitter 2.0</title>
         <link rel="icon" href="/assets/twitter-logo.svg" />
@@ -141,7 +148,7 @@ const Auth = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex justify-center items-center p-4 sm:p-12 lg:p-24">
+      <div className="flex-1 flex justify-center items-center p-4 sm:p-12 lg:p-24 bg-white dark:bg-black">
         <div>
           <Image src="/assets/twitter-logo.svg" alt="Twitter Logo" height={30} width={30} className="text-lightblue-500" />
           <h2 className="text-2xl font-bold">See what's happening in the world right now</h2>
@@ -161,7 +168,7 @@ const Auth = () => {
                 placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
+                className="w-full p-3 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
                 required
               />
             )}
@@ -171,7 +178,7 @@ const Auth = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
+              className="w-full p-3 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
               required
             />
 
@@ -180,7 +187,7 @@ const Auth = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
+              className="w-full p-3 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lightblue-500 placeholder-gray-400"
               required
             />
 
