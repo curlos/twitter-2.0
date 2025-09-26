@@ -17,8 +17,8 @@ const handleRetweetClick = (e: React.MouseEvent, onRetweet: () => void) => {
 
 const handleQuoteClick = (e: React.MouseEvent, onQuote: () => void, disabled?: boolean) => {
   e.stopPropagation();
-  e.preventDefault(); // Prevent menu from closing
   if (disabled) {
+    e.preventDefault(); // Prevent menu from closing when disabled
     return;
   }
   onQuote();
@@ -60,15 +60,13 @@ const RetweetDropdown: React.FC<RetweetDropdownProps> = ({
                       onClick={(e) => handleRetweetClick(e as React.MouseEvent, onRetweet)}
                       className="text-gray-400"
                     />
-                    <div className={`bg-white dark:bg-black w-full px-4 py-2 text-sm leading-5 text-left transition-colors duration-200 flex items-center space-x-3 ${
-                      disableQuote
-                        ? "text-gray-400 opacity-50 cursor-not-allowed"
-                        : "text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`}
-                    onClick={(e) => handleQuoteClick(e as React.MouseEvent, onQuote, disableQuote)}>
-                      <FaQuoteLeft className="h-5 w-5" />
-                      <span>{disableQuote ? 'Quotes disabled' : 'Quote'}</span>
-                    </div>
+                    <DropdownMenuItem
+                      icon={FaQuoteLeft}
+                      text={disableQuote ? 'Quotes disabled' : 'Quote'}
+                      onClick={(e) => handleQuoteClick(e as React.MouseEvent, onQuote, disableQuote)}
+                      className={disableQuote ? "text-gray-400 opacity-50" : "text-gray-400"}
+                      disabled={disableQuote}
+                    />
                   </div>
                 </div>
               </Menu.Items>
