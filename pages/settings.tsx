@@ -51,15 +51,14 @@ const Settings = () => {
                 </div>
               </div>
 
-              {/* Only show Account section if user is logged in */}
-              {session && session.user && (
+              {/* Only show Account section if user is logged in and is a "credentials-based" account. NO GMAIL ACCOUNTS ARE ALLOWED TO CHANGE EMAIL or PASSWORD. */}
+              {session && session.user && hasPassword && (
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-4">Account</h3>
 
                   <div className="space-y-4">
                     <EmailAccordion session={session} update={update} />
-
-                    {hasPassword && <PasswordAccordion />}
+                    <PasswordAccordion />
                   </div>
                 </div>
               )}
