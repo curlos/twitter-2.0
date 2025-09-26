@@ -203,8 +203,9 @@ export const authOptions = {
         session.user.uid = docRef.id;
 
         const userDoc = await getDoc(docRef);
-        const { bio, location, website, dateJoined } = userDoc.data();
+        const { bio, location, website, dateJoined, tag } = userDoc.data();
 
+        session.user.tag = tag
         session.user.bio = bio;
         session.user.location = location;
         session.user.website = website;

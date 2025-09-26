@@ -217,7 +217,6 @@ const Auth = () => {
           )}
 
           {!signUp && <div>Don't have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { router.push('/auth?sign-up=true'); setError(''); }}>Sign Up</a></div>}
-
           {signUp && <div>Already have an account? <a className="text-lightblue-400 cursor-pointer hover:underline" onClick={() => { router.push('/auth'); setError(''); }}>Sign In</a></div>}
         </div>
       </div>
