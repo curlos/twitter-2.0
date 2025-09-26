@@ -41,7 +41,7 @@ const Settings = () => {
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4">Display</h3>
 
-                <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="flex gap-2 items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div>
                     <div className="font-medium">Theme</div>
                     <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</div>

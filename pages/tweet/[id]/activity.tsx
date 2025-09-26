@@ -33,38 +33,53 @@ const TweetActivity = () => {
   const urlContainsLikes = router.query.likes === 'true';
 
   useEffect(() => {
+    let unsubscribeTweet: (() => void) | undefined;
+
     if (id) {
-      getTweetAndActivity();
+      getTweetAndActivity().then((unsubscribe) => {
+        unsubscribeTweet = unsubscribe;
+      });
     }
+
+    return () => {
+      if (unsubscribeTweet) {
+        unsubscribeTweet();
+      }
+    };
   }, [id]);
 
   /**
-   * @description - Gets the original tweet and its quote tweets/retweets
+   * @description - Gets the original tweet and sets up real-time listeners
    */
   const getTweetAndActivity = async () => {
     try {
-      // Get the original tweet
+      // Set up real-time listener for the original tweet
       const tweetRef = doc(db, "tweets", String(id));
-      const tweetSnapshot = await getDoc(tweetRef);
+      const unsubscribeTweet = onSnapshot(tweetRef, async (tweetSnapshot) => {
+        if (tweetSnapshot.exists()) {
+          const tweetData = tweetSnapshot.data();
+          setTweet(tweetData);
 
-      if (tweetSnapshot.exists()) {
-        const tweetData = tweetSnapshot.data();
-        setTweet(tweetData);
+          // Get the tweet author (only fetch once since user data rarely changes)
+          if (!author) {
+            const authorRef = doc(db, "users", tweetData.userID);
+            const authorSnapshot = await getDoc(authorRef);
+            setAuthor(authorSnapshot.data());
+          }
 
-        // Get the tweet author
-        const authorRef = doc(db, "users", tweetData.userID);
-        const authorSnapshot = await getDoc(authorRef);
-        setAuthor(authorSnapshot.data());
+          setLoading(false);
+        }
+      });
 
-        setLoading(false);
+      // Set up real-time listeners for quotes, retweets, and likes
+      setupQuotesListener();
+      setupRetweetsListener();
+      setupLikesListener();
 
-        // Set up real-time listeners for quotes, retweets, and likes
-        setupQuotesListener();
-        setupRetweetsListener();
-        setupLikesListener();
-      }
+      // Return cleanup function
+      return unsubscribeTweet;
     } catch (error) {
-      console.error('Error fetching tweet activity:', error);
+      console.error('Error setting up tweet activity listeners:', error);
       setLoading(false);
     }
   };
