@@ -46,7 +46,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
   };
 
   const renderInput = (isQuoteTweet) => (
-    <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== '' && !isQuoteTweet} quoteTweetModal={String(tweetBeingRepliedToId) !== '' && isQuoteTweet} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} />
+    <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== '' && !isQuoteTweet} quoteTweetModal={String(tweetBeingRepliedToId) !== '' && isQuoteTweet} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} fromModal={true} />
   )
 
   return (
@@ -78,30 +78,32 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]">
-              <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
-                <div>
-                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
+            <div className={`inline-block text-left overflow-hidden ${showEmojiState ? '' : 'shadow-xl'} transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]`}>
+              <div className="bg-white dark:bg-black rounded-2xl">
+                <div className="p-3">
+                  <div>
+                    <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
+                  </div>
                 </div>
-              </div>
 
-              {isQuoteTweet && (
-                <div className="pt-3">
-                  {renderInput(true)}
+                {isQuoteTweet && (
+                  <div className="pt-3">
+                    {renderInput(true)}
+                  </div>
+                )}
+
+                {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
+                <div className={isQuoteTweet ? "p-6" : ''}>
+                  <ParentTweet tweetBeingRepliedToId={tweetBeingRepliedToId as string} isQuoteTweet={isQuoteTweet as boolean} fromTweetModal={true} />
                 </div>
-              )}
 
-              {/* This will only show up if there's a tweet to reply to (meaning if there's a "tweetId" in the state.) */}
-              <div className={isQuoteTweet ? "p-6" : ''}>
-                <ParentTweet tweetBeingRepliedToId={tweetBeingRepliedToId as string} isQuoteTweet={isQuoteTweet as boolean} fromTweetModal={true} />
+                {!isQuoteTweet && renderInput(false)}
               </div>
-
-              {!isQuoteTweet && renderInput(false)}
 
               {/* Have to show this additional container below the input because for some reason this emoji picker library gets cut off by the container if it's too short. The minimum for comfortability purposes that I saw was "430px". */}
               {/* TODO: Find out if there's a way to display the emoji picker in the modal without extending the modal's container. If not, find a different library to use. */}
               {showEmojiState && (
-                <div className="h-[430px] w-full p-2" />
+                <div className="h-[430px] w-full p-2 bg-transparent" />
               )}
             </div>
           </Transition.Child>

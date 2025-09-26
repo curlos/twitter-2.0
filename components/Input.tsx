@@ -58,13 +58,14 @@ interface Props {
   setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
   setEditTweetInfo?: any;
   setIsEditing?: (editing: boolean) => void;
+  fromModal?: boolean;
 }
 
 /**
  * @description - Renders a container for the user to create/edit a tweet. Deals with the content they put into the tweet such as the text, images and/or emojis. Shown at the top of the Feed and the NewTweetModal components.
  * @returns {React.FC}
  */
-const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing }: Props) => {
+const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing, fromModal }: Props) => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
@@ -463,7 +464,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   return (
-    <div className={`relative flex p-3 space-x-2 border-b z-10 border-[#AAB8C2]  dark:border-gray-700 ${(replyModal && 'pt-0 border-none') || ''}`}>
+    <div className={`relative flex p-3 space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'pt-0 border-none' : ''}`}>
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
           <Spinner />
