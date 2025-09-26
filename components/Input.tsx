@@ -460,68 +460,176 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   return (
-    <div className={`relative flex p-3 space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'pt-0 border-none' : ''}`}>
+    <div className={`w-full relative flex p-3 space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'pt-0 border-none' : ''} sm:block sm:p-0`}>
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
           <Spinner />
         </div>
       )}
 
-      <Link href={`/profile/${session.user.tag}`}>
-        <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
-      </Link>
+      {/* Desktop layout - original structure */}
+      <div className="hidden sm:flex sm:p-3 sm:space-x-2">
+        <Link href={`/profile/${session.user.tag}`}>
+          <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
+        </Link>
 
-      <div className="w-full">
-        <div className="border-b border-[#AAB8C2]  dark:border-gray-700 ">
-          <TextareaAutosize
-            value={input}
-            onChange={handleTextChange}
-            className={`bg-white dark:bg-black text-black dark:text-white outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
+        <div className="w-full">
+          <div className="border-b border-[#AAB8C2] dark:border-gray-700">
+            <TextareaAutosize
+              value={input}
+              onChange={handleTextChange}
+              className={`bg-white dark:bg-black text-black dark:text-white outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
 
-          {selectedFiles.length > 0 && (
-            <div className="py-3">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={selectedFiles}
-                  strategy={rectSortingStrategy}
+            {selectedFiles.length > 0 && (
+              <div className="py-3">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="grid grid-cols-2 gap-2">
-                    {selectedFiles.map((file, index) => (
-                      <SortableImageItem
-                        key={file}
-                        id={file}
-                        image={file}
-                        index={index}
-                        onRemove={removeImage}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            </div>
-          )}
+                  <SortableContext
+                    items={selectedFiles}
+                    strategy={rectSortingStrategy}
+                  >
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedFiles.map((file, index) => (
+                        <SortableImageItem
+                          key={file}
+                          id={file}
+                          image={file}
+                          index={index}
+                          onRemove={removeImage}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              </div>
+            )}
 
-          {selectedFile && (
-            <div className="py-3">
-              <div className="relative">
-                <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 left-1 cursor-pointer" onClick={() => setSelectedFile(null)}>
-                  <XIcon className="text-white h-7" />
+            {selectedFile && (
+              <div className="py-3">
+                <div className="relative">
+                  <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 left-1 cursor-pointer" onClick={() => setSelectedFile(null)}>
+                    <XIcon className="text-white h-7" />
+                  </div>
+                </div>
+
+                <img src={selectedFile} alt="" className="rounded-2xl max-h-80 object-contain" />
+              </div>
+            )}
+          </div>
+
+          {!loading && (
+            <div>
+              {/* Interaction settings display - only show for new tweets, not edits */}
+              <div className="flex items-center gap-1 py-2 border-t border-[#AAB8C2] dark:border-gray-700">
+                <div
+                  className="text-gray-500 hover:underline cursor-pointer flex items-center gap-1 text-sm"
+                  onClick={handleInteractionClick}
+                >
+                  {React.createElement(getReplyStatus().icon, { className: "h-4 w-4" })}
+                  {getReplyStatus().text}
                 </div>
               </div>
 
-              <img src={selectedFile} alt="" className="rounded-2xl max-h-80 object-contain" />
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-3 text-lightblue-400 py-4">
+                  <div className="icon cursor-pointer" onClick={() => filePickerRef.current.click()}>
+                    <PhotographIcon className="h-7 w-7 hoverAnimation" />
+
+                    <input
+                      type="file"
+                      ref={filePickerRef}
+                      hidden
+                      multiple
+                      accept="image/*"
+                      onChange={addImageToPost}
+                    />
+                  </div>
+
+                  <EmojiDropdown onEmojiSelect={addEmoji} />
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
+                    <CircularProgress current={input.length} max={MAX_TWEET_LENGTH} />
+                  </div>
+                  <button
+                    className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
+                    onClick={getButtonObject().function}>
+                    {getButtonObject().text}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
+      </div>
 
+      {/* Mobile layout - profile and textarea together, controls separate */}
+      <div className="w-full block sm:hidden">
+        {/* Profile and textarea row */}
+        <div className="flex space-x-2 mb-3">
+          <Link href={`/profile/${session.user.tag}`}>
+            <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
+          </Link>
+
+          <div className="w-full">
+            <div className="border-b border-[#AAB8C2] dark:border-gray-700">
+              <TextareaAutosize
+                value={input}
+                onChange={handleTextChange}
+                className={`bg-white dark:bg-black text-black dark:text-white outline-none placeholder-gray-400 min-h-[60px] w-full resize-none font-sans text-lg`} placeholder="What's happening?" />
+
+              {selectedFiles.length > 0 && (
+                <div className="py-3">
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={selectedFiles}
+                      strategy={rectSortingStrategy}
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedFiles.map((file, index) => (
+                          <SortableImageItem
+                            key={file}
+                            id={file}
+                            image={file}
+                            index={index}
+                            onRemove={removeImage}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </div>
+              )}
+
+              {selectedFile && (
+                <div className="py-3">
+                  <div className="relative">
+                    <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 left-1 cursor-pointer" onClick={() => setSelectedFile(null)}>
+                      <XIcon className="text-white h-7" />
+                    </div>
+                  </div>
+
+                  <img src={selectedFile} alt="" className="rounded-2xl max-h-80 object-contain" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Controls section - full width on mobile */}
         {!loading && (
           <div>
             {/* Interaction settings display - only show for new tweets, not edits */}
-            <div className="flex items-center gap-1 py-2 border-t border-[#AAB8C2] dark:border-gray-700">
+            <div className="flex items-center gap-1 py-2">
               <div
                 className="text-gray-500 hover:underline cursor-pointer flex items-center gap-1 text-sm"
                 onClick={handleInteractionClick}
@@ -549,10 +657,13 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
                 <EmojiDropdown onEmojiSelect={addEmoji} />
               </div>
 
-              <div className="hidden md:flex items-center space-x-4">
+              <div className="flex items-center space-x-4">
                 <div className="flex items-center gap-2">
                   <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
                   <CircularProgress current={input.length} max={MAX_TWEET_LENGTH} />
+                  {input.length >= MAX_TWEET_LENGTH && (
+                    <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />
+                  )}
                 </div>
                 <button
                   className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold"
@@ -560,21 +671,6 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
                   {getButtonObject().text}
                 </button>
               </div>
-            </div>
-
-            <div className="flex md:hidden items-center space-x-4">
-              <div className="flex items-center gap-2">
-                <div className={`${input.length >= MAX_TWEET_LENGTH ? 'text-red-500' : 'text-black dark:text-white'}`}>{input.length}/{MAX_TWEET_LENGTH}</div>
-                <CircularProgress current={input.length} max={MAX_TWEET_LENGTH} />
-                {input.length >= MAX_TWEET_LENGTH && (
-                  <ExclamationCircleIcon className={`h-5 w-5 text-red-500`} />
-                )}
-              </div>
-              <button
-                className="bg-lightblue-500 text-white px-4 py-2 rounded-full font-bold w-full"
-                onClick={getButtonObject().function}>
-                {getButtonObject().text}
-              </button>
             </div>
           </div>
         )}
