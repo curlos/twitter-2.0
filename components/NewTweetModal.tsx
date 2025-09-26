@@ -78,7 +78,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className={`inline-block text-left overflow-hidden ${showEmojiState ? '' : 'shadow-xl'} transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]`}>
+            <div className="inline-block text-left overflow-visible shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]">
               <div className="bg-white dark:bg-black rounded-2xl">
                 <div className="p-3">
                   <div>
@@ -100,11 +100,6 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
                 {!isQuoteTweet && renderInput(false)}
               </div>
 
-              {/* Have to show this additional container below the input because for some reason this emoji picker library gets cut off by the container if it's too short. The minimum for comfortability purposes that I saw was "430px". */}
-              {/* TODO: Find out if there's a way to display the emoji picker in the modal without extending the modal's container. If not, find a different library to use. */}
-              {showEmojiState && (
-                <div className="h-[430px] w-full p-2 bg-transparent" />
-              )}
             </div>
           </Transition.Child>
         </div>

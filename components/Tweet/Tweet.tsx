@@ -486,7 +486,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
             </div>
 
             {/* This will be shown if the parent tweet has been deleted. */}
-            {/* TODO: I thought earlier that maybe this wasn't taken care of but it seems like I did. Will have to confirm. */}
             {replyingToDeletedTweet && (
               <div className="text-xl w-full">
                 <div className="text-[15px] text-gray-500">

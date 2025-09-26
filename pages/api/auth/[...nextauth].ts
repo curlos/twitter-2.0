@@ -22,7 +22,6 @@ const addNewUser = async (session: Session) => {
   // Else if the username is already taken, then a random crypto string will be added to the end with a length of 6.
   const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 });
 
-  // TODO: Won't have to worry about email for now since I only have Google Auth setup but in the future will have to refactor when other auth methods are added.
   // Add this user to the "users" collection, thus creating a NEW user.
   const docRef = await addDoc(collection(db, 'users'), {
     email: session.user.email,
@@ -42,8 +41,6 @@ const addNewUser = async (session: Session) => {
 };
 
 export const authOptions = {
-  // Configure one or more authentication providers
-  // TODO: Add CredentialsProvider (Need this to create a bunch of accounts without having to create a bunch of GMAIL accounts + pretty much every app lets you create an account without having to use a third-party source.)
   providers: [
     CredentialsProvider({
       name: "Credentials",

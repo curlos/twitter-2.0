@@ -24,8 +24,7 @@ import {
   XCircleIcon,
   UserGroupIcon
 } from "@heroicons/react/outline";
-import { Picker } from "emoji-mart";
-import "emoji-mart/css/emoji-mart.css";
+import EmojiDropdown from './EmojiDropdown';
 import { useSession } from 'next-auth/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { newTweetModalState, isQuoteTweetState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetSentAlertState } from '../atoms/atom';
@@ -72,7 +71,6 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const filePickerRef = useRef(null);
-  const [showEmojis, setShowEmojis] = useState(showEmojiState || false);
   const [loading, setLoading] = useState(false);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
@@ -210,7 +208,6 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
     setInput('');
     setSelectedFile(null);
     setSelectedFiles([]);
-    setShowEmojis(false);
     setIsOpen(false);
     setIsQuoteTweet(false);
 
@@ -300,7 +297,6 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       setInput('');
       setSelectedFile(null);
       setSelectedFiles([]);
-      setShowEmojis(false);
       setIsOpen(false);
       setIsQuoteTweet(false);
 
@@ -550,28 +546,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
                   />
                 </div>
 
-                <div className="icon cursor-pointer" onClick={() => {
-                  setShowEmojis(!showEmojis);
-                  if (setShowEmojiState) {
-                    setShowEmojiState(!showEmojis);
-                  }
-                }}>
-                  <EmojiHappyIcon className="h-7 w-7 hoverAnimation" />
-                </div>
-
-                {showEmojis && (
-                  <Picker
-                    onSelect={addEmoji}
-                    style={{
-                      position: "fixed",
-                      marginTop: "40px",
-                      marginLeft: -40,
-                      maxWidth: "320px",
-                      borderRadius: "20px"
-                    }}
-                    theme="dark"
-                  />
-                )}
+                <EmojiDropdown onEmojiSelect={addEmoji} />
               </div>
 
               <div className="hidden md:flex items-center space-x-4">
