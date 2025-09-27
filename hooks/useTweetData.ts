@@ -22,12 +22,17 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
     const unsubscribe = onSnapshot(doc(db, "tweets", String(id)), (snapshot) => {
       // Skip updates when editing to prevent component unmounting
       if (!isEditing) {
+        if (!snapshot.exists()) {
+          // Tweet doesn't exist, redirect to home
+          router.push('/');
+          return;
+        }
         setTweet(snapshot.data());
         setTweetID(snapshot.id);
       }
     });
     return () => unsubscribe();
-  }, [db, id, isEditing]);
+  }, [db, id, isEditing, router]);
 
   // Effect hook for loading the replies to the main tweet
   useEffect(() => {

@@ -32,11 +32,20 @@ const FollowersOrFollowing = () => {
    * @description - Gets the accounts that are either FOLLOWERS or FOLLOWING (depending on the URL) of the user whose username (or tag) matches the one in the URL.
    */
   const getAccounts = async () => {
-    // Finds the user whose tag is equal to the tag from the URL.
-    const q = query(collection(db, "users"), where('tag', '==', String(tag)));
-    const querySnapshot = await getDocs(q);
-    const userID = querySnapshot.docs[0].id;
-    setAuthor(querySnapshot.docs[0].data());
+    try {
+      // Finds the user whose tag is equal to the tag from the URL.
+      const q = query(collection(db, "users"), where('tag', '==', String(tag)));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.docs.length === 0) {
+        // No user found with this tag, redirect to home
+        setLoading(false);
+        router.push('/');
+        return;
+      }
+
+      const userID = querySnapshot.docs[0].id;
+      setAuthor(querySnapshot.docs[0].data());
 
     let queryAccounts = null;
 
@@ -66,11 +75,17 @@ const FollowersOrFollowing = () => {
 
     setAccounts(accountsWithUserData);
     setLoading(false);
+    } catch (error) {
+      console.error('Error fetching followers/following:', error);
+      setLoading(false);
+      // On error, also redirect to home page
+      router.push('/');
+    }
   };
 
   return (
     <AppLayout title={`${tag}'s Followers`}>
-      <ContentContainer>
+      <ContentContainer loading={loading || !author}>
         {author && (
           <>
             <PageHeader

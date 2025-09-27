@@ -202,12 +202,24 @@ const ProfilePage = () => {
     setLoading(true);
 
     const fetchFromDB = async () => {
-      const userQuery = query(collection(db, "users"), where('tag', '==', id));
-      const userQuerySnapshot = await getDocs(userQuery);
+      try {
+        const userQuery = query(collection(db, "users"), where('tag', '==', id));
+        const userQuerySnapshot = await getDocs(userQuery);
 
-      setAuthor(userQuerySnapshot.docs[0].data());
-      setAuthorID(userQuerySnapshot.docs[0].id);
-      setLoading(false);
+        if (userQuerySnapshot.docs.length === 0) {
+          // No user found with this tag, redirect to home
+          router.push('/');
+          return;
+        }
+
+        setAuthor(userQuerySnapshot.docs[0].data());
+        setAuthorID(userQuerySnapshot.docs[0].id);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // On error, also redirect to home page
+        router.push('/');
+      }
     };
     fetchFromDB();
   }, [db, id]);

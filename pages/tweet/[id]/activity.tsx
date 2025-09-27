@@ -68,6 +68,9 @@ const TweetActivity = () => {
           }
 
           setLoading(false);
+        } else {
+          // Tweet doesn't exist, redirect to home
+          router.push('/');
         }
       });
 
