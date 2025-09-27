@@ -6,7 +6,7 @@ import {
   CogIcon
 } from "@heroicons/react/outline";
 import { signOut, useSession } from "next-auth/react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { sidenavState, colorThemeState } from "../atoms/atom";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -22,13 +22,10 @@ const SidenavDrawer = () => {
 
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useRecoilState(sidenavState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const theme = useRecoilValue(colorThemeState);
   const [_activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 
-  useEffect(() => {
-    setTheme(localStorage.getItem('theme'));
-  }, []);
 
   useEffect(() => {
     if (router.pathname.startsWith('/bookmarks')) {

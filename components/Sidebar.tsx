@@ -10,7 +10,7 @@ import {
 import SidebarLink from "./SidebarLink";
 import ProfileButton from "./ProfileButton";
 import { useSession } from "next-auth/react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { colorThemeState, newTweetModalState, searchModalState, authModalState } from "../atoms/atom";
 import { useRouter } from "next/router";
 import { FaFeatherAlt, FaSearch } from "react-icons/fa";
@@ -24,16 +24,12 @@ const Sidebar = () => {
 
   const { data: session } = useSession();
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const theme = useRecoilValue(colorThemeState);
   const [_searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
   const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [activeLink, setActiveLink] = useState('home');
   const router = useRouter();
 
-  // Get the theme of the user to determine whether or not we'd display the 'light' theme or 'dark' theme
-  useEffect(() => {
-    setTheme(localStorage.getItem('theme'));
-  }, []);
 
   // When we click one of the links in the sidebar ("Home", "Bookmarks", "Profile", or "Settings"), then we want to change the active link to that page. This could also be detected by just going to the page. All that has to happen the router's pathname changing.
   useEffect(() => {

@@ -3,14 +3,13 @@ import Link from 'next/link';
 import React from 'react';
 import { FaHome, FaSearch } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
-import { colorThemeState, searchModalState, sidenavState } from '../atoms/atom';
+import { searchModalState, sidenavState } from '../atoms/atom';
 
 /**
  * @description - On mobile, the usual sidebar would not fit so instead all the items will be in a bottom NavBar with all the elements (Home button, Search button, Light/Dark mode button, etc.) from the sidebar but in a more compact version.
  * @returns {React.FC}
  */
 const MobileBottomNavBar: React.FC = () => {
-  const [theme, setTheme] = useRecoilState(colorThemeState);
   const [_searchModalOpen, setSearchModalOpen] = useRecoilState(searchModalState);
   const [_sidenavOpen, setSidenavOpen] = useRecoilState(sidenavState);
 

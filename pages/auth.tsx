@@ -4,7 +4,7 @@ import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
 import { getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { colorThemeState } from '../atoms/atom';
 import AnimatedButton from '../components/AnimatedButton';
 import Spinner from '../components/Spinner';
@@ -13,7 +13,7 @@ import { IProvider } from '../utils/types';
 const Auth = () => {
   const router = useRouter();
   const signUp = router.query['sign-up'] === 'true';
-  const [theme, setTheme] = useRecoilState(colorThemeState);
+  const theme = useRecoilValue(colorThemeState);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -31,9 +31,6 @@ const Auth = () => {
     fetchProviders();
   }, []);
 
-  useEffect(() => {
-    setTheme(localStorage.getItem('theme') || 'dark');
-  }, [setTheme]);
 
   const handleAuth = async (provider: IProvider) => {
     setLoading(true);

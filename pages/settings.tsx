@@ -72,9 +72,6 @@ const Settings = () => {
 const ThemeToggle = () => {
   const [theme, setTheme] = useRecoilState(colorThemeState);
 
-  useEffect(() => {
-    setTheme(localStorage.getItem('theme'));
-  }, []);
 
   return (
     <div className="flex items-center space-x-4">
