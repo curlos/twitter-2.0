@@ -32,9 +32,12 @@ const EditProfileModal = () => {
 
   const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null);
   const [selectedFileBanner, setSelectedFileBanner] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   const updateUserProfile = async () => {
+    setLoading(true);
+
     const updatedUserData = {
       name,
       bio,
@@ -49,12 +52,12 @@ const EditProfileModal = () => {
     if (await checkIfUsernameTaken()) {
       // If the username is taken, there is an error and the user must try something else.
       setUsernameTakenError(true);
+      setLoading(false);
     } else {
 
       // Create a StorageReference for the profile pic and banner pic (essentially tells us WHERE the files will be stored)
       const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
       const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`);
-
 
       if (selectedFileProfilePic) {
         // Upload the string of type "data_url" (this is a URI schema for uploading files) and put it in the "/users/profilePic/${}/image" storage reference
@@ -84,6 +87,7 @@ const EditProfileModal = () => {
 
       // Close the modal
       setIsOpen(false);
+      setLoading(false);
       router.push(`/profile/${tag}`).then(() => (
         window.location.reload()
       ));
@@ -183,7 +187,17 @@ const EditProfileModal = () => {
                     <div className="ml-4 text-xl font-bold">Edit Profile</div>
                   </div>
 
-                  <div className="bg-white text-black font-bold px-5 py-2 rounded-full cursor-pointer" onClick={updateUserProfile}>Save</div>
+                  <div
+                    className={`bg-white text-black font-bold px-5 py-2 rounded-full ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    onClick={loading ? undefined : updateUserProfile}
+                  >
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin ease-linear rounded-full border-2 border-t-2 border-gray-400 border-t-black h-4 w-4 mr-2"></div>
+                        Saving...
+                      </div>
+                    ) : 'Save'}
+                  </div>
                 </div>
               </div>
 
@@ -191,8 +205,8 @@ const EditProfileModal = () => {
 
                 <div className="">
                   <div
-                    className="w-full h-[140px] sm:h-[200px] xl:h-[225px] cursor-pointer relative flex items-center justify-center overflow-hidden bg-black"
-                    onClick={() => bannerFilePickerRef.current.click()}
+                    className={`w-full h-[140px] sm:h-[200px] xl:h-[225px] relative flex items-center justify-center overflow-hidden bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                    onClick={loading ? undefined : () => bannerFilePickerRef.current.click()}
                   >
                     {/* Background image with opacity */}
                     <div
@@ -212,8 +226,8 @@ const EditProfileModal = () => {
                   </div>
 
                   <div
-                    className="mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full cursor-pointer relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black"
-                    onClick={() => profilePicFilePickerRef.current.click()}
+                    className={`mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                    onClick={loading ? undefined : () => profilePicFilePickerRef.current.click()}
                   >
                     {/* Background image with opacity */}
                     <div
@@ -241,12 +255,16 @@ const EditProfileModal = () => {
                       <div>Name</div>
                       <div>{name.length} / 50</div>
                     </div>
-                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={name} onChange={(e) => {
-                      if (e.target.value.length <= 50) {
-                        setName(e.target.value);
-                      }
-                    }
-                    }></input>
+                    <input
+                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      value={name}
+                      disabled={loading}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 50) {
+                          setName(e.target.value);
+                        }
+                      }}
+                    />
                   </div>
 
                   <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
@@ -254,12 +272,16 @@ const EditProfileModal = () => {
                       <div>Username</div>
                       <div>{tag.length} / 15</div>
                     </div>
-                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={tag} onChange={(e) => {
-                      if (e.target.value.length <= 15) {
-                        setTag(e.target.value);
-                      }
-                    }
-                    }></input>
+                    <input
+                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      value={tag}
+                      disabled={loading}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 15) {
+                          setTag(e.target.value);
+                        }
+                      }}
+                    />
                   </div>
 
                   <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
@@ -268,9 +290,10 @@ const EditProfileModal = () => {
                       <div>{bio.length} / 160</div>
                     </div>
                     <input
-                      className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none"
+                      className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                       value={bio}
                       placeholder="Add your bio"
+                      disabled={loading}
                       onChange={(e) => {
                         if (e.target.value.length <= 160) {
                           setBio(e.target.value);
@@ -284,12 +307,16 @@ const EditProfileModal = () => {
                       <div>Location</div>
                       <div>{location.length} / 30</div>
                     </div>
-                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={location} onChange={(e) => {
-                      if (e.target.value.length <= 30) {
-                        setLocation(e.target.value);
-                      }
-                    }
-                    }></input>
+                    <input
+                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      value={location}
+                      disabled={loading}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 30) {
+                          setLocation(e.target.value);
+                        }
+                      }}
+                    />
                   </div>
 
                   <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
@@ -297,11 +324,16 @@ const EditProfileModal = () => {
                       <div>Website</div>
                       <div>{website.length} / 100</div>
                     </div>
-                    <input className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none" value={website} onChange={(e) => {
-                      if (e.target.value.length <= 100) {
-                        setWebsite(e.target.value);
-                      }
-                    }}></input>
+                    <input
+                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      value={website}
+                      disabled={loading}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 100) {
+                          setWebsite(e.target.value);
+                        }
+                      }}
+                    />
                   </div>
                 </div>
 
