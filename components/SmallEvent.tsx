@@ -17,7 +17,7 @@ const SmallEvent = ({ news }: Props) => {
   const { title, urlToImage, url } = news;
 
   return (
-    <div className="grid grid-cols-smallEvent cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-4 gap-2" onClick={() => window.location.href = url}>
+    <div className="grid grid-cols-smallEvent cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-4 gap-2" onClick={() => window.open(url, '_blank')}>
       <div className="font-bold">{title}</div>
 
       {urlToImage && (
