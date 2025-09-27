@@ -175,7 +175,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
+                  className="absolute right-0 w-56 mt-2 origin-top-right divide-y rounded-md shadow-gray-400 dark:shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
                 >
 
                   <div className="bg-white dark:bg-black rounded-md">
@@ -187,7 +187,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                           icon={!followed ? UserAddIcon : UserRemoveIcon}
                           text={!followed ? `Follow @${author.tag}` : `Unfollow @${author.tag}`}
                           onClick={handleFollowClick}
-                          className="text-gray-400"
                         />
                       )}
 
@@ -196,7 +195,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                         icon={ClipboardCopyIcon}
                         text="Copy tweet text"
                         onClick={handleCopyTweetText}
-                        className="text-gray-400"
                       />
 
                       {/* Translate tweet - available to all users */}
@@ -204,27 +202,23 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                         icon={TranslateIcon}
                         text="Translate"
                         onClick={handleTranslate}
-                        className="text-gray-400"
                       />
 
-                      {/* Version History - available to all users, only show if tweet has been edited */}
-                      {tweet?.versionHistory && tweet.versionHistory.length > 0 && (
-                        <DropdownMenuItem
-                          icon={ClockIcon}
-                          text="View version history"
-                          onClick={() => {
-                            router.push(`/tweet/${tweet.tweetId}/history`);
-                          }}
-                          className="text-gray-400"
-                        />
-                      )}
+                      {/* Version History - available to all users. */}
+                      <DropdownMenuItem
+                        icon={ClockIcon}
+                        text="View version history"
+                        onClick={() => {
+                          router.push(`/tweet/${tweet.tweetId}/history`);
+                        }}
+                      />
                     </div>
 
                     {/* Edit and Delete options - only shown if the tweet belongs to the currently logged in user */}
                     {session && session.user && author.tag === session.user.tag && (
                       <>
                         {/* Divider */}
-                        <div className="border-b border-gray-200 dark:border-gray-700"></div>
+                        <div className="border-b border-gray-400 dark:border-gray-700"></div>
 
                         {/* Edit and Delete Group */}
                         <div className="py-1">
@@ -239,7 +233,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                                 ...tweet
                               });
                             }}
-                            className="text-gray-400"
                           />
 
                           {/* Edit interaction settings - requires logged in user and tweet ownership */}
@@ -254,7 +247,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                               });
                               setEditInteractionSettingsModalOpen(true);
                             }}
-                            className="text-gray-400"
                           />
 
                           {/* Hide/Show All Replies - requires logged in user and tweet ownership */}
@@ -262,7 +254,6 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                             icon={EyeOffIcon}
                             text={tweet.hideReplies ? "Show all replies" : "Hide all replies"}
                             onClick={handleHideReplies}
-                            className="text-gray-400"
                           />
 
                           <DropdownMenuItem

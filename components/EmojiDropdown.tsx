@@ -3,14 +3,18 @@ import { Menu, Transition } from '@headlessui/react';
 import { EmojiHappyIcon } from '@heroicons/react/outline';
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+import { useRecoilValue } from 'recoil';
+import { colorThemeState } from '../atoms/atom';
 
 interface EmojiDropdownProps {
   onEmojiSelect: (emoji: any) => void;
 }
 
 const EmojiDropdown: React.FC<EmojiDropdownProps> = ({ onEmojiSelect }) => {
+  const theme = useRecoilValue(colorThemeState);
+
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left bg-transparent">
       <Menu>
         {({ open }) => (
           <>
@@ -40,7 +44,7 @@ const EmojiDropdown: React.FC<EmojiDropdownProps> = ({ onEmojiSelect }) => {
                       borderRadius: "20px",
                       border: "none"
                     }}
-                    theme="dark"
+                    theme={theme as string}
                   />
                 </div>
               </Menu.Items>

@@ -13,7 +13,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   icon: Icon,
   text,
   onClick,
-  className = "text-gray-400",
+  className = "text-gray-700 dark:text-gray-400",
   disabled = false
 }) => {
   const cursorClass = disabled ? "cursor-not-allowed" : "cursor-pointer";
