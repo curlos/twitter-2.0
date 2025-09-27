@@ -56,6 +56,20 @@ const ImageModal = ({ isOpen, images, initialIndex = 0, onClose }: ImageModalPro
     }
   }, [initialIndex, isOpen]);
 
+  // Handle scrollbar management
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const goToSlide = (slideIndex: number) => {
     if (carouselRef.current) {
       carouselRef.current.goToSlide(slideIndex);

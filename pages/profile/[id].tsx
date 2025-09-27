@@ -35,13 +35,11 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
     setShowImageModal(true);
-    document.body.style.overflow = 'hidden';
   };
 
   const handleCloseImageModal = () => {
     setShowImageModal(false);
     setSelectedImage('');
-    document.body.style.overflow = 'unset';
   };
 
   return (

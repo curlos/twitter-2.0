@@ -156,15 +156,13 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
   const handleImageClick = (e: React.MouseEvent, imageIndex: number = 0) => {
     e.stopPropagation();
     setSelectedImageIndex(imageIndex);
-    document.body.style.overflow = 'hidden';
   };
 
   /**
-   * @description - Closes the image modal and restores scrolling.
+   * @description - Closes the image modal.
    */
   const handleCloseImageModal = () => {
     setSelectedImageIndex(null);
-    document.body.style.overflow = 'unset';
   };
 
   /**
