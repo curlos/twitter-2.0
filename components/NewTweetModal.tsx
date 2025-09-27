@@ -80,7 +80,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
           >
             <div className="inline-block text-left overflow-visible shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw]">
               <div className="bg-white dark:bg-black rounded-2xl">
-                <div className="p-3">
+                <div className="p-3 pb-0">
                   <div>
                     <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
                   </div>

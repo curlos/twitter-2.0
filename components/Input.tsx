@@ -460,7 +460,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   return (
-    <div className={`w-full relative flex p-3 space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'pt-0 border-none' : ''} sm:block sm:p-0`}>
+    <div className={`w-full relative flex sm:block space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'border-none' : ''}`}>
       {loading && (
         <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
           <Spinner />
@@ -468,7 +468,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       )}
 
       {/* Desktop layout - original structure */}
-      <div className="hidden sm:flex sm:p-3 sm:space-x-2">
+      <div className="hidden sm:flex p-3 sm:space-x-2">
         <Link href={`/profile/${session.user.tag}`}>
           <img src={session.user.profilePic} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer z-10" />
         </Link>
@@ -569,7 +569,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       </div>
 
       {/* Mobile layout - profile and textarea together, controls separate */}
-      <div className="w-full block sm:hidden">
+      <div className="w-full block sm:hidden p-3">
         {/* Profile and textarea row */}
         <div className="flex space-x-2 mb-3">
           <Link href={`/profile/${session.user.tag}`}>
