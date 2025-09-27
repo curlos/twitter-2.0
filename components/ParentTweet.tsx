@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { db } from '../firebase';
 import { ITweet } from '../utils/types';
 import { PhotographIcon } from '@heroicons/react/solid';
+import DeletedTweet from './DeletedTweet';
 
 interface ParentTweetProps {
   tweetBeingRepliedToId: string;
@@ -21,6 +22,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
   const [tweet, setTweet] = useState<ITweet>();
   const [author, setAuthor] = useState<DocumentData>();
   const [loading, setLoading] = useState(false);
+  const [tweetExists, setTweetExists] = useState(true);
   const router = useRouter();
 
   const handleTweetClick = (e: React.MouseEvent) => {
@@ -36,7 +38,14 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
       setLoading(true);
 
       const unsubscribe = onSnapshot(doc(db, 'tweets', tweetBeingRepliedToId), (snapshot) => {
-        setTweet(snapshot.data() as ITweet);
+        if (snapshot.exists()) {
+          setTweet(snapshot.data() as ITweet);
+          setTweetExists(true);
+        } else {
+          // Tweet doesn't exist (was deleted)
+          setTweet(undefined);
+          setTweetExists(false);
+        }
         setLoading(false);
       });
       return () => unsubscribe();
@@ -63,9 +72,21 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
     };
   }, [tweet]);
 
+  // Deleted tweet component for quote tweets
+  const DeletedQuoteTweet = () => (
+    <div className="border border-gray-300 dark:border-gray-700 rounded-2xl p-4">
+      <div className="bg-gray-200 border border-gray-300 text-gray-500 dark:text-gray-400 rounded-xl p-3 text-base dark:border-gray-700 dark:bg-gray-800">
+        This Tweet is unavailable.
+      </div>
+    </div>
+  );
+
   return (
     !loading ? (
-      tweet && author ? (
+      !tweetExists ? (
+        // Show deleted tweet placeholder
+        isQuoteTweet ? <DeletedQuoteTweet /> : <DeletedTweet />
+      ) : tweet && author ? (
         <div
           className={`flex p-3 space-x-2 h-full ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer' : ''}`}
           onClick={handleTweetClick}
