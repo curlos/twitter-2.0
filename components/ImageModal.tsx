@@ -3,6 +3,20 @@ import { XIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 
+/**
+ * Get the common arrow button classes with position-specific class
+ */
+export const getArrowButtonClasses = (position: 'left' | 'right') => {
+  const baseClasses = "absolute top-1/2 transform -translate-y-1/2 z-10 p-1 bg-black bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-all bg-lightblue-500";
+  const positionClass = position === 'left' ? 'left-4' : 'right-4';
+  return `${baseClasses} ${positionClass}`;
+};
+
+/**
+ * Common icon classes for chevron arrows
+ */
+export const chevronIconClasses = "h-5 w-5";
+
 interface ImageModalProps {
   isOpen: boolean;
   images: string[];
@@ -17,11 +31,11 @@ const CustomLeftArrow = ({ onClick, ...rest }: any) => {
   const { onMove } = rest;
   return (
     <button
-      className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-black bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-all"
+      className={getArrowButtonClasses('left')}
       onClick={() => onClick()}
       disabled={onMove}
     >
-      <ChevronLeftIcon className="h-6 w-6" />
+      <ChevronLeftIcon className={chevronIconClasses} />
     </button>
   );
 };
@@ -33,11 +47,11 @@ const CustomRightArrow = ({ onClick, ...rest }: any) => {
   const { onMove } = rest;
   return (
     <button
-      className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-black bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-all"
+      className={getArrowButtonClasses('right')}
       onClick={() => onClick()}
       disabled={onMove}
     >
-      <ChevronRightIcon className="h-6 w-6" />
+      <ChevronRightIcon className={chevronIconClasses} />
     </button>
   );
 };
@@ -169,7 +183,7 @@ const ImageModal = ({ isOpen, images, initialIndex = 0, onClose }: ImageModalPro
             {images.map((image, index) => (
               <button
                 key={index}
-                className={`flex-shrink-0 p-1 ${currentSlide === index ? 'border-2 border-white' : 'border-2 border-transparent'}`}
+                className={`flex-shrink-0 p-1 ${currentSlide === index ? 'border-2 border-lightblue-500' : 'border-2 border-transparent'}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   goToSlide(index);
