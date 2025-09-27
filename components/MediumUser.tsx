@@ -87,7 +87,7 @@ const MediumUser = ({ userID, user }: Props) => {
                     <div><BadgeCheckIcon className="h-[18px] w-[18px] text-lightblue-500" /></div>
                   </div>
                 </Link>
-                <div className="text-gray-400">@{user.tag}</div>
+                <div className="text-gray-700 dark:text-gray-400">@{user.tag}</div>
 
                 <div>{user.bio}</div>
               </div>

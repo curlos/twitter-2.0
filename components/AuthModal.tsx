@@ -57,7 +57,7 @@ export const AuthModal = () => {
             <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-md w-[95vw] lg:w-[400px]">
               <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                 <div>
-                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
+                  <XIcon className="h-7 w-7 cursor-pointer text-gray-700 dark:text-gray-400 dark:text-white hover:text-gray-500" onClick={handleClose} />
                 </div>
               </div>
 
@@ -66,7 +66,7 @@ export const AuthModal = () => {
                   <BsTwitter className="h-8 w-8 text-lightblue-500" />
                   Join Twitter 2.0 today
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-gray-700 dark:text-gray-400 mb-6">
                   Sign up or log in to like, retweet, bookmark, and reply to tweets.
                 </p>
 

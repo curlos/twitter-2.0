@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from 'recoil';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { colorThemeState } from '../atoms/atom';
 
 // Component to initialize theme from localStorage
@@ -22,6 +22,19 @@ const ThemeInitializer = () => {
   return null;
 };
 
+// Theme wrapper component that can access Recoil state
+const ThemeWrapper = ({ children }) => {
+  const theme = useRecoilValue(colorThemeState);
+
+  return (
+    <div className={theme as string}>
+      <div className="bg-white text-black dark:bg-black dark:text-white">
+        {children}
+      </div>
+    </div>
+  );
+};
+
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
@@ -30,7 +43,9 @@ export default function App({
     <SessionProvider session={session}>
       <RecoilRoot>
         <ThemeInitializer />
-        <Component {...pageProps} />
+        <ThemeWrapper>
+          <Component {...pageProps} />
+        </ThemeWrapper>
       </RecoilRoot>
     </SessionProvider>
   );

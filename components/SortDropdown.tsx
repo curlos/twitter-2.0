@@ -27,7 +27,7 @@ export const SortDropdown = ({ sortType, setSortType, options }: Props) => {
                 <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white dark:bg-black rounded-md">
                   <span className="flex gap-2 p-2">
                     <span className="text-black dark:text-white">{sortType}</span>
-                    <DotsHorizontalIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
+                    <DotsHorizontalIcon className="h-5 w-5 text-gray-700 dark:text-gray-400 cursor-pointer" />
                   </span>
                 </Menu.Button>
               </span>

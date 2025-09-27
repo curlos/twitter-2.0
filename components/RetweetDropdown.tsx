@@ -58,13 +58,12 @@ const RetweetDropdown: React.FC<RetweetDropdownProps> = ({
                       icon={FaRetweet}
                       text="Retweet"
                       onClick={(e) => handleRetweetClick(e as React.MouseEvent, onRetweet)}
-                      className="text-gray-400"
                     />
                     <DropdownMenuItem
                       icon={FaQuoteLeft}
                       text={disableQuote ? 'Quotes disabled' : 'Quote'}
                       onClick={(e) => handleQuoteClick(e as React.MouseEvent, onQuote, disableQuote)}
-                      className={disableQuote ? "text-gray-400 opacity-50" : "text-gray-400"}
+                      className={disableQuote ? "text-gray-700 dark:text-gray-400 opacity-50" : "text-gray-700 dark:text-gray-400"}
                       disabled={disableQuote}
                     />
                   </div>

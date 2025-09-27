@@ -41,10 +41,10 @@ const Settings = () => {
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-4">Display</h3>
 
-                <div className="flex gap-2 items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="flex gap-2 items-center justify-between p-4 border border-gray-400 dark:border-gray-700 rounded-lg">
                   <div>
                     <div className="font-medium">Theme</div>
-                    <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</div>
+                    <div className="hidden sm:block text-sm text-gray-700 dark:text-gray-400">Choose your preferred theme</div>
                   </div>
 
                   <ThemeToggle />
@@ -83,7 +83,7 @@ const ThemeToggle = () => {
         className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${
           theme === 'light'
             ? 'bg-lightblue-500 text-white border-lightblue-500'
-            : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
         }`}
       >
         <SunIcon className="h-4 w-4" />
@@ -98,7 +98,7 @@ const ThemeToggle = () => {
         className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${
           theme === 'dark'
             ? 'bg-lightblue-500 text-white border-lightblue-500'
-            : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+            : 'bg-white dark:bg-gray-800 border-gray-400 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
         }`}
       >
         <MoonIcon className="h-4 w-4" />
@@ -165,7 +165,7 @@ const EmailAccordion = ({ session, update }) => {
   };
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div className="border border-gray-400 dark:border-gray-700 rounded-lg">
       <button
         onClick={() => setIsEmailAccordionOpen(!isEmailAccordionOpen)}
         className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
@@ -173,14 +173,14 @@ const EmailAccordion = ({ session, update }) => {
         }`}
       >
         <div className="flex items-center space-x-3">
-          <MailIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          <MailIcon className="h-5 w-5 text-gray-700 dark:text-gray-400" />
           <div className="text-left">
             <div className="font-medium">Change Email Address</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Update your email address</div>
+            <div className="text-sm text-gray-700 dark:text-gray-400">Update your email address</div>
           </div>
         </div>
         <ChevronDownIcon
-          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+          className={`h-5 w-5 text-gray-700 dark:text-gray-400 transition-transform duration-200 ${
             isEmailAccordionOpen ? 'rotate-180' : ''
           }`}
         />
@@ -189,11 +189,11 @@ const EmailAccordion = ({ session, update }) => {
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
         isEmailAccordionOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="px-4 pb-4 border-t border-gray-400 dark:border-gray-700">
           <div className="pt-4">
             <div className="mb-4">
               <div className="text-sm font-medium">Current Email</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-gray-700 dark:text-gray-400">
                 <span>{session?.user?.email}</span>
               </div>
             </div>
@@ -209,7 +209,7 @@ const EmailAccordion = ({ session, update }) => {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="Enter new email address"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-400 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
                   disabled={isUpdatingEmail}
                 />
               </div>
@@ -306,7 +306,7 @@ const PasswordAccordion = () => {
   };
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div className="border border-gray-400 dark:border-gray-700 rounded-lg">
       <button
         onClick={() => setIsPasswordAccordionOpen(!isPasswordAccordionOpen)}
         className={`w-full p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200 ${
@@ -314,14 +314,14 @@ const PasswordAccordion = () => {
         }`}
       >
         <div className="flex items-center space-x-3">
-          <LockClosedIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          <LockClosedIcon className="h-5 w-5 text-gray-700 dark:text-gray-400" />
           <div className="text-left">
             <div className="font-medium">Change Password</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Update your account password</div>
+            <div className="text-sm text-gray-700 dark:text-gray-400">Update your account password</div>
           </div>
         </div>
         <ChevronDownIcon
-          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+          className={`h-5 w-5 text-gray-700 dark:text-gray-400 transition-transform duration-200 ${
             isPasswordAccordionOpen ? 'rotate-180' : ''
           }`}
         />
@@ -330,7 +330,7 @@ const PasswordAccordion = () => {
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
         isPasswordAccordionOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="px-4 pb-4 border-t border-gray-400 dark:border-gray-700">
           <div className="pt-4">
             <form onSubmit={handlePasswordUpdate} className="space-y-4">
               <div>
@@ -343,7 +343,7 @@ const PasswordAccordion = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter current password"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-400 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
                   disabled={isUpdatingPassword}
                 />
               </div>
@@ -358,7 +358,7 @@ const PasswordAccordion = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-400 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
                   disabled={isUpdatingPassword}
                 />
               </div>
@@ -373,12 +373,12 @@ const PasswordAccordion = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-400 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-lightblue-500 focus:border-transparent"
                   disabled={isUpdatingPassword}
                 />
               </div>
 
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-gray-700 dark:text-gray-400">
                 Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.
               </div>
 

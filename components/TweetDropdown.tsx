@@ -159,7 +159,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
             <>
               <span className="rounded-md">
                 <Menu.Button className="inline-flex justify-center w-full px-4 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-transparent rounded-md ">
-                  <span><DotsHorizontalIcon className="h-5 w-5 text-gray-400 cursor-pointer" /></span>
+                  <span><DotsHorizontalIcon className="h-5 w-5 text-gray-700 dark:text-gray-400 cursor-pointer" /></span>
                 </Menu.Button>
               </span>
 

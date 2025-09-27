@@ -150,198 +150,200 @@ const EditProfileModal = () => {
       <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={(val) => {
         setIsOpen(val);
       }}>
-        <div className={`${theme} flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0`}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
+        <div className={`${theme}`}>
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-            &#8203;
-          </span>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <div className="inline-block align-bottom bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
-              <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <XIcon className="h-6 w-6 cursor-pointer text-gray-400 dark:text-white" onClick={(val) => {
-                      setIsOpen(false);
-                    }} />
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div className="inline-block align-bottom bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
+                <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <XIcon className="h-6 w-6 cursor-pointer text-gray-700 dark:text-gray-400" onClick={(val) => {
+                        setIsOpen(false);
+                      }} />
 
-                    <div className="ml-4 text-xl font-bold">Edit Profile</div>
+                      <div className="ml-4 text-xl font-bold">Edit Profile</div>
+                    </div>
+
+                    <div
+                      className={`bg-white text-black font-bold px-5 py-2 rounded-full ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      onClick={loading ? undefined : updateUserProfile}
+                    >
+                      {loading ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin ease-linear rounded-full border-2 border-t-2 border-gray-400 border-t-black h-4 w-4 mr-2"></div>
+                          Saving...
+                        </div>
+                      ) : 'Save'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="h-[70vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
+
+                  <div className="">
+                    <div
+                      className={`w-full h-[140px] sm:h-[200px] xl:h-[225px] relative flex items-center justify-center overflow-hidden bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      onClick={loading ? undefined : () => bannerFilePickerRef.current.click()}
+                    >
+                      {/* Background image with opacity */}
+                      <div
+                        className="absolute inset-0 bg-cover bg-center opacity-50 hover:opacity-30 transition-opacity"
+                        style={{ backgroundImage: `url(${selectedFileBanner || banner})` }}
+                      ></div>
+
+                      {/* Camera icon - full opacity */}
+                      <FiCamera className="h-8 w-8 text-white drop-shadow-lg relative z-10" />
+
+                      <input
+                        type="file"
+                        ref={bannerFilePickerRef}
+                        hidden
+                        onChange={(e) => changePic(e, 'banner')}
+                      />
+                    </div>
+
+                    <div
+                      className={`mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      onClick={loading ? undefined : () => profilePicFilePickerRef.current.click()}
+                    >
+                      {/* Background image with opacity */}
+                      <div
+                        className="absolute inset-0 bg-cover bg-center rounded-full opacity-50 hover:opacity-30 transition-opacity z-20"
+                        style={{ backgroundImage: `url(${selectedFileProfilePic || profilePic})` }}
+                      ></div>
+
+                      {/* Camera icon - full opacity */}
+                      <FiCamera className="h-6 w-6 text-white drop-shadow-lg relative z-30" />
+
+                      <input
+                        type="file"
+                        ref={profilePicFilePickerRef}
+                        hidden
+                        onChange={(e) => changePic(e, 'profile')}
+                      />
+                    </div>
+
+
                   </div>
 
-                  <div
-                    className={`bg-white text-black font-bold px-5 py-2 rounded-full ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                    onClick={loading ? undefined : updateUserProfile}
-                  >
-                    {loading ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin ease-linear rounded-full border-2 border-t-2 border-gray-400 border-t-black h-4 w-4 mr-2"></div>
-                        Saving...
+                  <div className="p-3 space-y-4">
+                    <div className="p-2 border border-gray-700 space-y-1 rounded">
+                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                        <div>Name</div>
+                        <div>{name.length} / 50</div>
                       </div>
-                    ) : 'Save'}
+                      <input
+                        className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        value={name}
+                        disabled={loading}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 50) {
+                            setName(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="p-2 border border-gray-700 space-y-1 rounded">
+                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                        <div>Username</div>
+                        <div>{tag.length} / 15</div>
+                      </div>
+                      <input
+                        className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        value={tag}
+                        disabled={loading}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 15) {
+                            setTag(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="p-2 border border-gray-700 space-y-1 rounded">
+                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                        <div>Bio</div>
+                        <div>{bio.length} / 160</div>
+                      </div>
+                      <input
+                        className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        value={bio}
+                        placeholder="Add your bio"
+                        disabled={loading}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 160) {
+                            setBio(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="p-2 border border-[#AAB8C2] border-gray-700 space-y-1 rounded">
+                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                        <div>Location</div>
+                        <div>{location.length} / 30</div>
+                      </div>
+                      <input
+                        className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        value={location}
+                        disabled={loading}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 30) {
+                            setLocation(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="p-2 border border-[#AAB8C2] border-gray-700 space-y-1 rounded">
+                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                        <div>Website</div>
+                        <div>{website.length} / 100</div>
+                      </div>
+                      <input
+                        className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        value={website}
+                        disabled={loading}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 100) {
+                            setWebsite(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
+
                 </div>
+
+                <div className="p-5" />
               </div>
-
-              <div className="h-[70vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
-
-                <div className="">
-                  <div
-                    className={`w-full h-[140px] sm:h-[200px] xl:h-[225px] relative flex items-center justify-center overflow-hidden bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                    onClick={loading ? undefined : () => bannerFilePickerRef.current.click()}
-                  >
-                    {/* Background image with opacity */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center opacity-50 hover:opacity-30 transition-opacity"
-                      style={{ backgroundImage: `url(${selectedFileBanner || banner})` }}
-                    ></div>
-
-                    {/* Camera icon - full opacity */}
-                    <FiCamera className="h-8 w-8 text-white drop-shadow-lg relative z-10" />
-
-                    <input
-                      type="file"
-                      ref={bannerFilePickerRef}
-                      hidden
-                      onChange={(e) => changePic(e, 'banner')}
-                    />
-                  </div>
-
-                  <div
-                    className={`mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                    onClick={loading ? undefined : () => profilePicFilePickerRef.current.click()}
-                  >
-                    {/* Background image with opacity */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center rounded-full opacity-50 hover:opacity-30 transition-opacity z-20"
-                      style={{ backgroundImage: `url(${selectedFileProfilePic || profilePic})` }}
-                    ></div>
-
-                    {/* Camera icon - full opacity */}
-                    <FiCamera className="h-6 w-6 text-white drop-shadow-lg relative z-30" />
-
-                    <input
-                      type="file"
-                      ref={profilePicFilePickerRef}
-                      hidden
-                      onChange={(e) => changePic(e, 'profile')}
-                    />
-                  </div>
-
-
-                </div>
-
-                <div className="p-3 space-y-4">
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
-                    <div className="text-sm text-gray-400 flex justify-between">
-                      <div>Name</div>
-                      <div>{name.length} / 50</div>
-                    </div>
-                    <input
-                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={name}
-                      disabled={loading}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 50) {
-                          setName(e.target.value);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
-                    <div className="text-sm text-gray-400 flex justify-between">
-                      <div>Username</div>
-                      <div>{tag.length} / 15</div>
-                    </div>
-                    <input
-                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={tag}
-                      disabled={loading}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 15) {
-                          setTag(e.target.value);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
-                    <div className="text-sm text-gray-400 flex justify-between">
-                      <div>Bio</div>
-                      <div>{bio.length} / 160</div>
-                    </div>
-                    <input
-                      className="w-full bg-white text-black dark:text-white dark:bg-black focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={bio}
-                      placeholder="Add your bio"
-                      disabled={loading}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 160) {
-                          setBio(e.target.value);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
-                    <div className="text-sm text-gray-400 flex justify-between">
-                      <div>Location</div>
-                      <div>{location.length} / 30</div>
-                    </div>
-                    <input
-                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={location}
-                      disabled={loading}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 30) {
-                          setLocation(e.target.value);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="p-2 border border-[#AAB8C2] dark:border-gray-700 space-y-1 rounded">
-                    <div className="text-sm text-gray-400 flex justify-between">
-                      <div>Website</div>
-                      <div>{website.length} / 100</div>
-                    </div>
-                    <input
-                      className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={website}
-                      disabled={loading}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 100) {
-                          setWebsite(e.target.value);
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="p-5" />
-            </div>
-          </Transition.Child>
+            </Transition.Child>
+          </div>
         </div>
       </Dialog>
     </Transition.Root>

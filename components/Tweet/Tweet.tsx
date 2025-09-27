@@ -471,7 +471,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
                     </div>
                   </Link>
                   <Link href={`/profile/${author.tag}`}>
-                    <div className="text-gray-400 p-0 m-0 cursor-pointer hover:underline">@{author.tag}</div>
+                    <div className="text-gray-700 dark:text-gray-400 p-0 m-0 cursor-pointer hover:underline">@{author.tag}</div>
                   </Link>
                 </div>
               </div>

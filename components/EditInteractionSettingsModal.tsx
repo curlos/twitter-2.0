@@ -30,11 +30,11 @@ const ReplyOptionButton: React.FC<ReplyOptionButtonProps> = ({
       className={`${fullWidth ? 'w-full' : ''} text-gray-500 relative p-2 rounded-lg text-left transition-all ${
         isSelected
           ? 'bg-lightblue-500/40'
-          : 'dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-100 dark:bg-gray-800'
+          : 'dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-gray-200 dark:bg-gray-800'
       }`}
     >
       <div className="flex items-center justify-between">
-        <div className="font-medium text-white">{label}</div>
+        <div className="font-medium text-black dark:text-white">{label}</div>
         {isSelected && (
           <div className="flex items-center justify-center">
             <CheckIcon className="w-5 h-5 text-lightblue-500" />
@@ -160,18 +160,18 @@ export const EditInteractionSettingsModal = () => {
           >
             <div className="inline-block bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all my-8 align-top max-w-lg w-[95vw] lg:w-[50vw] p-6" onClick={handleDialogClick}>
               {/* Header */}
-              <div className="bg-white dark:bg-black pb-4 border-b border-[#AAB8C2] dark:border-gray-700">
+              <div className="bg-white dark:bg-black pb-4 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-black dark:text-white">Edit interaction settings</h2>
-                  <XIcon className="h-7 w-7 cursor-pointer text-gray-400 dark:text-white hover:text-gray-500" onClick={handleXClick} />
+                  <XIcon className="h-7 w-7 cursor-pointer text-gray-700 dark:text-gray-400 dark:text-white hover:text-gray-500" onClick={handleXClick} />
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">Customize who can interact with this post.</p>
+                <p className="text-gray-500 text-gray-700 dark:text-gray-400 mt-2">Customize who can interact with this post.</p>
               </div>
 
               {/* Content */}
               <div className="bg-white dark:bg-black py-4 space-y-4">
                 {/* Quote Settings */}
-                <div className="pb-5 border-b border-gray-200 dark:border-gray-700">
+                <div className="pb-5 border-b border-gray-700">
                   <h3 className="text-lg font-semibold text-black dark:text-white mb-3">Quote settings</h3>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-700 dark:text-gray-300">Allow quote tweets</span>
@@ -182,7 +182,7 @@ export const EditInteractionSettingsModal = () => {
                         onChange={(e) => setAllowQuotes(e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-lightblue-300 dark:peer-focus:ring-lightblue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-lightblue-600"></div>
+                      <div className="w-11 h-6 bg-gray-500 dark:bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-lightblue-300 dark:peer-focus:ring-lightblue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-lightblue-600"></div>
                     </label>
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export const EditInteractionSettingsModal = () => {
                 {/* Reply Settings */}
                 <div>
                   <h3 className="text-lg font-semibold text-black dark:text-white mb-3">Reply settings</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-2">Allow replies from:</p>
+                  <p className="text-gray-700 dark:text-gray-400 mb-2">Allow replies from:</p>
 
                   <div className="grid grid-cols-2 gap-3 mb-5">
                     <ReplyOptionButton
@@ -207,7 +207,7 @@ export const EditInteractionSettingsModal = () => {
                     />
                   </div>
 
-                  <p className="text-gray-500 dark:text-gray-400 mb-2">Or combine these options:</p>
+                  <p className="text-gray-700 dark:text-gray-400 mb-2">Or combine these options:</p>
 
                   <div className="space-y-3">
                     <ReplyOptionButton

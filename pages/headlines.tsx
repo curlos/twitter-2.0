@@ -98,7 +98,7 @@ const Headlines: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="mb-2">
                         <div className="flex items-center gap-2 md:mb-0 mb-1">
-                          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-400">
                             {article.source.name}
                           </span>
                           <span className="text-sm text-gray-500 hidden md:inline">•</span>
@@ -131,7 +131,7 @@ const Headlines: React.FC = () => {
                       )}
 
                       {article.description && (
-                        <p className="text-gray-600 dark:text-gray-400 md:line-clamp-3 mb-3">
+                        <p className="text-gray-700 dark:text-gray-400 md:line-clamp-3 mb-3">
                           {article.description}
                         </p>
                       )}

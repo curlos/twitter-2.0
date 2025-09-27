@@ -99,7 +99,7 @@ const ReplyInfoModal: React.FC<ReplyInfoModalProps> = ({
                   {replyInfo.title}
                 </h3>
                 <XIcon
-                  className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-500"
+                  className="h-6 w-6 cursor-pointer text-gray-700 dark:text-gray-400 hover:text-gray-500"
                   onClick={onClose}
                 />
               </div>

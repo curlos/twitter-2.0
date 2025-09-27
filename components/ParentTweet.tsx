@@ -76,7 +76,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
 
           {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}
           <div className="w-full">
-            <div className="text-gray-400 lg:flex">
+            <div className="text-gray-700 dark:text-gray-400 lg:flex">
               <div className="text-black dark:text-white font-bold mr-[2px]">{author.name}</div>
               <div>@{author.tag}</div>
               <div className="text-gray-500 mx-1 font-bold hidden lg:block">·</div>
@@ -162,7 +162,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
             </div>
 
             {!isQuoteTweet && (
-              <div className="my-3 text-gray-400">
+              <div className="my-3 text-gray-700 dark:text-gray-400">
                 Replying to <span className="text-lightblue-400">
                   <Link href={`/profile/${author.tag}`}>
                     <span>@{author.tag}</span>

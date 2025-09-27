@@ -25,7 +25,7 @@ const ProfileButton = ({ onMenuItemClick }: ProfileButtonProps) => {
                   <div className="text-left">{session.user.name}</div>
                   <div className="text-gray-500 break-word text-left">@{session.user.tag}</div>
                 </div>
-                <DotsHorizontalIcon className="h-5 w-5 text-gray-400" />
+                <DotsHorizontalIcon className="h-5 w-5 text-gray-700 dark:text-gray-400" />
               </Menu.Button>
 
               <Transition

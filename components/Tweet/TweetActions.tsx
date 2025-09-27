@@ -314,7 +314,7 @@ const TweetActions = ({
 
   if (fullSize) {
     return (
-      <div className="flex justify-between w-full text-gray-500 py-2 px-4 sm:px-12">
+      <div className="flex justify-between w-full text-gray-700 dark:text-gray-400 py-2 px-4 sm:px-12">
         {/* Reply button */}
         <div className={`p-2 rounded-full transition-colors duration-200 group ${
           hideReplies || !canReply
