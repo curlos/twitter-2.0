@@ -4,8 +4,38 @@ import { Session } from "next-auth/core/types";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { db } from "../../../firebase";
 import cryptoRandomString from 'crypto-random-string';
+
+// Universal Firebase initialization that works in both local and serverless environments
+const getFirebaseDb = () => {
+  try {
+    // Try to use the existing Firebase instance first (works locally)
+    if (typeof window === 'undefined') {
+      // Server-side: use dynamic import to avoid initialization issues
+      const { initializeApp, getApp, getApps } = require("firebase/app");
+      const { getFirestore } = require("firebase/firestore");
+
+      const firebaseConfig = {
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+      };
+
+      // Check if Firebase is already initialized
+      const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+      const db = getFirestore(app);
+      return db;
+    }
+    return null;
+  } catch (error) {
+    console.error('Firebase initialization failed:', error);
+    return null;
+  }
+};
 
 // Helper function to add timeout to Firebase operations for serverless compatibility
 const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<T> => {
@@ -73,6 +103,7 @@ export const authOptions = {
 
         try {
           // Check if db is properly initialized
+          const db = getFirebaseDb();
           if (!db) {
             console.error('Firebase db not initialized in credentials provider');
             return null;
@@ -134,6 +165,7 @@ export const authOptions = {
       if (trigger === "update" && token.sub) {
         try {
           // Check if db is properly initialized
+          const db = getFirebaseDb();
           if (!db) {
             console.error('Firebase db not initialized in JWT callback');
             return token;
@@ -172,6 +204,7 @@ export const authOptions = {
         // If we have a UID, use direct document lookup (handles email changes properly)
         try {
           // Check if db is properly initialized
+          const db = getFirebaseDb();
           if (!db) {
             console.error('Firebase db not initialized in session callback');
             return session;
@@ -204,6 +237,7 @@ export const authOptions = {
       // Fall back to email lookup for initial sessions (when UID not yet set)
       if (!userFound) {
         // Check if db is properly initialized
+        const db = getFirebaseDb();
         if (!db) {
           console.error('Firebase db not initialized in session email fallback');
           return session;
