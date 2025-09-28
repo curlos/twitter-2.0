@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { Session } from "next-auth/core/types";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import cryptoRandomString from 'crypto-random-string';
 
 // Universal Firebase initialization that works in both local and serverless environments
