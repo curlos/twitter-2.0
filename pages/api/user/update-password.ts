@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { db } from '../../../firebase';
 import { authOptions } from '../auth/[...nextauth]';
 

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { db } from '../../../firebase';
 import cryptoRandomString from 'crypto-random-string';
 
