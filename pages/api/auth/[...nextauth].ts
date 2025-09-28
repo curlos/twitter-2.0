@@ -1,4 +1,3 @@
-import { addDoc, collection, onSnapshot, query, serverTimestamp, getDoc, where, getDocs, doc } from "firebase/firestore";
 import NextAuth from "next-auth";
 import { Session } from "next-auth/core/types";
 import GoogleProvider from "next-auth/providers/google";
@@ -9,9 +8,8 @@ import cryptoRandomString from 'crypto-random-string';
 // Universal Firebase initialization that works in both local and serverless environments
 const getFirebaseDb = () => {
   try {
-    // Try to use the existing Firebase instance first (works locally)
+    // Server-side: use dynamic import to avoid initialization issues
     if (typeof window === 'undefined') {
-      // Server-side: use dynamic import to avoid initialization issues
       const { initializeApp, getApp, getApps } = require("firebase/app");
       const { getFirestore } = require("firebase/firestore");
 
@@ -37,6 +35,20 @@ const getFirebaseDb = () => {
   }
 };
 
+// Get Firebase functions dynamically to avoid module-level imports
+const getFirebaseFunctions = () => {
+  try {
+    if (typeof window === 'undefined') {
+      const { addDoc, collection, query, serverTimestamp, getDoc, where, getDocs, doc } = require("firebase/firestore");
+      return { addDoc, collection, query, serverTimestamp, getDoc, where, getDocs, doc };
+    }
+    return null;
+  } catch (error) {
+    console.error('Firebase functions import failed:', error);
+    return null;
+  }
+};
+
 // Helper function to add timeout to Firebase operations for serverless compatibility
 const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<T> => {
   return Promise.race([
@@ -53,10 +65,14 @@ const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<
  * @returns {DocumentReference<DocumentData>}
  */
 const addNewUser = async (session: Session) => {
-  // Check if db is properly initialized
-  if (!db) {
-    throw new Error('Firebase db not initialized');
+  const db = getFirebaseDb();
+  const firebase = getFirebaseFunctions();
+
+  if (!db || !firebase) {
+    throw new Error('Firebase not initialized');
   }
+
+  const { addDoc, collection, query, serverTimestamp, where, getDocs } = firebase;
 
   // Go into the database and attempt to find a user with the same username (or tag) as the one the current user is to trying to create an account with.
   const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag));
@@ -65,7 +81,7 @@ const addNewUser = async (session: Session) => {
 
   // If the username that was entered does not exist, then use that username.
   // Else if the username is already taken, then a random crypto string will be added to the end with a length of 6.
-  const userTag = qUserSnap.docs.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 });
+  const userTag = (qUserSnap as any)?.docs?.length === 0 ? session.user.tag : session.user.tag + cryptoRandomString({ length: 6 });
 
   // Add this user to the "users" collection, thus creating a NEW user.
   const docRef = await addDoc(collection(db, 'users'), {
@@ -94,7 +110,6 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        console.log(db)
         console.log('LOGGING IN....')
 
         if (!credentials?.email || !credentials?.password) {
@@ -102,23 +117,26 @@ export const authOptions = {
         }
 
         try {
-          // Check if db is properly initialized
           const db = getFirebaseDb();
-          if (!db) {
-            console.error('Firebase db not initialized in credentials provider');
+          const firebase = getFirebaseFunctions();
+
+          if (!db || !firebase) {
+            console.error('Firebase not initialized in credentials provider');
             return null;
           }
+
+          const { query, collection, where, getDocs } = firebase;
 
           // Look up user by email
           const q = query(collection(db, "users"), where('email', '==', credentials.email));
           const querySnapshot = await withTimeout(getDocs(q), 3000);
 
-          if (querySnapshot.docs.length === 0) {
+          if ((querySnapshot as any)?.docs?.length === 0) {
             return null; // User not found
           }
 
-          const userDoc = querySnapshot.docs[0];
-          const userData = userDoc.data();
+          const userDoc = (querySnapshot as any)?.docs?.[0];
+          const userData = userDoc?.data();
 
           // Check if password matches
           if (!userData.hashedPassword) {
@@ -164,16 +182,19 @@ export const authOptions = {
       // When update() is called, refresh user data from database
       if (trigger === "update" && token.sub) {
         try {
-          // Check if db is properly initialized
           const db = getFirebaseDb();
-          if (!db) {
-            console.error('Firebase db not initialized in JWT callback');
+          const firebase = getFirebaseFunctions();
+
+          if (!db || !firebase) {
+            console.error('Firebase not initialized in JWT callback');
             return token;
           }
 
+          const { getDoc, doc } = firebase;
+
           const userDoc = await withTimeout(getDoc(doc(db, 'users', token.sub)), 3000);
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
+          if ((userDoc as any)?.exists?.()) {
+            const userData = (userDoc as any)?.data?.();
 
             // Update token with fresh database data
             token.email = userData.email;
@@ -203,16 +224,19 @@ export const authOptions = {
       if (token.sub) {
         // If we have a UID, use direct document lookup (handles email changes properly)
         try {
-          // Check if db is properly initialized
           const db = getFirebaseDb();
-          if (!db) {
-            console.error('Firebase db not initialized in session callback');
+          const firebase = getFirebaseFunctions();
+
+          if (!db || !firebase) {
+            console.error('Firebase not initialized in session callback');
             return session;
           }
 
+          const { getDoc, doc } = firebase;
+
           const userDoc = await withTimeout(getDoc(doc(db, 'users', token.sub)), 3000);
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
+          if ((userDoc as any)?.exists?.()) {
+            const userData = (userDoc as any)?.data?.();
 
             // Update session with fresh data from database (including any email changes)
             session.user.email = userData.email;
@@ -236,24 +260,27 @@ export const authOptions = {
 
       // Fall back to email lookup for initial sessions (when UID not yet set)
       if (!userFound) {
-        // Check if db is properly initialized
         const db = getFirebaseDb();
-        if (!db) {
-          console.error('Firebase db not initialized in session email fallback');
+        const firebase = getFirebaseFunctions();
+
+        if (!db || !firebase) {
+          console.error('Firebase not initialized in session email fallback');
           return session;
         }
+
+        const { query, collection, where, getDocs } = firebase;
 
         const q = query(collection(db, "users"), where('email', '==', session.user.email));
         const querySnapshot = await withTimeout(getDocs(q), 3000);
 
-        if (querySnapshot.docs.length > 0) {
+        if ((querySnapshot as any)?.docs?.length > 0) {
           // Get values from the database of this existing user and set it inside the session object
-          const { name, tag, bio, location, website, dateJoined, profilePic, banner, email } = querySnapshot.docs[0].data();
+          const { name, tag, bio, location, website, dateJoined, profilePic, banner, email } = (querySnapshot as any)?.docs?.[0]?.data();
 
           session.user.email = email;
           session.user.name = name;
           session.user.tag = tag;
-          session.user.uid = querySnapshot.docs[0].id;
+          session.user.uid = (querySnapshot as any)?.docs?.[0]?.id;
           session.user.bio = bio;
           session.user.location = location;
           session.user.website = website;
@@ -278,14 +305,18 @@ export const authOptions = {
         const docRef = await withTimeout(addNewUser(session), 5000);
         session.user.uid = docRef.id;
 
-        const userDoc = await withTimeout(getDoc(docRef), 3000);
-        const { bio, location, website, dateJoined, tag } = userDoc.data();
+        const firebase = getFirebaseFunctions();
+        if (firebase) {
+          const { getDoc } = firebase;
+          const userDoc = await withTimeout(getDoc(docRef), 3000);
+          const { bio, location, website, dateJoined, tag } = (userDoc as any)?.data?.() || {};
 
-        session.user.tag = tag
-        session.user.bio = bio;
-        session.user.location = location;
-        session.user.website = website;
-        session.user.dateJoined = dateJoined;
+          session.user.tag = tag
+          session.user.bio = bio;
+          session.user.location = location;
+          session.user.website = website;
+          session.user.dateJoined = dateJoined;
+        }
       }
 
       return session;
