@@ -3,45 +3,58 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { ArrowLeftIcon, ExternalLinkIcon } from '@heroicons/react/outline';
 import AppLayout from '../components/Layout/AppLayout';
-import { getTopHeadlines } from '../services/news.service';
+import { getLatestNews } from '../services/news.service';
+import { latestNewsFromLateSeptember2025 } from '../latestNewsFromLateSeptember2025';
 
 interface NewsItem {
-  source: {
-    id: string | null;
-    name: string;
-  };
-  author: string | null;
+  article_id: string;
   title: string;
+  link: string;
+  creator: string[] | null;
   description: string;
-  url: string;
-  urlToImage: string | null;
-  publishedAt: string;
+  pubDate: string;
+  image_url: string | null;
+  source_name: string;
+  source_icon: string | null;
+  source_priority: number;
   content: string;
 }
 
-const Headlines: React.FC = () => {
+const News: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [headlines, setHeadlines] = useState<NewsItem[]>([]);
+  const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchHeadlines();
+    fetchLatestNews();
   }, [session, router]);
 
-  const fetchHeadlines = async () => {
+  const fetchLatestNews = async () => {
     try {
-      const cachedHeadlines = sessionStorage.getItem('topHeadlines');
+      const cachedLatestNews = sessionStorage.getItem('latestNews');
+      let newsData: NewsItem[] = [];
 
-      if (cachedHeadlines) {
-        setHeadlines(JSON.parse(cachedHeadlines));
+      if (cachedLatestNews) {
+        newsData = JSON.parse(cachedLatestNews);
       } else {
-        const data = await getTopHeadlines();
-        setHeadlines(data?.articles || []);
-        sessionStorage.setItem('topHeadlines', JSON.stringify(data?.articles || []));
+        const data = await getLatestNews();
+        newsData = data?.results || [];
+        sessionStorage.setItem('latestNews', JSON.stringify(newsData));
       }
+
+      // Use fallback data if newsData is empty or there's an error
+      if (newsData.length === 0) {
+        newsData = latestNewsFromLateSeptember2025;
+      }
+
+      const sortedNews = newsData.sort((a, b) => a.source_priority - b.source_priority);
+      setLatestNews(sortedNews);
     } catch (error) {
-      console.error('Error fetching headlines:', error);
+      console.error('Error fetching latest news:', error);
+      // Use fallback data when error occurs
+      const sortedFallbackNews = latestNewsFromLateSeptember2025.sort((a, b) => a.source_priority - b.source_priority);
+      setLatestNews(sortedFallbackNews);
     } finally {
       setLoading(false);
     }
@@ -57,12 +70,8 @@ const Headlines: React.FC = () => {
     });
   };
 
-  if (!session) {
-    return null;
-  }
-
   return (
-    <AppLayout title="Headlines - Twitter 2.0">
+    <AppLayout title="News - Twitter 2.0">
       <main className="flex-1 min-h-screen border-l border-r border-gray-200 dark:border-gray-800">
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 z-10">
@@ -74,8 +83,8 @@ const Headlines: React.FC = () => {
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-xl font-bold">Headlines</h1>
-              <p className="text-sm text-gray-500">Top news from the US</p>
+              <h1 className="text-xl font-bold">Latest News</h1>
+              <p className="text-sm text-gray-500">Latest news from the US</p>
             </div>
           </div>
         </div>
@@ -88,27 +97,37 @@ const Headlines: React.FC = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-800">
-              {headlines.map((article, index) => (
+              {latestNews.map((article, index) => (
                 <article
-                  key={article.url || index}
+                  key={article.link || index}
                   className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer"
-                  onClick={() => window.open(article.url, '_blank', 'noopener,noreferrer')}
+                  onClick={() => window.open(article.link, '_blank', 'noopener,noreferrer')}
                 >
                   <div className="md:flex md:gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="mb-2">
                         <div className="flex items-center gap-2 md:mb-0 mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-400">
-                            {article.source.name}
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-400 flex items-center gap-1">
+                            {article.source_icon && (
+                              <img
+                                src={article.source_icon}
+                                alt=""
+                                className="w-5 rounded"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            )}
+                            {article.source_name}
                           </span>
                           <span className="text-sm text-gray-500 hidden md:inline">•</span>
                           <span className="text-sm text-gray-500 hidden md:inline">
-                            {formatDate(article.publishedAt)}
+                            {formatDate(article.pubDate)}
                           </span>
                         </div>
                         <div className="md:hidden">
                           <span className="text-sm text-gray-500">
-                            {formatDate(article.publishedAt)}
+                            {formatDate(article.pubDate)}
                           </span>
                         </div>
                       </div>
@@ -117,10 +136,10 @@ const Headlines: React.FC = () => {
                       </h2>
 
                       {/* Mobile image placement - after headline */}
-                      {article.urlToImage && (
+                      {article.image_url && (
                         <div className="md:hidden mb-3">
                           <img
-                            src={article.urlToImage}
+                            src={article.image_url}
                             alt=""
                             className="w-full object-contain rounded-lg"
                             onError={(e) => {
@@ -135,13 +154,13 @@ const Headlines: React.FC = () => {
                           {article.description}
                         </p>
                       )}
-                      {article.author && (
+                      {article.creator && article.creator.length > 0 && (
                         <p className="text-sm text-gray-500 mb-2">
-                          By {article.author}
+                          By {article.creator[0]}
                         </p>
                       )}
                       <a
-                        href={article.url}
+                        href={article.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center text-lightblue-500 hover:text-lightblue-600 text-sm font-medium"
@@ -152,10 +171,10 @@ const Headlines: React.FC = () => {
                     </div>
 
                     {/* Desktop image placement - on the right */}
-                    {article.urlToImage && (
+                    {article.image_url && (
                       <div className="hidden md:block md:flex-shrink-0">
                         <img
-                          src={article.urlToImage}
+                          src={article.image_url}
                           alt=""
                           className="max-w-48 object-contain rounded-lg"
                           onError={(e) => {
@@ -175,4 +194,4 @@ const Headlines: React.FC = () => {
   );
 };
 
-export default Headlines;
+export default News;

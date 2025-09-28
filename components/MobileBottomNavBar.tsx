@@ -1,4 +1,4 @@
-import { CogIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
+import { CogIcon, NewspaperIcon } from '@heroicons/react/solid';
 import Link from 'next/link';
 import React from 'react';
 import { FaHome, FaSearch } from 'react-icons/fa';
@@ -27,6 +27,15 @@ const MobileBottomNavBar: React.FC = () => {
       {/* Clicking this will open the "Search" modal where users can type in whatever they want and filter the tweets shown by their query. */}
       <div className="flex-1 flex justify-center">
         <FaSearch className="h-6 w-6 cursor-pointer" onClick={() => setSearchModalOpen(true)} />
+      </div>
+
+      {/* Will redirect to the news page. */}
+      <div className="flex-1 flex justify-center">
+        <Link href={`/news`}>
+          <span>
+            <NewspaperIcon className="h-6 w-6 cursor-pointer" />
+          </span>
+        </Link>
       </div>
 
       {/* This is the settings icon. When it's clicked, it will open the "Sidenav" so the user can see all the full detailed stuff that couldn't fit on this MobileBottomNavBar. */}

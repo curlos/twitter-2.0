@@ -40,8 +40,8 @@ const Sidebar = () => {
       setActiveLink('profile');
     } else if (router.pathname.startsWith('/settings')) {
       setActiveLink('settings');
-    } else if (router.pathname.startsWith('/headlines')) {
-      setActiveLink('headlines');
+    } else if (router.pathname.startsWith('/news')) {
+      setActiveLink('news');
     } else {
       setActiveLink('home');
     }
@@ -63,7 +63,7 @@ const Sidebar = () => {
           <div className="hidden xl:block">Search</div>
         </div>
 
-        <SidebarLink text="News" Icon={NewspaperIcon} IconSolid={NewspaperIconSolid} active={activeLink === 'headlines'} />
+        <SidebarLink text="News" Icon={NewspaperIcon} IconSolid={NewspaperIconSolid} active={activeLink === 'news'} />
 
         {session && session.user && <SidebarLink text="Bookmarks" Icon={BookmarkIcon} IconSolid={BookmarkIconSolid} active={activeLink === 'bookmarks'} />}
 

@@ -1,392 +1,392 @@
-export const latestNewsFromLateSeptember2025 = {
-    "status":"success",
-    "totalResults":15760,
-    "results":[
-        {
-            "article_id":"ffcf86dd5c7a1887781a3f08b626ce17",
-            "title":"Deion Sanders's Message to Players After Colorado's Loss to BYU",
-            "link":"https://www.si.com/college/colorado/football/deion-sanders-colorado-buffaloes-byu-cougars-postgame-coach-prime-kaidon-salter-big-12-conference-college-football",
-            "keywords":[
-                "colorado buffaloes,byu,deion sanders,coach prime,colorado buffaloes football,boulder,byu cougars ,big 12 ,kaidon salter,drelon miller,bear bachmeier,lj martin,kalani sitake,micah welch,folsom field ,defensive line,dj mckinney,omarion miller"
-            ],
-            "creator":[
-                "Harrison Simeon"
-            ],
-            "description":"The Colorado Buffaloes let a possible upset slip through their fingers on Saturday night, falling 24-21 to the No. 25 BYU Cougars. Coach Deion Sanders' clock management and offensive coordinator Pat Shurmur's game plan once again took heat.",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:46:27",
-            "pubDateTZ":"UTC",
-            "image_url":"https://images2.minutemediacdn.com/image/upload/c_crop,w_6000,h_3375,x_0,y_43/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/buffs_beat/01k67meztr2p678w8afw.jpg",
-            "video_url":null,
-            "source_id":"si",
-            "source_name":"Si",
-            "source_priority":2050,
-            "source_url":"https://www.si.com",
-            "source_icon":"https://n.bytvi.com/si.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "sports"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"36b190f1980c6ac0ce25f0342a2c53c8",
-            "title":"Caught early, puppy can survive MUO",
-            "link":"https://www.bostonherald.com/2025/09/28/caught-early-puppy-can-survive-muo/",
-            "keywords":[
-                "health",
-                "ask the vet",
-                "advice",
-                "news",
-                "things to do",
-                "lifestyle"
-            ],
-            "creator":[
-                "Dr. John De Jong"
-            ],
-            "description":"The puppy was disoriented and had had a seizure which prompted the visit to the emergency center.",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:46:23",
-            "pubDateTZ":"UTC",
-            "image_url":"https://www.bostonherald.com/wp-content/uploads/migration/2014/04/28/062418vet2.jpg?strip=all&w=1400px",
-            "video_url":null,
-            "source_id":"bostonherald",
-            "source_name":"Boston Herald",
-            "source_priority":9319,
-            "source_url":"https://www.bostonherald.com",
-            "source_icon":"https://n.bytvi.com/bostonherald.jpg",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "crime",
-                "health"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"3ecac1c7357142bf4f2424c03c1ed1b1",
-            "title":"Leonardo DiCaprio Good Genes or Good Docs?!",
-            "link":"https://www.tmz.com/2025/09/28/leonardo-dicaprio-good-genes-or-good-docs/",
-            "keywords":null,
-            "creator":[
-                "TMZ Staff"
-            ],
-            "description":"Leonardo DiCaprio looks over the years will have your HEART GO ON 😍! Here is a 21-year-old version of the Los Angeles native playing his breakout role -- the hunky Jack Dawson in \"Titanic\" -- back in 1997 (left). He went on to star in several... Permalink",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:59",
-            "pubDateTZ":"UTC",
-            "image_url":"https://imagez.tmz.com/image/d5/4by3/2025/09/23/d5573a5faa0b4bbaa4a24af80d4cde9f_md.jpg",
-            "video_url":null,
-            "source_id":"tmz",
-            "source_name":"Tmz",
-            "source_priority":2558,
-            "source_url":"http://www.tmz.com",
-            "source_icon":"https://n.bytvi.com/tmz.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "entertainment"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"cb618a9795784b00124fd90869a39cb1",
-            "title":"Marc Márquez vuelve a ser campeón del mundo de MotoGP",
-            "link":"https://www.infobae.com/america/agencias/2025/09/28/marc-marquez-vuelve-a-ser-campeon-del-mundo-de-motogp/",
-            "keywords":[
-                "europapress"
-            ],
-            "creator":[
-                "Newsroom Infobae"
-            ],
-            "description":"Marc Márquez vuelve a ser campeón del mundo de MotoGP",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:33",
-            "pubDateTZ":"UTC",
-            "image_url":"https://www.infobae.com/resizer/v2/PY3HIPWTONFPXDLJ3WJGAJXNBQ.jpg?auth=f6150a08f65af36637988c0d6bbc92e8e17f47ea6c12e744a8ca42d6ea6c26ba&height=675&quality=85&smart=true&width=1200",
-            "video_url":null,
-            "source_id":"infobae",
-            "source_name":"Infobae",
-            "source_priority":1056,
-            "source_url":"https://www.infobae.com",
-            "source_icon":"https://n.bytvi.com/infobae.png",
-            "language":"spanish",
-            "country":[
-                "united states of america",
-                "colombia",
-                "mexico",
-                "argentina"
-            ],
-            "category":[
-                "lifestyle",
-                "top"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":true
-        },
-        {
-            "article_id":"d5df7c45da6b6ac608be2e411190d190",
-            "title":"Aviso amarillo por lluvias y tormentas este domingo en varias comunidades autónomas",
-            "link":"https://www.infobae.com/america/agencias/2025/09/28/aviso-amarillo-por-lluvias-y-tormentas-este-domingo-en-varias-comunidades-autonomas/",
-            "keywords":[
-                "europapress"
-            ],
-            "creator":[
-                "Newsroom Infobae"
-            ],
-            "description":"Aviso amarillo por lluvias y tormentas este domingo en varias comunidades autónomas",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:16",
-            "pubDateTZ":"UTC",
-            "image_url":"https://www.infobae.com/resizer/v2/S7X4J4FJOVFZTGL5HL3QCDIZ54.jpg?auth=3602c7bf42c519ccd0f5ec74ff7444b886dbdfcab40f1d6fd2e5158b6517818f&height=675&quality=85&smart=true&width=1200",
-            "video_url":null,
-            "source_id":"infobae",
-            "source_name":"Infobae",
-            "source_priority":1056,
-            "source_url":"https://www.infobae.com",
-            "source_icon":"https://n.bytvi.com/infobae.png",
-            "language":"spanish",
-            "country":[
-                "united states of america",
-                "colombia",
-                "mexico",
-                "argentina"
-            ],
-            "category":[
-                "lifestyle",
-                "top"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":true
-        },
-        {
-            "article_id":"09f616f1de97daf68ed9a139d34f733d",
-            "title":"US homeowners are quickly adopting these 'plug-and-play' alternatives to rooftop solar panels: 'It fixes our energy cost'",
-            "link":"https://www.yahoo.com/lifestyle/articles/us-homeowners-quickly-adopting-plug-074500502.html",
-            "keywords":[
-                "solar energy",
-                "rooftop solar",
-                "matthew milner",
-                "energy savings",
-                "energysage",
-                "energy",
-                "kqed"
-            ],
-            "creator":[
-                "The Cool Down"
-            ],
-            "description":"It’s part of an amazing time for suncatchers.",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:00",
-            "pubDateTZ":"UTC",
-            "image_url":"https://s.yimg.com/ny/api/res/1.2/TZgNJZhv2AK3776lrOfyAg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02ODY7Y2Y9d2VicA--/https://media.zenfs.com/en/the_cool_down_737/323ed7d2bd2ba65d7a43881b8bffe37d",
-            "video_url":null,
-            "source_id":"yahoo",
-            "source_name":"Yahoo! News",
-            "source_priority":17,
-            "source_url":"https://news.yahoo.com",
-            "source_icon":"https://n.bytvi.com/yahoo.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "business",
-                "environment",
-                "top"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"dcf22c4e31c52c21181884a341eed431",
-            "title":"Housing, homelessness and ICE: Conservative faces progressive in northwest Spokane council race - Sun, 28 Sep 2025 PST",
-            "link":"http://www.spokesman.com/stories/2025/sep/28/housing-homelessness-and-ice-conservative-faces-pr/",
-            "keywords":null,
-            "creator":[
-                "Amanda Sullender"
-            ],
-            "description":"The race between Spokane city councilman Jonathan Bingle and community organizer Sarah Dixit provides a sharp contrast for voters in northeast Spokane.",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:00",
-            "pubDateTZ":"UTC",
-            "image_url":"https://thumb.spokesman.com/sKNgzIeXx7l7q7sfifVVqYRN1Vo=/1200x800/smart/media.spokesman.com/photos/2025/09/26/68d72a461874c.hires.jpg",
-            "video_url":null,
-            "source_id":"spokesman",
-            "source_name":"Spokesman",
-            "source_priority":6464,
-            "source_url":"https://www.spokesman.com",
-            "source_icon":"https://n.bytvi.com/spokesman.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "politics",
-                "top"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"c971c5966af67e7b90e96d897a527445",
-            "title":"How to customize the Control Center in macOS Tahoe 26",
-            "link":"https://www.tomsguide.com/computing/macos/how-to-customize-the-control-center-in-macos-tahoe-26",
-            "keywords":[
-                "operating systems",
-                "macos",
-                "software",
-                "computing"
-            ],
-            "creator":[
-                "David Crookes"
-            ],
-            "description":"The Control Center in macOS Tahoe can now be changed to how you like it. Here's how",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:45:00",
-            "pubDateTZ":"UTC",
-            "image_url":"https://cdn.mos.cms.futurecdn.net/e9ve6YT5G3vircCWjLi6jJ-1280-80.jpg",
-            "video_url":null,
-            "source_id":"tomsguide",
-            "source_name":"Tom's Guide",
-            "source_priority":203,
-            "source_url":"https://www.tomsguide.com",
-            "source_icon":"https://n.bytvi.com/tomsguide.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "technology"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"ece99b6a45facb5d25b5de62aa2a9f79",
-            "title":"Here's Precisely How Much Social Security's 2026 Cost-of-Living Adjustment (COLA) Is Projected to Raise Benefits - The Motley Fool",
-            "link":"https://news.google.com/rss/articles/CBMimAFBVV95cUxNYkdRcDNyTU5POFNRWTYzcUdBRDlpX3YtM09hWFpZSzRKWUt0cDVvbnhROTB5UjRwRlZqSnI5bzdaa29iTnE5dkZIOVhqY2h6S2RhWGVrUGY5cmZBb2JUTFFtRnZTbGd2UUEyLTBUSTdDYWRjVHIxcWVIc0c3dmdkYzZiVlBjcVN6UjgwVEc4cmkySGtmQ0U2Rg?oc=5",
-            "keywords":null,
-            "creator":null,
-            "description":"Here's Precisely How Much Social Security's 2026 Cost-of-Living Adjustment (COLA) Is Projected to Raise Benefits The Motley FoolWhat All Retirees Need to Know About Social Security in 2025 AOL.comSocial Security is changing in 2026 for recipients. Here's what to know in Tennessee The Commercial AppealHow much will Social Security increase in 2026? CNBC5 big changes coming to Social Security in 2026 that may surprise retirees USA Today",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:44:00",
-            "pubDateTZ":"UTC",
-            "image_url":null,
-            "video_url":null,
-            "source_id":"google",
-            "source_name":"Google News",
-            "source_priority":14,
-            "source_url":"https://news.google.com",
-            "source_icon":"https://n.bytvi.com/google.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "business"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        },
-        {
-            "article_id":"8634085938add28af0dfa864646eca32",
-            "title":"Atletico score 5 vs Real Madrid for first time in 75 years, Alvarez stars",
-            "link":"https://www.business-standard.com/sports/football-news/atletico-score-5-vs-real-madrid-for-first-time-in-75-years-alvarez-stars-125092800147_1.html",
-            "keywords":null,
-            "creator":null,
-            "description":"The last time Julin lvarez faced Real Madrid, his mishap in a penalty shootout led to another painful loss for Atletico Madrid.lvarez redeemed himself on Saturday when he scored two goals to fuel a memorable 5-2 rout of Atletico's fiercest rival in a La Liga derby. It was the first time in 75 years that Atletico scored five goals against its crosstown rival.The Argentina striker stole the show from Kylian Mbapp, who scored as Madrid built a 2-1 lead. lvarez converted a penalty to put the hosts ahead 3-2 early in the second half before he added a second goal with a curling free kick.Diego Simeone's Atletico dealt Xabi Alonso his first loss of the season after Madrid had won all six La Liga games and its Champions League opener. Alonso's only other loss since taking over as Madrid's coach in the summer was against Paris Saint-Germain in the Club World Cup semifinals in July.Barcelona can overtake leader Madrid with a win at Real Sociedad on Sunday. Atletico moved into fourth plac",
-            "content":"ONLY AVAILABLE IN PAID PLANS",
-            "pubDate":"2025-09-28 07:43:34",
-            "pubDateTZ":"UTC",
-            "image_url":null,
-            "video_url":null,
-            "source_id":"business-standard",
-            "source_name":"Business Standard",
-            "source_priority":9158,
-            "source_url":"https://www.business-standard.com",
-            "source_icon":"https://n.bytvi.com/business-standard.png",
-            "language":"english",
-            "country":[
-                "united states of america"
-            ],
-            "category":[
-                "top",
-                "sports"
-            ],
-            "sentiment":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "sentiment_stats":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_tag":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "ai_region":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_org":"ONLY AVAILABLE IN CORPORATE PLANS",
-            "ai_summary":"ONLY AVAILABLE IN PAID PLANS",
-            "ai_content":"ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
-            "duplicate":false
-        }
-    ],
-    "nextPage":"1759045414003178059"
-}
+export const latestNewsFromLateSeptember2025 = [
+    {
+        "article_id": "d8e83862d0318964ed49d3d3dc49c19d",
+        "title": "What is APR? How to think about your card's annual percentage rate",
+        "link": "https://qz.com/what-is-apr",
+        "keywords": [
+            "personal finance",
+            "money & markets"
+        ],
+        "creator": [
+            "Richard Stockton"
+        ],
+        "description": "Learn what APR is, how it works, and why it matters when comparing loans and credit — so you can borrow smarter",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:11:50",
+        "pubDateTZ": "UTC",
+        "image_url": "https://qz.com/cdn-cgi/image/width=600,quality=85,format=auto/https://assets.qz.com/media/Pexels-7821470.jpg",
+        "video_url": null,
+        "source_id": "quartz",
+        "source_name": "Quartz",
+        "source_priority": 5329,
+        "source_url": "https://qz.com/latest",
+        "source_icon": "https://n.bytvi.com/quartz.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "business",
+            "top"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "24280f2755428f45a3a1aacb7aab94ce",
+        "title": "How do you freeze your credit?",
+        "link": "https://qz.com/how-freeze-credit-experian-equifax-transunion",
+        "keywords": [
+            "personal finance",
+            "money & markets"
+        ],
+        "creator": [
+            "Richard Stockton"
+        ],
+        "description": "Learn how to freeze your credit, protect your identity, and manage your accounts with Experian, Equifax, and TransUnion",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:11:42",
+        "pubDateTZ": "UTC",
+        "image_url": "https://qz.com/cdn-cgi/image/width=600,quality=85,format=auto/https://assets.qz.com/media/Pexels-3784391.jpg",
+        "video_url": null,
+        "source_id": "quartz",
+        "source_name": "Quartz",
+        "source_priority": 5329,
+        "source_url": "https://qz.com/latest",
+        "source_icon": "https://n.bytvi.com/quartz.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "business",
+            "top"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "03350aa596f0a640ec7f6a11c031980c",
+        "title": "Sam Altman knows people don't want to chat a snitch",
+        "link": "https://qz.com/sam-altman-privacy-protections-chatgpt",
+        "keywords": [
+            "a.i.",
+            "tech & innovation"
+        ],
+        "creator": [
+            "Hannah Parker"
+        ],
+        "description": "The OpenAI CEO wants the same privacy protections given to doctors and lawyers to protect ChatGPT users' data from lawsuits",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:11:37",
+        "pubDateTZ": "UTC",
+        "image_url": "https://qz.com/cdn-cgi/image/width=600,quality=85,format=auto/https://assets.qz.com/media/GettyImages-2236544160.jpg",
+        "video_url": null,
+        "source_id": "quartz",
+        "source_name": "Quartz",
+        "source_priority": 5329,
+        "source_url": "https://qz.com/latest",
+        "source_icon": "https://n.bytvi.com/quartz.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "health",
+            "top"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "44bb75cc29340497b5e50e9d0144c9da",
+        "title": "'It's like a motivational boost' - Evenepoel looking to emulate TT glory in Road Race",
+        "link": "https://www.tntsports.co.uk/cycling/uci-road-world-championships/2025/its-like-a-motivational-boost-remco-evenepoel-looking-to-emulate-uci-world-championships-time-trial-glory-in-road-race_vid60030819/video.shtml",
+        "keywords": null,
+        "creator": [
+            "TNT Sports"
+        ],
+        "description": "Following his victory in the Men's Time Trial, Remco Evenepoel says he is aiming for more success in the Road Race at the UCI World Championships.",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:11:13",
+        "pubDateTZ": "UTC",
+        "image_url": "https://i.eurosport.com/2025/09/28/image-fd99b6fd-f101-45b1-bbfe-14e05a06f492-68-310-310.jpeg",
+        "video_url": null,
+        "source_id": "eurosport_com",
+        "source_name": "Eurosport",
+        "source_priority": 5064,
+        "source_url": "https://www.eurosport.com",
+        "source_icon": "https://n.bytvi.com/eurosport_com.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "sports"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "a86b849ae923241a4b7037db4c53d5ff",
+        "title": "A former cashier's dream of creating a Lowe's Halloween decoration came true. It took 70 tries",
+        "link": "https://qz.com/lowes-associate-halloween-decoration-party-skeleton",
+        "keywords": [
+            "retail",
+            "business news"
+        ],
+        "creator": [
+            "Chris Morris"
+        ],
+        "description": "A three-foot tall dancing animatronic is one of the season's top-selling decorations. Here's the unlikely story of how it came to be",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:11:13",
+        "pubDateTZ": "UTC",
+        "image_url": "https://qz.com/cdn-cgi/image/width=600,quality=85,format=auto/https://assets.qz.com/media/Amanual%20Coleman%20party%20skeleton.png",
+        "video_url": null,
+        "source_id": "quartz",
+        "source_name": "Quartz",
+        "source_priority": 5329,
+        "source_url": "https://qz.com/latest",
+        "source_icon": "https://n.bytvi.com/quartz.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "lifestyle",
+            "top"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "8bedecfc916be04161068063a9822c6d",
+        "title": "Adin Ross crashes out after losing near $800,000 UFC bet in the final fight of his five-bout combo",
+        "link": "https://bloodyelbow.com/2025/09/28/adin-ross-crashes-out-after-losing-near-800000-ufc-bet-in-the-final-fight-of-his-five-bout-combo/",
+        "keywords": [
+            "dominick reyes",
+            "adin ross",
+            "carlos ulberg",
+            "ufc",
+            "ufc perth"
+        ],
+        "creator": [
+            "Kyle Dimond"
+        ],
+        "description": "Adin Ross was locked in for the UFC Perth main event only to be left stunned within a matter of minutes. The popular streamer has...",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:10:14",
+        "pubDateTZ": "UTC",
+        "image_url": "https://bloodyelbow.com/wp-content/uploads/1/2025/09/carlos-ulberg-dominick-reyes-adin-ross-1759050130224-1-1024x576.jpg",
+        "video_url": null,
+        "source_id": "bloodyelbow",
+        "source_name": "Bloody Elbow",
+        "source_priority": 8768,
+        "source_url": "https://www.bloodyelbow.com",
+        "source_icon": "https://n.bytvi.com/bloodyelbow.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "sports"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "33fbd21b386577e3285ee4e5086a16bf",
+        "title": "CFP Projections After Wild Week 5 — Could Indiana Get a Home Game?",
+        "link": "https://www.si.com/college/indiana/football/cfp-projections-week-5-reactions-oregon-ohio-state-hoosiers",
+        "keywords": [
+            "indiana,college football,ohio state,college football playoff,penn state,projections,oregon,oregon vs penn state"
+        ],
+        "creator": [
+            "Nick Shepkowski"
+        ],
+        "description": "Indiana didn't have its most impressive win Saturday, but it survived and advanced in what is shaping up to be an epic college football season.",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:08:53",
+        "pubDateTZ": "UTC",
+        "image_url": "https://images2.minutemediacdn.com/image/upload/c_crop,w_8256,h_4644,x_0,y_129/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/hoosiers_now/01k67p9dts2t3wr28qq5.jpg",
+        "video_url": null,
+        "source_id": "si",
+        "source_name": "Si",
+        "source_priority": 2050,
+        "source_url": "https://www.si.com",
+        "source_icon": "https://n.bytvi.com/si.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "sports"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "fce2ef4d65e14767cabd269c88803674",
+        "title": "Russia launches deadly aerial attack on Ukraine as Poland scrambles jets",
+        "link": "https://www.nbcnews.com/world/europe/russia-launches-deadly-aerial-attack-ukraine-poland-scrambles-jets-rcna234191",
+        "keywords": [
+            "news"
+        ],
+        "creator": [
+            "Freddie Clayton"
+        ],
+        "description": "Russia launched a massive aerial assault on Ukraine’s capital and across the country early Sunday, killing at least four people, including a 12-year-old girl, the Ukrainian government said.",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:08:50",
+        "pubDateTZ": "UTC",
+        "image_url": "https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/rockcms/2025-09/20250928-ukraine-attack-jj-507a-1cb63c.jpg",
+        "video_url": null,
+        "source_id": "nbcnews",
+        "source_name": "Nbc News",
+        "source_priority": 175,
+        "source_url": "https://www.nbcnews.com",
+        "source_icon": "https://n.bytvi.com/nbcnews.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "world"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "528a8e62b2a8d4d0d7f7c18a77c29f4f",
+        "title": "Large Russian drone, missile attack on Kyiv kills 4 and wounds at least 10",
+        "link": "https://nypost.com/2025/09/28/world-news/large-russian-drone-and-missile-attack-on-kyiv-kills-4-and-wounds-at-least-10/",
+        "keywords": [
+            "kyiv",
+            "russia",
+            "ukraine war",
+            "volodymyr zelensky",
+            "vladimir putin",
+            "putin"
+        ],
+        "creator": [
+            "Associated Press"
+        ],
+        "description": "The capital city of Kyiv suffered from the heaviest assault on Sunday.",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:08:40",
+        "pubDateTZ": "UTC",
+        "image_url": "https://nypost.com/wp-content%2Fuploads%2Fsites%2F2%2F2025%2F09%2Fnewspress-collage-oa9o74xuh-1759049960221.jpg?quality%3D90%26strip%3Dall%261759035608=",
+        "video_url": null,
+        "source_id": "nypost",
+        "source_name": "New York Post",
+        "source_priority": 643,
+        "source_url": "https://nypost.com",
+        "source_icon": "https://n.bytvi.com/nypost.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "world"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    },
+    {
+        "article_id": "64ce5a528de365266f5986488bce0fe6",
+        "title": "Three Dead, Others Injured After Someone on a Boat Opened Fire on a Restaurant",
+        "link": "https://www.breitbart.com/2nd-amendment/2025/09/28/three-dead-others-injured-after-someone-on-a-boat-opened-fire-on-a-restaurant/",
+        "keywords": [
+            "murder",
+            "2nd amendment",
+            "boat",
+            "shooting",
+            "politics"
+        ],
+        "creator": [
+            "AWR Hawkins"
+        ],
+        "description": "Three people are dead and eight others injured after someone on a boat pulled up by Southport, North Carolina's American Fish Company and opened fire. The post Three Dead, Others Injured After Someone on a Boat Opened Fire on a Restaurant appeared first on Breitbart.",
+        "content": "ONLY AVAILABLE IN PAID PLANS",
+        "pubDate": "2025-09-28 09:08:15",
+        "pubDateTZ": "UTC",
+        "image_url": "https://media.breitbart.com/media/2024/08/police-tape-640x480.jpeg",
+        "video_url": null,
+        "source_id": "breitbart",
+        "source_name": "Brietbart",
+        "source_priority": 1399,
+        "source_url": "https://www.breitbart.com",
+        "source_icon": "https://n.bytvi.com/breitbart.png",
+        "language": "english",
+        "country": [
+            "united states of america"
+        ],
+        "category": [
+            "crime",
+            "top"
+        ],
+        "sentiment": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "sentiment_stats": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_tag": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "ai_region": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_org": "ONLY AVAILABLE IN CORPORATE PLANS",
+        "ai_summary": "ONLY AVAILABLE IN PAID PLANS",
+        "ai_content": "ONLY AVAILABLE IN PROFESSIONAL AND CORPORATE PLANS",
+        "duplicate": false
+    }
+]

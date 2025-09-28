@@ -3,7 +3,8 @@ import {
   UserIcon,
   LogoutIcon,
   LoginIcon,
-  CogIcon
+  CogIcon,
+  NewspaperIcon
 } from "@heroicons/react/outline";
 import { signOut, useSession } from "next-auth/react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -46,6 +47,13 @@ const SidenavDrawer = () => {
               <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
                 <FaHome className="h-7 w-7" />
                 Home
+              </div>
+            </Link>
+
+            <Link href="/news">
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsOpen(false)}>
+                <NewspaperIcon className="h-7 w-7" />
+                News
               </div>
             </Link>
 

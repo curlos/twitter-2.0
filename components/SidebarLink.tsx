@@ -30,7 +30,7 @@ const SidebarLink = ({ text, Icon, IconSolid, active, tag }: Props) => {
       case 'Settings':
         return `/settings`;
       case 'News':
-        return '/headlines'
+        return '/news'
       case 'Login':
         return '/auth'
       case 'Signup':

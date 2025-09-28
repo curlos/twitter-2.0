@@ -14,10 +14,10 @@ const getTopHeadlines = async (country = 'us') => {
     }
 };
 
-const getLatestNews = async (country = 'us') => {
+const getLatestNews = async () => {
     try {
         const response = await fetch(
-            `https://newsdata.io/api/1/latest?apikey=${process.env.NEXT_PUBLIC_NEWSDATA_API_KEY}&country=${country}&prioritydomain=top`,
+            `https://newsdata.io/api/1/latest?apikey=${process.env.NEXT_PUBLIC_NEWSDATA_API_KEY}&language=en&country=us&prioritydomain=top&removeduplicate=1`,
             {
                 method: 'GET'
             }
