@@ -2,7 +2,7 @@ import { SearchIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import SmallEvent from './SmallEvent';
-import { getTopHeadlines } from '../services/news.service';
+import { getLatestNews } from '../services/news.service';
 import { useDebounceSearch } from '../hooks/useDebounceSearch';
 
 /**
@@ -32,15 +32,17 @@ const Widgets = () => {
         setTopHeadlines(JSON.parse(topHeadlinesInCache));
       } else {
         // Get's the top headlines and sets it.
-        const data = await getTopHeadlines();
-        setTopHeadlines(data?.articles || []);
+        const data = await getLatestNews();
+        setTopHeadlines(data?.results || []);
         // Set the headlines in the cache for later retrieval if need be.
-        sessionStorage.setItem('topHeadlines', JSON.stringify(data?.articles || []));
+        sessionStorage.setItem('topHeadlines', JSON.stringify(data?.results || []));
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  console.log(topHeadlines)
 
   return (
     <div className="hidden px-3 py-2 space-y-5 lg:block">
@@ -57,9 +59,9 @@ const Widgets = () => {
         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
           <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
 
-          {topHeadlines && topHeadlines.length > 0 && topHeadlines.slice(0, 5).map((news) => (
+          {/* {topHeadlines && topHeadlines.length > 0 && topHeadlines.slice(0, 5).map((news) => (
             <SmallEvent key={news.url} news={news} />
-          ))}
+          ))} */}
 
           <button
             className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3"
