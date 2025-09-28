@@ -8,14 +8,14 @@ import { db } from "../../../firebase";
 import cryptoRandomString from 'crypto-random-string';
 
 // Helper function to add timeout to Firebase operations for serverless compatibility
-// const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<T> => {
-//   return Promise.race([
-//     promise,
-//     new Promise<T>((_, reject) =>
-//       setTimeout(() => reject(new Error('Firebase operation timeout')), timeoutMs)
-//     )
-//   ]);
-// };
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error('Firebase operation timeout')), timeoutMs)
+    )
+  ]);
+};
 
 /**
  * @description
@@ -30,8 +30,8 @@ const addNewUser = async (session: Session) => {
 
   // Go into the database and attempt to find a user with the same username (or tag) as the one the current user is to trying to create an account with.
   const qUser = query(collection(db, "users"), where('tag', '==', session.user.tag));
-  // Using that queried user, get their docs.
-  const qUserSnap = await getDocs(qUser);
+  // Using that queried user, get their docs with timeout.
+  const qUserSnap = await withTimeout(getDocs(qUser), 3000);
 
   // If the username that was entered does not exist, then use that username.
   // Else if the username is already taken, then a random crypto string will be added to the end with a length of 6.
@@ -80,7 +80,7 @@ export const authOptions = {
 
           // Look up user by email
           const q = query(collection(db, "users"), where('email', '==', credentials.email));
-          const querySnapshot = await getDocs(q);
+          const querySnapshot = await withTimeout(getDocs(q), 3000);
 
           if (querySnapshot.docs.length === 0) {
             return null; // User not found
@@ -139,7 +139,7 @@ export const authOptions = {
             return token;
           }
 
-          const userDoc = await getDoc(doc(db, 'users', token.sub));
+          const userDoc = await withTimeout(getDoc(doc(db, 'users', token.sub)), 3000);
           if (userDoc.exists()) {
             const userData = userDoc.data();
 
@@ -177,7 +177,7 @@ export const authOptions = {
             return session;
           }
 
-          const userDoc = await getDoc(doc(db, 'users', token.sub));
+          const userDoc = await withTimeout(getDoc(doc(db, 'users', token.sub)), 3000);
           if (userDoc.exists()) {
             const userData = userDoc.data();
 
@@ -210,7 +210,7 @@ export const authOptions = {
         }
 
         const q = query(collection(db, "users"), where('email', '==', session.user.email));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await withTimeout(getDocs(q), 3000);
 
         if (querySnapshot.docs.length > 0) {
           // Get values from the database of this existing user and set it inside the session object
@@ -241,10 +241,10 @@ export const authOptions = {
           .toLocaleLowerCase();
         session.user.profilePic = session.user.image;
 
-        const docRef = await addNewUser(session);
+        const docRef = await withTimeout(addNewUser(session), 5000);
         session.user.uid = docRef.id;
 
-        const userDoc = await getDoc(docRef);
+        const userDoc = await withTimeout(getDoc(docRef), 3000);
         const { bio, location, website, dateJoined, tag } = userDoc.data();
 
         session.user.tag = tag
