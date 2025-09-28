@@ -31,6 +31,10 @@ const SidebarLink = ({ text, Icon, IconSolid, active, tag }: Props) => {
         return `/settings`;
       case 'News':
         return '/headlines'
+      case 'Login':
+        return '/auth'
+      case 'Signup':
+        return '/auth?sign-up=true'
       default:
         return '/';
     }

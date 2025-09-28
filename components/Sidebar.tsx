@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid, CogIcon as CogIconSolid, NewspaperIcon as NewspaperIconSolid } from "@heroicons/react/solid";
+import { HomeIcon as HomeIconSolid, BookmarkIcon as BookmarkIconSolid, UserIcon as UserIconSolid, CogIcon as CogIconSolid, NewspaperIcon as NewspaperIconSolid, LoginIcon as LoginIconSolid } from "@heroicons/react/solid";
 import {
   HomeIcon,
   BookmarkIcon,
   UserIcon,
   CogIcon,
-  NewspaperIcon
+  NewspaperIcon,
+  LoginIcon
 } from "@heroicons/react/outline";
 import SidebarLink from "./SidebarLink";
 import ProfileButton from "./ProfileButton";
@@ -46,6 +47,8 @@ const Sidebar = () => {
     }
   }, [router.pathname]);
 
+  const showLoginAndSignupButtons = !session || !session.user
+
   return (
     <div className={`${theme} hidden sm:flex flex-col sticky top-0 h-screen px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
       <div className="flex flex-col justify-start items-center xl:items-start space-y-6 flex-grow">
@@ -67,6 +70,13 @@ const Sidebar = () => {
         {/* Only show if the user is logged in. */}
         {session && session.user && (
           <SidebarLink text="Profile" Icon={UserIcon} IconSolid={UserIconSolid} active={activeLink === 'profile'} tag={session.user.tag} />
+        )}
+
+        {showLoginAndSignupButtons && (
+          <>
+            <SidebarLink text="Login" Icon={LoginIcon} IconSolid={LoginIconSolid} active={activeLink === 'login'} />
+            <SidebarLink text="Signup" Icon={UserIcon} IconSolid={UserIconSolid} active={activeLink === 'signup'} />
+          </>
         )}
 
         <SidebarLink text="Settings" Icon={CogIcon} IconSolid={CogIconSolid} active={activeLink === 'settings'} />

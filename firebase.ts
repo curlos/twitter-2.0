@@ -31,7 +31,5 @@ try {
   storage = getStorage();
 }
 
-console.log('Firebase initialized:', { app: !!app, db: !!db, storage: !!storage });
-
 export default app;
 export { db, storage };
