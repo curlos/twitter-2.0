@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { SearchIcon, UsersIcon, ChatIcon } from '@heroicons/react/outline';
 import { getProviders, signIn } from 'next-auth/react';
 import Head from 'next/head';
@@ -127,6 +128,15 @@ const Auth = () => {
           <title>Login to Twitter 2.0</title>
           <link rel="icon" href="/assets/twitter-logo.svg" />
         </Head>
+
+        {/* Navigation header */}
+        <div className="absolute top-4 right-4 z-10">
+          <Link href="/">
+            <button className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-lightblue-500 dark:hover:text-lightblue-400 transition-colors duration-200">
+              Continue as Guest
+            </button>
+          </Link>
+        </div>
         <div className="hidden text-white md:flex flex-col flex-1 bg-lightblue-500 justify-center items-center p-12 lg:p-24">
           <div className="space-y-5">
             <div className="flex space-x-3">
