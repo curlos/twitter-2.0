@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import { colorThemeState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../../atoms/atom';
-import { doc, writeBatch, increment, getDoc } from '@firebase/firestore';
+import { doc, writeBatch, increment, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { TweetDropdown } from '../TweetDropdown';
 import { FaRetweet } from 'react-icons/fa';

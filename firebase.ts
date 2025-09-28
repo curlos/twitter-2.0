@@ -18,8 +18,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const storage = getStorage(app);
+
+// For Firebase v10+, we need to be more explicit about initialization
+let db, storage;
+try {
+  db = getFirestore(app);
+  storage = getStorage(app);
+} catch (error) {
+  console.error('Error initializing Firebase services:', error);
+  // Fallback to basic initialization
+  db = getFirestore();
+  storage = getStorage();
+}
+
+console.log('Firebase initialized:', { app: !!app, db: !!db, storage: !!storage });
 
 export default app;
 export { db, storage };

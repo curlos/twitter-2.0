@@ -1,4 +1,4 @@
-import { DocumentData, onSnapshot, collection, doc, getDoc } from "@firebase/firestore";
+import { DocumentData, onSnapshot, collection, doc, getDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";

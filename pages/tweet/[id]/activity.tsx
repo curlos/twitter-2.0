@@ -1,4 +1,4 @@
-import { DocumentData, query, collection, where, doc, getDoc, onSnapshot } from "@firebase/firestore";
+import { DocumentData, query, collection, where, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { ChatAltIcon, HeartIcon } from "@heroicons/react/solid";
 import { FaRetweet } from "react-icons/fa";
 import { useRouter } from "next/router";

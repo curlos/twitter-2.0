@@ -1,4 +1,4 @@
-import { doc, serverTimestamp, increment, writeBatch, getDoc } from "@firebase/firestore";
+import { doc, serverTimestamp, increment, writeBatch, getDoc } from "firebase/firestore";
 import NumberFlow from "@number-flow/react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { FaRegComment, FaRetweet, FaBookmark, FaRegBookmark } from "react-icons/fa";

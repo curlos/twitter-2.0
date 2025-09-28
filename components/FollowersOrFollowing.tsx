@@ -1,4 +1,4 @@
-import { DocumentData, query, collection, where, getDocs, doc, getDoc } from "@firebase/firestore";
+import { DocumentData, query, collection, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { BadgeCheckIcon, UserGroupIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";

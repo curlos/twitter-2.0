@@ -4,7 +4,7 @@ import { XIcon } from '@heroicons/react/solid';
 import { db } from "../firebase";
 import Input from './Input';
 import { useSession } from 'next-auth/react';
-import { onSnapshot, query, collection, orderBy } from '@firebase/firestore';
+import { onSnapshot, query, collection, orderBy } from 'firebase/firestore';
 import { useRecoilState } from 'recoil';
 import { colorThemeState } from '../atoms/atom';
 import { useRouter } from 'next/router';

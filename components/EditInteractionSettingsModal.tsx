@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from '../atoms/atom';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
-import { doc, updateDoc } from '@firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 /**

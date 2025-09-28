@@ -7,7 +7,7 @@ import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, Clipboar
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IAuthor, ITweet } from "../utils/types";
-import { collection, doc, DocumentData, getDoc, getDocs, query, where, updateDoc } from "@firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, query, where, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useFollow } from "../utils/useFollow";
 import DropdownMenuItem from "./DropdownMenuItem";
