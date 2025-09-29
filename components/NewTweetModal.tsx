@@ -20,7 +20,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
   const [tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
-  const [isQuoteTweet, _setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
+  const [isQuoteTweet, setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
   const isEditInteractionModalOpen = useRecoilValue(editInteractionSettingsModalState);
 
   const handleClose = () => {
@@ -43,10 +43,14 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
       retweetedBy: '',
       tweetId: ''
     });
+    setIsQuoteTweet(false)
   };
 
+  const isNewReply = String(tweetBeingRepliedToId) !== '' && !isQuoteTweet && !editTweetInfo?.tweetId
+  const isNewQuote = String(tweetBeingRepliedToId) !== '' && isQuoteTweet && !editTweetInfo?.tweetId
+
   const renderInput = (isQuoteTweet) => (
-    <Input editTweetInfo={editTweetInfo} replyModal={String(tweetBeingRepliedToId) !== '' && !isQuoteTweet} quoteTweetModal={String(tweetBeingRepliedToId) !== '' && isQuoteTweet} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} fromModal={true} />
+    <Input editTweetInfo={editTweetInfo} replyModal={isNewReply} quoteTweetModal={isNewQuote} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} fromModal={true} />
   )
 
   return (

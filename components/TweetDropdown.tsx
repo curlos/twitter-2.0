@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState } from "../atoms/atom";
+import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetBeingRepliedToIdState, isQuoteTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon, TranslateIcon } from "@heroicons/react/outline";
@@ -34,6 +34,8 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [_editInteractionSettingsModalOpen, setEditInteractionSettingsModalOpen] = useRecoilState(editInteractionSettingsModalState);
   const [_editInteractionSettingsTweet, setEditInteractionSettingsTweet] = useRecoilState(editInteractionSettingsTweetState);
+  const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
+  const [_isQuoteTweet, setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
 
   useEffect(() => {
     let isMounted = true;
@@ -232,6 +234,14 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                                 images: tweet?.images || [],
                                 ...tweet
                               });
+                              
+                              if (tweet?.parentTweet) {
+                                setTweetBeingRepliedToId(tweet.parentTweet);
+                              }
+                              
+                              if (tweet?.isQuoteTweet) {
+                                setIsQuoteTweet(true);
+                              }
                             }}
                           />
 
