@@ -110,8 +110,6 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        console.log('LOGGING IN....')
-
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
