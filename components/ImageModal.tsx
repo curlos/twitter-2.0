@@ -7,7 +7,7 @@ import 'react-multi-carousel/lib/styles.css';
  * Get the common arrow button classes with position-specific class
  */
 export const getArrowButtonClasses = (position: 'left' | 'right') => {
-  const baseClasses = "absolute top-1/2 transform -translate-y-1/2 z-10 p-1 bg-black rounded-full text-white transition-all bg-gray-600 hover:bg-gray-700";
+  const baseClasses = "absolute top-1/2 transform -translate-y-1/2 z-10 p-1 bg-black rounded-full text-white transition-all bg-gray-600 hover:bg-gray-700 border-2 border-gray-400";
   const positionClass = position === 'left' ? 'left-4' : 'right-4';
   return `${baseClasses} ${positionClass}`;
 };
@@ -15,7 +15,7 @@ export const getArrowButtonClasses = (position: 'left' | 'right') => {
 /**
  * Common icon classes for chevron arrows
  */
-export const chevronIconClasses = "h-7 w-7";
+export const chevronIconClasses = "h-8 w-8";
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -158,7 +158,7 @@ const ImageModal = ({ isOpen, images, initialIndex = 0, onClose }: ImageModalPro
               showDots={false}
               removeArrowOnDeviceType={[]}
               containerClass="h-full"
-              itemClass="flex items-center justify-center h-full px-4"
+              itemClass="flex items-center justify-center h-full px-4 relative"
               sliderClass="h-full"
               afterChange={(_previousSlide, { currentSlide }) => {
                 setCurrentSlide(currentSlide);
