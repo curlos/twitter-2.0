@@ -66,7 +66,6 @@ export const useTweetData = (isEditing?: boolean, getReplies: boolean = true) =>
         if (isMounted) {
           setAuthor(snap.data());
           setLoading(false);
-          setParentTweet(null);
         }
       });
     }
