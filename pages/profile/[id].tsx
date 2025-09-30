@@ -130,7 +130,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
           }}>
             <div className="space-x-1 cursor-pointer hover:underline">
               <span className="text-black dark:text-white font-bold">{author.followersCount ?? 0}</span>
-              <span>Followers</span>
+              <span>{(author.followersCount ?? 0) === 1 ? 'Follower' : 'Followers'}</span>
             </div>
           </Link>
         </div>
