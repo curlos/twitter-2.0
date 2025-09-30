@@ -408,7 +408,10 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     let codesArray = [];
     sym.forEach((el) => codesArray.push('0x' + el));
     let emoji = String.fromCodePoint(...codesArray);
-    setInput(input + emoji);
+    const newInput = input + emoji;
+    if (newInput.length <= MAX_TWEET_LENGTH) {
+      setInput(newInput);
+    }
   };
 
   const handleTextChange = (e) => {
