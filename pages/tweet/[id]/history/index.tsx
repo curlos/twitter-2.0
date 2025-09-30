@@ -45,6 +45,7 @@ const TweetVersionHistory = () => {
                             tweet={pastTweet}
                             tweetID={pastTweet.tweetId}
                             pastTweet={true}
+                            historyLatestTweetIsQuoteTweet={isQuoteTweet}
                         />
                     ))
                 ) : (

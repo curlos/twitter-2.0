@@ -30,6 +30,7 @@ interface Props {
   showFullView?: boolean;
   showParentTweetConnectingLine?: boolean;
   isReplyTweetWithConnectedLine?: boolean;
+  historyLatestTweetIsQuoteTweet?: boolean;
 }
 
 /**
@@ -40,7 +41,7 @@ interface Props {
  * AUTHOR ACTIONS - Deleting or editing it.
  * @returns {React.FC}
  */
-const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showFullView = false, showParentTweetConnectingLine = false, isReplyTweetWithConnectedLine = false  }: Props) => {
+const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showFullView = false, showParentTweetConnectingLine = false, isReplyTweetWithConnectedLine = false, historyLatestTweetIsQuoteTweet = false }: Props) => {
   const { data: session } = useSession();
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const setAuthModalOpen = useSetRecoilState(authModalState);
@@ -72,9 +73,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
     author,
     retweetedBy,
     loading,
-    isQuoteTweet
+    isQuoteTweet: tweetDataIsQuoteTweet
   } = useTweetData(id, tweet, tweetID, tweetPage);
 
+  const isQuoteTweet = tweetDataIsQuoteTweet || historyLatestTweetIsQuoteTweet
   const replyingToDeletedTweet = tweet?.parentTweet && ((!parentTweet || !parentTweet.data()) && !isQuoteTweet)
 
   /**
