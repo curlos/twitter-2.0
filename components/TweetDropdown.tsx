@@ -154,7 +154,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   };
 
   return (
-    <div className="flex items-center justify-center" onClick={(e) => e.preventDefault()}>
+    <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
       <div className="relative inline-block text-left">
         <Menu>
           {({ open }) => (
