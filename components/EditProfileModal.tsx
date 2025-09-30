@@ -21,7 +21,7 @@ const EditProfileModal = () => {
   const [name, setName] = useState(session.user.name || '');
   const [tag, setTag] = useState(session.user.tag || '');
   const [bio, setBio] = useState(session.user.bio || '');
-  const [_usernameTakenError, setUsernameTakenError] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
   const [location, setLocation] = useState(session.user.location || '');
   const [website, setWebsite] = useState(session.user.website || '');
   const [banner, _setBanner] = useState(session.user.banner || '/assets/profile_banner.jpg');
@@ -35,8 +35,36 @@ const EditProfileModal = () => {
   const [loading, setLoading] = useState(false);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
 
+  const validateUsername = () => {
+    // Check for spaces
+    if (tag.includes(' ')) {
+      return 'Username cannot contain spaces';
+    }
+
+    // Check for empty username
+    if (tag.trim().length === 0) {
+      return 'Username cannot be empty';
+    }
+
+    // Check for special characters (only allow alphanumeric and underscore)
+    if (!/^[a-zA-Z0-9_]+$/.test(tag)) {
+      return 'Username can only contain letters, numbers, and underscores';
+    }
+
+    return '';
+  };
+
   const updateUserProfile = async () => {
     setLoading(true);
+    setUsernameErrorMessage('');
+
+    // Validate username format first
+    const validationError = validateUsername();
+    if (validationError) {
+      setUsernameErrorMessage(validationError);
+      setLoading(false);
+      return;
+    }
 
     const updatedUserData = {
       name,
@@ -51,7 +79,7 @@ const EditProfileModal = () => {
 
     if (await checkIfUsernameTaken()) {
       // If the username is taken, there is an error and the user must try something else.
-      setUsernameTakenError(true);
+      setUsernameErrorMessage('Username is already taken');
       setLoading(false);
     } else {
 
@@ -268,21 +296,27 @@ const EditProfileModal = () => {
                       />
                     </div>
 
-                    <div className="p-2 border border-gray-700 space-y-1 rounded">
-                      <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
-                        <div>Username</div>
-                        <div>{tag.length} / 15</div>
+                    <div>
+                      <div className="p-2 border border-gray-700 space-y-1 rounded">
+                        <div className="text-sm text-gray-700 dark:text-gray-400 flex justify-between">
+                          <div>Username</div>
+                          <div>{tag.length} / 15</div>
+                        </div>
+                        <input
+                          className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                          value={tag}
+                          disabled={loading}
+                          onChange={(e) => {
+                            if (e.target.value.length <= 15) {
+                              setTag(e.target.value);
+                            }
+                          }}
+                        />
                       </div>
-                      <input
-                        className="bg-white text-black dark:text-white dark:bg-black rounded w-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                        value={tag}
-                        disabled={loading}
-                        onChange={(e) => {
-                          if (e.target.value.length <= 15) {
-                            setTag(e.target.value);
-                          }
-                        }}
-                      />
+
+                      {usernameErrorMessage && (
+                        <div className="mt-1 ml-2 text-red-500 text-sm">{usernameErrorMessage}</div>
+                      )}
                     </div>
 
                     <div className="p-2 border border-gray-700 space-y-1 rounded">
