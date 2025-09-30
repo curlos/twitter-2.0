@@ -409,27 +409,24 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
             </div>
           )}
 
-          {/* Action buttons - Hidden for past tweets */}
-          {!pastTweet && (
-            <TweetActions
-              id={id}
-              likesCount={likesCount}
-              retweetsCount={retweetsCount}
-              bookmarksCount={bookmarksCount}
-              repliesCount={repliesCount}
-              liked={liked}
-              retweeted={retweeted}
-              bookmarked={bookmarked}
-              session={session}
-              hideReplies={tweet?.hideReplies}
-              allowQuotes={tweet?.allowQuotes}
-              allowRepliesFrom={tweet?.allowRepliesFrom}
-              tweetAuthorId={authorId}
-              onLikeChange={setLiked}
-              onRetweetChange={setRetweeted}
-              onBookmarkChange={setBookmarked}
-            />
-          )}
+          {/* Action buttons */}
+          <TweetActions
+            id={id}
+            likesCount={likesCount}
+            retweetsCount={retweetsCount}
+            bookmarksCount={bookmarksCount}
+            repliesCount={repliesCount}
+            liked={liked}
+            retweeted={retweeted}
+            bookmarked={bookmarked}
+            session={session}
+            pastTweet={pastTweet}
+            tweet={tweet}
+            tweetAuthorId={authorId}
+            onLikeChange={setLiked}
+            onRetweetChange={setRetweeted}
+            onBookmarkChange={setBookmarked}
+          />
         </div>
       </div>
     </div>
@@ -697,28 +694,25 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
                 </div>
               )}
 
-              {/* Action buttons - Hidden for past tweets */}
-              {!pastTweet && (
-                <TweetActions
-                  id={id}
-                  likesCount={likesCount}
-                  retweetsCount={retweetsCount}
-                  bookmarksCount={bookmarksCount}
-                  repliesCount={repliesCount}
-                  liked={liked}
-                  retweeted={retweeted}
-                  bookmarked={bookmarked}
-                  session={session}
-                  fullSize={true}
-                  hideReplies={tweet?.hideReplies}
-                  allowQuotes={tweet?.allowQuotes}
-                  allowRepliesFrom={tweet?.allowRepliesFrom}
-                  tweetAuthorId={authorId}
-                  onLikeChange={setLiked}
-                  onRetweetChange={setRetweeted}
-                  onBookmarkChange={setBookmarked}
-                />
-              )}
+              {/* Action buttons */}
+              <TweetActions
+                id={id}
+                likesCount={likesCount}
+                retweetsCount={retweetsCount}
+                bookmarksCount={bookmarksCount}
+                repliesCount={repliesCount}
+                liked={liked}
+                retweeted={retweeted}
+                bookmarked={bookmarked}
+                session={session}
+                fullSize={true}
+                pastTweet={pastTweet}
+                tweet={tweet}
+                tweetAuthorId={authorId}
+                onLikeChange={setLiked}
+                onRetweetChange={setRetweeted}
+                onBookmarkChange={setBookmarked}
+              />
 
               <div className="flex justify-end">
                 <button
