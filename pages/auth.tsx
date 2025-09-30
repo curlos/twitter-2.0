@@ -70,6 +70,19 @@ const Auth = () => {
           return;
         }
 
+        if (password.length < 8) {
+          setError('Password must be at least 8 characters long');
+          setLoading(false);
+          return;
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+        if (!passwordRegex.test(password)) {
+          setError('Password must contain at least one lowercase letter, one uppercase letter, and one number');
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: {
