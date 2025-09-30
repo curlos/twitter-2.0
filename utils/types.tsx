@@ -20,6 +20,12 @@ export interface ITweet {
   tweetId: string;
   versionHistory?: Array<ITweet>;
   hideReplies?: boolean;
+  allowQuotes?: boolean;
+  allowRepliesFrom?: string[];
+  isQuoteTweet?: boolean;
+  likesCount?: number;
+  bookmarksCount?: number;
+  retweetsCount?: number;
 }
 
 export interface IAuthor {

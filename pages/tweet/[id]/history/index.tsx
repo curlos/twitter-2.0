@@ -30,7 +30,7 @@ const TweetVersionHistory = () => {
                 <div className="font-bold text-xl p-3 pt-5">Latest Tweet</div>
                 <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} />
 
-                <div className="font-bold text-xl p-3 pt-5">Version History</div>
+                <div className="font-bold text-xl p-3 pt-5">Past Version History</div>
 
                 {/* List of Past Tweets or Empty State */}
                 {tweet?.versionHistory && tweet?.versionHistory.length > 0 ? (

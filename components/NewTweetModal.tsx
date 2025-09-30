@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, editTweetState, isQuoteTweetState, editInteractionSettingsModalState } from '../atoms/atom';
+import { colorThemeState, newTweetModalState, tweetBeingRepliedToIdState, tweetToEditState, isQuoteTweetState, editInteractionSettingsModalState } from '../atoms/atom';
 import { XIcon } from '@heroicons/react/solid';
 import Input from './Input';
 import ParentTweet from './ParentTweet';
@@ -16,12 +16,14 @@ interface Props {
  */
 export const NewTweetModal = ({ setIsEditing }: Props) => {
   const [isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [showEmojiState, setShowEmojiState] = useState(false);
   const [tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [theme, _setTheme] = useRecoilState(colorThemeState);
-  const [editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [tweetToEdit, setTweetToEdit] = useRecoilState(tweetToEditState);
   const [isQuoteTweet, setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
   const isEditInteractionModalOpen = useRecoilValue(editInteractionSettingsModalState);
+
+  const isNewReply = String(tweetBeingRepliedToId) !== '' && !isQuoteTweet && !tweetToEdit?.tweetId
+  const isNewQuote = String(tweetBeingRepliedToId) !== '' && isQuoteTweet && !tweetToEdit?.tweetId
 
   const handleClose = () => {
     // Don't close if EditInteractionSettingsModal is open
@@ -31,26 +33,20 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
     setIsOpen(false);
     // Need to set the tweetId as empty as well because if not then the next time the modal is open, it would be possible to see the tweet that was being replied to show up AGAIN even if you're drafting a completely new tweet that is NOT a reply.
     setTweetBeingRepliedToId('');
-    setEditTweetInfo({
-      image: '',
-      parentTweet: '',
-      text: '',
-      timestamp: {
-        seconds: 0,
-        nanoseconds: 0,
-      },
-      userID: '',
-      retweetedBy: '',
-      tweetId: ''
-    });
+    setTweetToEdit(null);
     setIsQuoteTweet(false)
   };
 
-  const isNewReply = String(tweetBeingRepliedToId) !== '' && !isQuoteTweet && !editTweetInfo?.tweetId
-  const isNewQuote = String(tweetBeingRepliedToId) !== '' && isQuoteTweet && !editTweetInfo?.tweetId
+  // Handle cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      // Call handleClose when component unmounts to clean up state
+      handleClose();
+    };
+  }, []);
 
-  const renderInput = (isQuoteTweet) => (
-    <Input editTweetInfo={editTweetInfo} replyModal={isNewReply} quoteTweetModal={isNewQuote} tweetBeingRepliedToId={tweetBeingRepliedToId} showEmojiState={showEmojiState} setShowEmojiState={setShowEmojiState} setEditTweetInfo={setEditTweetInfo} setIsEditing={setIsEditing} fromModal={true} />
+  const renderInput = () => (
+    <Input {...{ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply, isNewQuote, setIsEditing, fromModal: true }} />
   )
 
   return (
@@ -92,7 +88,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
 
                 {isQuoteTweet && (
                   <div className="pt-3">
-                    {renderInput(true)}
+                    {renderInput()}
                   </div>
                 )}
 
@@ -101,7 +97,7 @@ export const NewTweetModal = ({ setIsEditing }: Props) => {
                   <ParentTweet tweetBeingRepliedToId={tweetBeingRepliedToId as string} isQuoteTweet={isQuoteTweet as boolean} fromTweetModal={true} />
                 </div>
 
-                {!isQuoteTweet && renderInput(false)}
+                {!isQuoteTweet && renderInput()}
               </div>
 
             </div>

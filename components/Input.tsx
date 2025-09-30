@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Image from "next/image";
 import { db, storage } from '../firebase';
 
 const MAX_TWEET_LENGTH = 500;
@@ -16,7 +15,6 @@ import {
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
-  EmojiHappyIcon,
   PhotographIcon,
   XIcon,
   ExclamationCircleIcon,
@@ -49,13 +47,11 @@ import {
 import SortableImageItem from './SortableImageItem';
 
 interface Props {
-  editTweetInfo?: ITweet,
-  replyModal?: boolean;
-  quoteTweetModal?: boolean;
-  tweetBeingRepliedToId?: string,
-  showEmojiState?: boolean,
-  setShowEmojiState?: React.Dispatch<React.SetStateAction<boolean>>;
-  setEditTweetInfo?: any;
+  tweetToEdit: ITweet;
+  isNewReply: boolean;
+  isNewQuote: boolean;
+  tweetBeingRepliedToId: string;
+  setTweetToEdit: any;
   setIsEditing?: (editing: boolean) => void;
   fromModal?: boolean;
 }
@@ -64,7 +60,7 @@ interface Props {
  * @description - Renders a container for the user to create/edit a tweet. Deals with the content they put into the tweet such as the text, images and/or emojis. Shown at the top of the Feed and the NewTweetModal components.
  * @returns {React.FC}
  */
-const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedToId, showEmojiState, setShowEmojiState, setEditTweetInfo, setIsEditing, fromModal }: Props) => {
+const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply, isNewQuote, setIsEditing, fromModal }: Props) => {
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
@@ -77,11 +73,11 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
   const setEditInteractionSettingsTweet = useSetRecoilState(editInteractionSettingsTweetState);
   const setTweetSentAlert = useSetRecoilState(tweetSentAlertState);
-  const isEditingTweet = (editTweetInfo && Object.keys(editTweetInfo).length >= 1 && (editTweetInfo?.text?.length > 0 || editTweetInfo?.image?.length > 0 || editTweetInfo?.images?.length > 0));
+  const isEditingTweet = (tweetToEdit && Object.keys(tweetToEdit).length >= 1 && (tweetToEdit?.text?.length > 0 || tweetToEdit?.image?.length > 0 || tweetToEdit?.images?.length > 0));
 
   // Interaction settings state
-  const [allowQuotes, setAllowQuotes] = useState(editTweetInfo?.allowQuotes ?? true);
-  const [allowRepliesFrom, setAllowRepliesFrom] = useState<string[]>(editTweetInfo?.allowRepliesFrom ?? ['everybody']);
+  const [allowQuotes, setAllowQuotes] = useState(tweetToEdit?.allowQuotes ?? true);
+  const [allowRepliesFrom, setAllowRepliesFrom] = useState<string[]>(tweetToEdit?.allowRepliesFrom ?? ['everybody']);
 
   /**
    * Get simplified reply status text and icon for new tweet
@@ -130,19 +126,37 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   useEffect(() => {
-    if (isEditingTweet) {
-      if (editTweetInfo?.text) {
-        setInput(editTweetInfo.text);
-      }
-
-      if (editTweetInfo?.images && editTweetInfo.images.length > 0) {
-        setSelectedFiles(editTweetInfo.images);
-      } else if (editTweetInfo?.image) {
-        setSelectedFile(editTweetInfo?.image);
-        setSelectedFiles([]);
-      }
+    if (!isEditingTweet || !tweetToEdit) {
+      setInput('')
+      setSelectedFile('')
+      setSelectedFiles([])
+      return
     }
-  }, [editTweetInfo]);
+
+    if (tweetToEdit?.text) {
+      setInput(tweetToEdit.text);
+    }
+
+    if (tweetToEdit?.images && tweetToEdit.images.length > 0) {
+      setSelectedFiles(tweetToEdit.images);
+    } else if (tweetToEdit?.image) {
+      setSelectedFile(tweetToEdit?.image);
+      setSelectedFiles([]);
+    }
+  }, [tweetToEdit]);
+
+  const resetCoreStateValues = () => {
+    setLoading(false);
+    setInput('');
+    setSelectedFile(null);
+    setSelectedFiles([]);
+    setIsOpen(false);
+    setIsQuoteTweet(false);
+
+    if (setTweetToEdit) {
+      setTweetToEdit(null)
+    }
+  }
 
   const sendTweet = async () => {
     // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
@@ -152,8 +166,8 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
     const newTweet = {
       userID: session.user.uid,
       text: input,
-      parentTweet: replyModal || quoteTweetModal ? tweetBeingRepliedToId : '',
-      isQuoteTweet: quoteTweetModal ? true : false,
+      parentTweet: isNewReply || isNewQuote ? tweetBeingRepliedToId : '',
+      isQuoteTweet: isNewQuote ? true : false,
       timestamp: serverTimestamp(),
       versionHistory: [],
       allowQuotes: allowQuotes,
@@ -162,7 +176,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
 
     const docRef = await addDoc(collection(db, 'tweets'), newTweet);
 
-    if (replyModal) {
+    if (isNewReply) {
       const batch = writeBatch(db);
 
       // Add to replies subcollection
@@ -176,7 +190,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       });
 
       await batch.commit();
-    } else if (quoteTweetModal) {
+    } else if (isNewQuote) {
       const batch = writeBatch(db);
 
       // Add to quotes subcollection
@@ -204,16 +218,11 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       });
     }
 
-    setLoading(false);
-    setInput('');
-    setSelectedFile(null);
-    setSelectedFiles([]);
-    setIsOpen(false);
-    setIsQuoteTweet(false);
+    resetCoreStateValues()
 
     // Show success alert
-    const message = replyModal ? 'Your reply was sent' :
-                   quoteTweetModal ? 'Your quote tweet was sent' :
+    const message = isNewReply ? 'Your reply was sent' :
+                   isNewQuote ? 'Your quote tweet was sent' :
                    'Your tweet was sent';
 
     setTweetSentAlert({
@@ -224,7 +233,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   const editTweet = async () => {
-    const currentTweet = editTweetInfo;
+    const currentTweet = tweetToEdit;
 
     // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
     if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
@@ -257,16 +266,15 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       updatedObject.image = selectedFile;
     }
 
+    const { versionHistory, allowRepliesFrom: currentAllowRepliesFrom, timestamp, ...tweetPrimitiveData } = currentTweet
+    const currentTweetAllowRepliesFrom = currentAllowRepliesFrom || []
+    const currentTweetTimestamp = {...timestamp}
+
     // Create a clean version of currentTweet without Firebase-specific objects
     const cleanTweetForHistory = {
-      text: currentTweet.text,
-      image: currentTweet.image || '',
-      images: currentTweet.images || [],
-      timestamp: currentTweet.timestamp,
-      userID: currentTweet.userID,
-      tweetId: currentTweet.tweetId,
-      retweetedBy: currentTweet.retweetedBy || '',
-      parentTweet: currentTweet.parentTweet || ''
+      ...tweetPrimitiveData,
+      allowRepliesFrom: currentTweetAllowRepliesFrom,
+      timestamp: currentTweetTimestamp
     };
 
     if (currentTweet?.versionHistory) {
@@ -293,29 +301,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
 
       // Once we're finished, reset everything back to the defaults and close the modal.
-      setLoading(false);
-      setInput('');
-      setSelectedFile(null);
-      setSelectedFiles([]);
-      setIsOpen(false);
-      setIsQuoteTweet(false);
-
-      // Clear the edit tweet info to prevent modal from reopening
-      if (setEditTweetInfo) {
-        setEditTweetInfo({
-          image: '',
-          images: [],
-          parentTweet: '',
-          text: '',
-          timestamp: {
-            seconds: 0,
-            nanoseconds: 0,
-          },
-          userID: '',
-          retweetedBy: '',
-          tweetId: ''
-        });
-      }
+      resetCoreStateValues()
 
       // Disable editing mode to resume onSnapshot updates
       if (setIsEditing) {
@@ -382,7 +368,7 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (readerEvent) => resolve(readerEvent.target.result);
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file as Blob);
       });
     });
 
@@ -434,14 +420,14 @@ const Input = ({ editTweetInfo, replyModal, quoteTweetModal, tweetBeingRepliedTo
   };
 
   const getButtonObject = () => {
-    { !replyModal ? 'Tweet' : 'Reply'; }
+    { !isNewReply ? 'Tweet' : 'Reply'; }
 
-    if (replyModal) {
+    if (isNewReply) {
       return {
         text: 'Reply',
         function: sendTweet
       };
-    } else if (quoteTweetModal) {
+    } else if (isNewQuote) {
       return {
         text: 'Quote',
         function: sendTweet

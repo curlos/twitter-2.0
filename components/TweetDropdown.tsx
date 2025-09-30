@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { newTweetModalState, editTweetState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetBeingRepliedToIdState, isQuoteTweetState } from "../atoms/atom";
+import { newTweetModalState, tweetToEditState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetBeingRepliedToIdState, isQuoteTweetState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon, TranslateIcon } from "@heroicons/react/outline";
@@ -30,7 +30,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [followed, setFollowed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
-  const [_editTweetInfo, setEditTweetInfo] = useRecoilState(editTweetState);
+  const [_tweetToEdit, setTweetToEdit] = useRecoilState(tweetToEditState);
   const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
   const [_editInteractionSettingsModalOpen, setEditInteractionSettingsModalOpen] = useRecoilState(editInteractionSettingsModalState);
   const [_editInteractionSettingsTweet, setEditInteractionSettingsTweet] = useRecoilState(editInteractionSettingsTweetState);
@@ -229,11 +229,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
                             text="Edit tweet"
                             onClick={() => {
                               setIsOpen(true);
-                              setEditTweetInfo({
-                                image: tweet?.image || '',
-                                images: tweet?.images || [],
-                                ...tweet
-                              });
+                              setTweetToEdit(tweet);
                               
                               if (tweet?.parentTweet) {
                                 setTweetBeingRepliedToId(tweet.parentTweet);
