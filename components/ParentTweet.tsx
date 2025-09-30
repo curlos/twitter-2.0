@@ -88,11 +88,14 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
         isQuoteTweet ? <DeletedQuoteTweet /> : <DeletedTweet />
       ) : tweet && author ? (
         <div
-          className={`flex p-3 space-x-2 h-full ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer' : ''}`}
+          className={`flex p-3 space-x-2 h-full relative ${isQuoteTweet ? 'border border-gray-700 rounded-2xl' : ''} ${isQuoteTweet && !fromTweetModal ? 'hover:bg-gray-200 dark:hover:bg-gray-900 cursor-pointer' : ''}`}
           onClick={handleTweetClick}
         >
-          <div className="min-w-[55px] h-full">
+          <div className="min-w-[55px] relative">
             <img src={author.profilePic} alt="" className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
+            {tweetBeingRepliedToId && !isQuoteTweet && (
+              <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
+            )}
           </div>
 
           {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}

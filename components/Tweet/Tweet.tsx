@@ -28,6 +28,8 @@ interface Props {
   topParentTweet?: boolean;
   pastTweet?: boolean;
   showFullView?: boolean;
+  showParentTweetConnectingLine?: boolean;
+  isReplyTweetWithConnectedLine?: boolean;
 }
 
 /**
@@ -38,7 +40,7 @@ interface Props {
  * AUTHOR ACTIONS - Deleting or editing it.
  * @returns {React.FC}
  */
-const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showFullView = false }: Props) => {
+const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showFullView = false, showParentTweetConnectingLine = false, isReplyTweetWithConnectedLine = false  }: Props) => {
   const { data: session } = useSession();
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const setAuthModalOpen = useSetRecoilState(authModalState);
@@ -247,12 +249,15 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
           </Link>
         </div>
       ) : null}</div>
-      <div className="flex">
+      <div className="flex relative">
         {/* Profile pic */}
-        <div className="mr-2">
+        <div className="mr-2 relative">
           <Link href={`/profile/${author.tag}`}>
             <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
           </Link>
+          {showParentTweetConnectingLine && (
+            <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
+          )}
         </div>
 
         <div className="flex flex-col justify-between w-full">
@@ -438,7 +443,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
       {!tweetPage && !showFullView ? (
         !loading && author ? (
           // This is the SIMPLE tweet where we won't see as much detailed information (like a thread of replies) but ONLY the content of the tweet and the author.
-          <div className={`${theme} max-w-full text-base p-3 w-full ${!pastTweet ? 'cursor-pointer' : ''} ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
+          <div className={`${theme} max-w-full text-base ${showParentTweetConnectingLine ? 'p-3 pb-6' : 'p-3'} w-full ${!pastTweet ? 'cursor-pointer' : ''} ${!topParentTweet && !showParentTweetConnectingLine ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>
             {pastTweet ? (
               <div onClick={(e) => e.preventDefault()}>
                 {renderTweetContent()}
@@ -453,14 +458,17 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
       ) : (
         !loading && author ? (
           // This shows the other view, the FULL-SIZED Tweet when it's on it's own page.
-          <div className="text-base p-3 sm:p-5 border-b border-[#AAB8C2] dark:border-gray-700 w-full">
+          <div className={`text-base border-b border-[#AAB8C2] dark:border-gray-700 w-full ${isReplyTweetWithConnectedLine ? 'p-3 pt-0' : 'p-3'}`}>
 
             {/* Top of the tweet where the information about it's author is shown.  */}
             <div className="flex justify-between">
               <div className="flex">
                 <Link href={`/profile/${author.tag}`}>
-                  <div className="mr-2">
+                  <div className="mr-2 relative">
                     <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
+                    {showParentTweetConnectingLine && (
+                      <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
+                    )}
                   </div>
                 </Link>
 

@@ -16,6 +16,7 @@ const TweetPage = () => {
     const { tweet, tweetID, author, replies, parentTweet, loading, isQuoteTweet } = useTweetData(isEditing);
 
     const replyingToDeletedTweet = tweet?.parentTweet && ((!parentTweet || !parentTweet.data()) && !isQuoteTweet)
+    const replyingToValidParentTweet = parentTweet && parentTweet.data() && !isQuoteTweet
 
     return (
         <AppLayout
@@ -27,15 +28,15 @@ const TweetPage = () => {
                     <SparklesIcon className="h-5 w-5" />
                 </PageHeader>
 
-                {parentTweet && parentTweet.data() && !isQuoteTweet && (
-                    <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />
+                {replyingToValidParentTweet && (
+                    <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} showParentTweetConnectingLine={true} />
                 )}
 
                 {replyingToDeletedTweet && (
                     <DeletedTweet />
                 )}
 
-                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} tweetPage={true} />
+                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} tweetPage={true} isReplyTweetWithConnectedLine={replyingToValidParentTweet} />
 
                 {tweet?.hideReplies ? (
                     <div className="flex flex-col items-center justify-center py-16 text-gray-500">

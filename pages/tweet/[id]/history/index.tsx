@@ -10,7 +10,10 @@ import { useTweetData } from '../../../../hooks/useTweetData';
 
 const TweetVersionHistory = () => {
     // Use shared hook for tweet data (no isEditing needed for history page)
-    const { tweet, tweetID, author, replies, parentTweet, loading, isQuoteTweet } = useTweetData(false, false);
+    const { tweet, tweetID, author, parentTweet, loading, isQuoteTweet } = useTweetData(false, false);
+
+    const replyingToDeletedTweet = parentTweet && !parentTweet.data() && !isQuoteTweet
+    const replyingToValidParentTweet = parentTweet && parentTweet.data() && !isQuoteTweet
 
     return (
         <AppLayout title={author ? `${author.name} on Twitter: "${tweet?.text}"` : "Tweet History / Twitter 2.0"}>
@@ -21,15 +24,15 @@ const TweetVersionHistory = () => {
 
                 <div className="font-bold text-xl p-3">Latest Tweet</div>
 
-                {parentTweet && parentTweet.data() && !isQuoteTweet && (
-                    <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />
+                {replyingToValidParentTweet && (
+                    <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} showParentTweetConnectingLine={true} />
                 )}
 
-                {parentTweet && !parentTweet.data() && !isQuoteTweet && (
+                {replyingToDeletedTweet && (
                     <DeletedTweet />
                 )}
 
-                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} showFullView={true} />
+                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} showFullView={true} isReplyTweetWithConnectedLine={replyingToValidParentTweet} />
 
                 <div className="font-bold text-xl p-3 pt-5">Past Version History</div>
 
