@@ -274,7 +274,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
                 </Link>
                 <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
               </div>
-              <div className="text-gray-500">@{author.tag}</div>
+              <Link href={`/profile/${author.tag}`}>
+                <div className="text-gray-500 cursor-pointer hover:underline">@{author.tag}</div>
+              </Link>
               <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
               {tweet.timestamp && tweet.timestamp.seconds && (
                 <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
@@ -301,15 +303,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
             {parentTweet && parentTweetAuthor && !isQuoteTweet && (
               <div className="text-[15px] text-gray-500">
                 Replying to
-                <span
-                  className="ml-1 text-lightblue-400 cursor-pointer hover:underline"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/profile/${parentTweetAuthor.tag}`);
-                  }}
-                >
-                  @{parentTweetAuthor.tag}
-                </span>
+                <Link href={`/profile/${parentTweetAuthor.tag}`}>
+                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">
+                    @{parentTweetAuthor.tag}
+                  </span>
+                </Link>
               </div>
             )}
 
@@ -510,15 +508,11 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
               {parentTweet && parentTweetAuthor && !isQuoteTweet ? (
                 <div className="text-[15px] text-gray-500">
                   <span>Replying to</span>
-                  <span
-                    className="ml-1 text-lightblue-400 cursor-pointer hover:underline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/profile/${parentTweetAuthor.tag}`);
-                    }}
-                  >
-                    @{parentTweetAuthor.tag}
-                  </span>
+                  <Link href={`/profile/${parentTweetAuthor.tag}`}>
+                    <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">
+                      @{parentTweetAuthor.tag}
+                    </span>
+                  </Link>
                 </div>
               ) : null}
 
