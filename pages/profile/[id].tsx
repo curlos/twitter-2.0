@@ -86,19 +86,30 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
             </div>
           ) : null}
 
-          {author.website ? (
-            <div className="flex space-x-1">
-              <LinkIcon className="h-5 w-5" />
-              <a href={`${!author.website.includes('https://') ?
-                `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline">{author.website}</a>
-            </div>
-          ) : null}
+          <div className="hidden sm:block">
+            {author.website ? (
+              <div className="flex space-x-1">
+                <LinkIcon className="h-5 w-5 flex-shrink-0" />
+                <a href={`${!author.website.includes('https://') ?
+                  `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline truncate max-w-[200px]">{author.website}</a>
+              </div>
+            ) : null}
+          </div>
 
           <div className="flex space-x-1">
             <CalendarIcon className="h-5 w-5" />
             <div className="">Joined {moment(new Date(author.dateJoined.seconds * 1000)).format('MMMM YYYY')}</div>
           </div>
+        </div>
 
+        <div className="sm:hidden text-base text-gray-500 mb-2">
+          {author.website ? (
+            <div className="flex space-x-1">
+              <LinkIcon className="h-5 w-5 flex-shrink-0" />
+              <a href={`${!author.website.includes('https://') ?
+                `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline truncate max-w-[250px]">{author.website}</a>
+            </div>
+          ) : null}
         </div>
 
         <div className="text-gray-500 text-base flex space-x-4">
