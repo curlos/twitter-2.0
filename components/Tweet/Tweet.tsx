@@ -27,6 +27,7 @@ interface Props {
   tweetPage?: boolean;
   topParentTweet?: boolean;
   pastTweet?: boolean;
+  showFullView?: boolean;
 }
 
 /**
@@ -37,7 +38,7 @@ interface Props {
  * AUTHOR ACTIONS - Deleting or editing it.
  * @returns {React.FC}
  */
-const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Props) => {
+const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showFullView = false }: Props) => {
   const { data: session } = useSession();
   const [theme, _setTheme] = useRecoilState(colorThemeState);
   const setAuthModalOpen = useSetRecoilState(authModalState);
@@ -434,7 +435,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet }: Pro
       {/* In this component, there are two ways a tweet will be shown:
       - As a tweet in a page where we are on the page of that tweet and show the thread of replies below the tweet as well as other detailed info like the specific time it was posted, device it was posted on, and the exact stats of each action (replies, retweets, likes, bookmarks)
       - As a tweet in a list where we WON'T see any of the more detailed info and will see the simplified version of it with the author and the content of the tweet. */}
-      {!tweetPage ? (
+      {!tweetPage && !showFullView ? (
         !loading && author ? (
           // This is the SIMPLE tweet where we won't see as much detailed information (like a thread of replies) but ONLY the content of the tweet and the author.
           <div className={`${theme} max-w-full text-base p-3 w-full ${!pastTweet ? 'cursor-pointer' : ''} ${!topParentTweet ? 'border-b border-[#AAB8C2]  dark:border-gray-700' : ''}`}>

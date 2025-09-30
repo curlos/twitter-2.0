@@ -19,6 +19,8 @@ const TweetVersionHistory = () => {
                     <SparklesIcon className="h-5 w-5" />
                 </PageHeader>
 
+                <div className="font-bold text-xl p-3">Latest Tweet</div>
+
                 {parentTweet && parentTweet.data() && !isQuoteTweet && (
                     <Tweet id={parentTweet.id} tweet={parentTweet.data()} tweetID={parentTweet.id} topParentTweet={true} />
                 )}
@@ -27,8 +29,7 @@ const TweetVersionHistory = () => {
                     <DeletedTweet />
                 )}
 
-                <div className="font-bold text-xl p-3 pt-5">Latest Tweet</div>
-                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} />
+                <Tweet id={tweetID} tweet={tweet} tweetID={tweetID} showFullView={true} />
 
                 <div className="font-bold text-xl p-3 pt-5">Past Version History</div>
 
