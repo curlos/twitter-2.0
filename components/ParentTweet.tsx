@@ -101,7 +101,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
           {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}
           <div className="w-full">
             <div className="text-gray-700 dark:text-gray-400 lg:flex">
-              <div className="text-black dark:text-white font-bold mr-[2px]">{author.name}</div>
+              <div className="text-black dark:text-white font-bold mr-[2px] truncate max-w-[150px] sm:max-w-[200px]">{author.name}</div>
               <div>@{author.tag}</div>
               <div className="text-gray-500 mx-1 font-bold hidden lg:block">·</div>
               {tweet.timestamp && tweet.timestamp.seconds && (

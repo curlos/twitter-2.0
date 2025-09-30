@@ -246,7 +246,9 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
           <Link href={`/profile/${retweetedBy.tag}`}>
             <span className="flex hover:underline">
               <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
-              {session && session.user && retweetedBy.tag === session.user.tag ? 'You retweeted' : `${retweetedBy.name} retweeted`}
+              <span className="truncate max-w-[200px]">
+                {session && session.user && retweetedBy.tag === session.user.tag ? 'You retweeted' : `${retweetedBy.name} retweeted`}
+              </span>
             </span>
           </Link>
         </div>
@@ -255,7 +257,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
         {/* Profile pic */}
         <div className="mr-2 relative">
           <Link href={`/profile/${author.tag}`}>
-            <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
+            <img src={author.profilePic} alt={`${author.tag}'s profile pic`} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
           </Link>
           {showParentTweetConnectingLine && (
             <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
@@ -268,7 +270,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
             <div className="lg:flex">
               <div className="flex">
                 <Link href={`/profile/${author.tag}`}>
-                  <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
+                  <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
                 </Link>
                 <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
               </div>
@@ -464,7 +466,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
               <div className="flex">
                 <Link href={`/profile/${author.tag}`}>
                   <div className="mr-2 relative">
-                    <img src={author.profilePic} alt={author.name} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
+                    <img src={author.profilePic} alt={`${author.tag}'s profile pic`} className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer" />
                     {showParentTweetConnectingLine && (
                       <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
                     )}
@@ -474,7 +476,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
                 <div className="">
                   <Link href={`/profile/${author.tag}`}>
                     <div className="flex">
-                      <div className="cursor-pointer hover:underline font-bold">{author.name}</div>
+                      <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
                       <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                     </div>
                   </Link>

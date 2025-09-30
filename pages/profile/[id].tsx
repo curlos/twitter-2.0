@@ -70,7 +70,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
 
       <div className="p-4 pt-2">
         <div className="flex items-center">
-          <h2 className="text-xl font-[900]">{author.name}</h2>
+          <h2 className="text-xl font-[900] truncate max-w-[250px] sm:max-w-[420px] xl:max-w-[480px]">{author.name}</h2>
           <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
         </div>
 
@@ -148,7 +148,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
               Followed by {followersYouFollow.slice(0, 3).map((follower, i) => (
                 <span key={`follower-${follower.tag}`}>
                   <Link href={`/profile/${follower.tag}`}>
-                    <span className="cursor-pointer hover:underline">{follower.name}
+                    <span className="cursor-pointer hover:underline truncate max-w-[200px] inline-block align-bottom">{follower.name}
                     </span>
                   </Link>
                   <span>
@@ -554,8 +554,8 @@ const ProfilePage = () => {
           <>
             <PageHeader
               title={
-                <div className="flex items-center">
-                  {author.name}
+                <div className="flex items-center min-w-0">
+                  <span className="truncate max-w-[250px] sm:max-w-[420px] md:max-w-[600px] lg:max-w-[420px] xl:max-w-[480px] break-all">{author.name}</span>
                   <BadgeCheckIcon className="h-6 w-6 text-lightblue-500 ml-1" />
                 </div>
               }

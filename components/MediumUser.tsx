@@ -77,13 +77,13 @@ const MediumUser = ({ userID, user }: Props) => {
           <div className="p-3 flex justify-between items-center text-base cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
             <div className="flex gap-2">
               <Link href={`/profile/${user.tag}`}>
-                <img src={user.profilePic} alt={user.name} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
+                <img src={user.profilePic} alt={`${user.tag}'s profile pic`} className="rounded-full h-[55px] w-[55px] object-cover cursor-pointer" />
               </Link>
 
               <div>
                 <Link href={`/profile/${user.tag}`}>
                   <div className="flex items-center gap-1 font-semibold cursor-pointer hover:underline">
-                    <div>{user.name}</div>
+                    <div className="truncate max-w-[200px]">{user.name}</div>
                     <div><BadgeCheckIcon className="h-[18px] w-[18px] text-lightblue-500" /></div>
                   </div>
                 </Link>

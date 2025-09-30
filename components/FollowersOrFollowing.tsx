@@ -91,7 +91,7 @@ const FollowersOrFollowing = () => {
             <PageHeader
               title={
                 <div className="flex items-center">
-                  {author.name}
+                  <h2 className="text-xl font-[900] truncate max-w-[250px] sm:max-w-[550px] lg:max-w-[420px] xl:max-w-[480px]">{author.name}</h2>
                   <BadgeCheckIcon className="h-6 w-6 text-lightblue-500 ml-1" />
                 </div>
               }
