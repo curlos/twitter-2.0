@@ -146,96 +146,8 @@ const SmallTweet = ({
             >
               {tweet.text}
             </div>
-            {tweet.images && tweet.images.length > 0 ? (
-              <div className="pt-3">
-                {tweet.images.length === 1 ? (
-                  <img
-                    src={tweet.images[0]}
-                    alt=""
-                    className="rounded-2xl max-h-[500px] w-full object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={(e) => handleImageClick(e, 0)}
-                  />
-                ) : tweet.images.length === 2 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {tweet.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt=""
-                        className={`w-full aspect-[1/1] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
-                          index === 0 ? "rounded-l-2xl" : "rounded-r-2xl"
-                        }`}
-                        onClick={(e) => handleImageClick(e, index)}
-                      />
-                    ))}
-                  </div>
-                ) : tweet.images.length === 3 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <img
-                      src={tweet.images[0]}
-                      alt=""
-                      className="rounded-l-2xl w-full h-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={(e) => handleImageClick(e, 0)}
-                    />
-                    <div className="flex flex-col gap-2">
-                      <img
-                        src={tweet.images[1]}
-                        alt=""
-                        className="rounded-tr-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={(e) => handleImageClick(e, 1)}
-                      />
-                      <img
-                        src={tweet.images[2]}
-                        alt=""
-                        className="rounded-br-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={(e) => handleImageClick(e, 2)}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2">
-                    {tweet.images.slice(0, 4).map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={image}
-                          alt=""
-                          className={`w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
-                            index === 0
-                              ? "rounded-tl-2xl"
-                              : index === 1
-                                ? "rounded-tr-2xl"
-                                : index === 2
-                                  ? "rounded-bl-2xl"
-                                  : "rounded-br-2xl"
-                          }`}
-                          onClick={(e) => handleImageClick(e, index)}
-                        />
-                        {index === 3 && tweet.images.length > 4 && (
-                          <div
-                            className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`}
-                            onClick={(e) => handleImageClick(e, 0)}
-                          >
-                            <PhotographIcon className="h-5 w-5 text-white" />
-                            <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              tweet.image && (
-                <div className="pt-3">
-                  <img
-                    src={tweet.image}
-                    alt=""
-                    className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={(e) => handleImageClick(e, 0)}
-                  />
-                </div>
-              )
-            )}
+            
+            <TweetImages {...{ tweet, handleImageClick }} />
           </div>
 
           {isQuoteTweet && tweet.parentTweet && (
@@ -267,5 +179,102 @@ const SmallTweet = ({
     </div>
   );
 };
+
+const TweetImages = ({ tweet, handleImageClick }) => {
+  if (tweet.images && tweet.images.length > 0) {
+    return (
+      <div className="pt-3">
+        {tweet.images.length === 1 ? (
+          <img
+            src={tweet.images[0]}
+            alt=""
+            className="rounded-2xl max-h-[500px] w-full object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={(e) => handleImageClick(e, 0)}
+          />
+        ) : tweet.images.length === 2 ? (
+          <div className="grid grid-cols-2 gap-2">
+            {tweet.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt=""
+                className={`w-full aspect-[1/1] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                  index === 0 ? "rounded-l-2xl" : "rounded-r-2xl"
+                }`}
+                onClick={(e) => handleImageClick(e, index)}
+              />
+            ))}
+          </div>
+        ) : tweet.images.length === 3 ? (
+          <div className="grid grid-cols-2 gap-2">
+            <img
+              src={tweet.images[0]}
+              alt=""
+              className="rounded-l-2xl w-full h-full object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={(e) => handleImageClick(e, 0)}
+            />
+            <div className="flex flex-col gap-2">
+              <img
+                src={tweet.images[1]}
+                alt=""
+                className="rounded-tr-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={(e) => handleImageClick(e, 1)}
+              />
+              <img
+                src={tweet.images[2]}
+                alt=""
+                className="rounded-br-2xl w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={(e) => handleImageClick(e, 2)}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            {tweet.images.slice(0, 4).map((image, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={image}
+                  alt=""
+                  className={`w-full aspect-[3/2] object-cover border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity ${
+                    index === 0
+                      ? "rounded-tl-2xl"
+                      : index === 1
+                        ? "rounded-tr-2xl"
+                        : index === 2
+                          ? "rounded-bl-2xl"
+                          : "rounded-br-2xl"
+                  }`}
+                  onClick={(e) => handleImageClick(e, index)}
+                />
+                {index === 3 && tweet.images.length > 4 && (
+                  <div
+                    className={`absolute bottom-3 right-3 bg-gray-900 hover:bg-black rounded-lg px-4 py-2 cursor-pointer transition-all flex items-center gap-2 border border-gray-400 dark:border-gray-700`}
+                    onClick={(e) => handleImageClick(e, 0)}
+                  >
+                    <PhotographIcon className="h-5 w-5 text-white" />
+                    <span className="text-white text-lg font-bold">+{tweet.images.length - 4}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+  
+  return (
+    tweet.image && (
+      <div className="pt-3">
+        <img
+          src={tweet.image}
+          alt=""
+          className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+          onClick={(e) => handleImageClick(e, 0)}
+        />
+      </div>
+    )
+  )
+}
 
 export default SmallTweet;
