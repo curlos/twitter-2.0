@@ -140,8 +140,10 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
 
       await batch.commit();
 
-      // Redirect to home page after successful deletion
-      router.push('/');
+      // Redirect to home page if we're on the deleted tweet's page
+      if (router.query.id === id) {
+        router.push('/');
+      }
     } catch (error) {
       console.error('Error deleting tweet:', error);
     }
