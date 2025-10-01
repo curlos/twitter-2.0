@@ -44,49 +44,7 @@ const BigTweet = ({
       className={`text-base border-b border-[#AAB8C2] dark:border-gray-700 w-full ${isReplyTweetWithConnectedLine ? "p-3 pt-0" : "p-3"}`}
     >
       {/* Top of the tweet where the information about it's author is shown.  */}
-      <div className="flex justify-between">
-        <div className="flex">
-          <Link href={`/profile/${author.tag}`}>
-            <div className="mr-2 relative">
-              <img
-                src={author.profilePic}
-                alt={`${author.tag}'s profile pic`}
-                className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer"
-              />
-              {showParentTweetConnectingLine && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
-              )}
-            </div>
-          </Link>
-
-          <div className="">
-            <Link href={`/profile/${author.tag}`}>
-              <div className="flex">
-                <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
-                <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
-              </div>
-            </Link>
-            <Link href={`/profile/${author.tag}`}>
-              <div className="text-gray-700 dark:text-gray-400 p-0 m-0 cursor-pointer hover:underline">
-                @{author.tag}
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        {/* Dropdown where different actions can be seen - Hidden for past tweets */}
-        {!pastTweet && (
-          <TweetDropdown
-            tweet={{
-              ...tweet,
-              tweetId: id,
-            }}
-            author={author}
-            authorId={authorId}
-            deleteTweet={deleteTweet}
-          />
-        )}
-      </div>
+      <TweetTopGeneralInfo {...{ author, showParentTweetConnectingLine, pastTweet, tweet, id, authorId, deleteTweet }} />
 
       {/* This will be shown if the parent tweet has been deleted. */}
       {replyingToDeletedTweet && (
@@ -187,6 +145,54 @@ const BigTweet = ({
     </div>
   );
 };
+
+const TweetTopGeneralInfo = ({ author, showParentTweetConnectingLine, pastTweet, tweet, id, authorId, deleteTweet }) => {
+  return (
+    <div className="flex justify-between">
+      <div className="flex">
+        <Link href={`/profile/${author.tag}`}>
+          <div className="mr-2 relative">
+            <img
+              src={author.profilePic}
+              alt={`${author.tag}'s profile pic`}
+              className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer"
+            />
+            {showParentTweetConnectingLine && (
+              <div className="absolute left-1/2 transform -translate-x-1/2 top-[55px] bottom-[-24px] w-0.5 bg-gray-400 dark:bg-gray-600"></div>
+            )}
+          </div>
+        </Link>
+
+        <div className="">
+          <Link href={`/profile/${author.tag}`}>
+            <div className="flex">
+              <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
+              <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+            </div>
+          </Link>
+          <Link href={`/profile/${author.tag}`}>
+            <div className="text-gray-700 dark:text-gray-400 p-0 m-0 cursor-pointer hover:underline">
+              @{author.tag}
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Dropdown where different actions can be seen - Hidden for past tweets */}
+      {!pastTweet && (
+        <TweetDropdown
+          tweet={{
+            ...tweet,
+            tweetId: id,
+          }}
+          author={author}
+          authorId={authorId}
+          deleteTweet={deleteTweet}
+        />
+      )}
+    </div>
+  )
+}
 
 const TweetBottomGeneralInfo = ({ editedTweet, id, tweet, handleInteractionClick, getReplyStatus }) => {
   return (
