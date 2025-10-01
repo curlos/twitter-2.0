@@ -149,12 +149,12 @@ const SmallTweet = ({
 const TweetTopGeneralInfo = ({ author, tweet, editedTweet, pastTweet, id, authorId, deleteTweet }) => {
   return (
     <div className="flex justify-between w-full">
-      <div className="lg:flex">
+      <div className="lg:flex items-center">
         <div className="flex">
           <Link href={`/profile/${author.tag}`}>
             <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]" onClick={(e) => e.stopPropagation()}>{author.name}</div>
           </Link>
-          <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+          <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] mt-[2px] mr-[2px] text-lightblue-500" />
         </div>
         <Link href={`/profile/${author.tag}`}>
           <div className="text-gray-500 cursor-pointer hover:underline" onClick={(e) => e.stopPropagation()}>@{author.tag}</div>

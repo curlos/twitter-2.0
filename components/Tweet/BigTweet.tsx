@@ -167,7 +167,7 @@ const TweetTopGeneralInfo = ({ author, showParentTweetConnectingLine, pastTweet,
           <Link href={`/profile/${author.tag}`}>
             <div className="flex">
               <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
-              <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+              <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] mt-[2px] text-lightblue-500" />
             </div>
           </Link>
           <Link href={`/profile/${author.tag}`}>
