@@ -1,4 +1,3 @@
-import { BadgeCheckIcon } from '@heroicons/react/solid';
 import { collection, DocumentData, getDocs, query, where } from 'firebase/firestore';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -7,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { authModalState } from '../atoms/atom';
 import { db } from '../firebase';
 import { useFollow } from '../utils/useFollow';
+import { HiBadgeCheck } from 'react-icons/hi';
 
 interface Props {
   userID: string,
@@ -82,9 +82,9 @@ const MediumUser = ({ userID, user }: Props) => {
 
               <div>
                 <Link href={`/profile/${user.tag}`}>
-                  <div className="flex items-center gap-1 font-semibold cursor-pointer hover:underline">
+                  <div className="flex items-center font-semibold cursor-pointer hover:underline">
                     <div className="truncate max-w-[200px]">{user.name}</div>
-                    <div><BadgeCheckIcon className="h-[18px] w-[18px] text-lightblue-500" /></div>
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                   </div>
                 </Link>
                 <div className="text-gray-700 dark:text-gray-400">@{user.tag}</div>

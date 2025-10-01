@@ -1,5 +1,5 @@
 import { DocumentData, query, collection, where, getDocs, doc, getDoc } from "firebase/firestore";
-import { BadgeCheckIcon, UserGroupIcon } from "@heroicons/react/solid";
+import { UserGroupIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -8,6 +8,7 @@ import AppLayout from "./Layout/AppLayout";
 import PageHeader from "./Layout/PageHeader";
 import ContentContainer from "./Layout/ContentContainer";
 import SortableUserList from "./SortableUserList";
+import { HiBadgeCheck } from "react-icons/hi";
 
 /**
  * @description - Renders the content for either the "/followers/${tag}" OR "/following/${tag}" pages.
@@ -92,7 +93,7 @@ const FollowersOrFollowing = () => {
               title={
                 <div className="flex items-center">
                   <h2 className="text-xl font-[900] truncate max-w-[250px] sm:max-w-[550px] lg:max-w-[420px] xl:max-w-[480px]">{author.name}</h2>
-                  <BadgeCheckIcon className="h-6 w-6 text-lightblue-500 ml-1" />
+                  <HiBadgeCheck className="h-6 w-6 text-lightblue-500 ml-1" />
                 </div>
               }
               subtitle={`@${author.tag}`}

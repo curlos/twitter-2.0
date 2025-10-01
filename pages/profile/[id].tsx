@@ -8,7 +8,6 @@ import { editProfileModalState, authModalState } from '../../atoms/atom';
 import AppLayout from '../../components/Layout/AppLayout';
 import PageHeader from '../../components/Layout/PageHeader';
 import ContentContainer from '../../components/Layout/ContentContainer';
-import { BadgeCheckIcon } from '@heroicons/react/solid';
 import { collection, orderBy, query, where, documentId } from 'firebase/firestore';
 import { CalendarIcon, LinkIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import ProfileTweets from '../../components/ProfileTweets';
@@ -18,6 +17,7 @@ import Link from 'next/link';
 import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
+import { HiBadgeCheck } from 'react-icons/hi';
 
 // Utility function to split array into chunks of specified size
 const chunkArray = (array, chunkSize) => {
@@ -71,7 +71,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
       <div className="p-4 pt-2">
         <div className="flex items-center">
           <h2 className="text-xl font-[900] truncate max-w-[250px] sm:max-w-[420px] xl:max-w-[480px]">{author.name}</h2>
-          <BadgeCheckIcon className="h-5 w-5 text-lightblue-500" />
+          <HiBadgeCheck className="h-[22px] w-[22px] ml-[2px] mb-[3px] text-lightblue-500" />
         </div>
 
         <div className="text-base text-gray-500">@{author.tag}</div>
@@ -556,7 +556,7 @@ const ProfilePage = () => {
               title={
                 <div className="flex items-center min-w-0">
                   <span className="truncate max-w-[250px] sm:max-w-[420px] md:max-w-[600px] lg:max-w-[420px] xl:max-w-[480px] break-all">{author.name}</span>
-                  <BadgeCheckIcon className="h-6 w-6 text-lightblue-500 ml-1" />
+                  <HiBadgeCheck className="h-6 w-6 text-lightblue-500 ml-1 mb-[2px]" />
                 </div>
               }
               subtitle={`${tweets.length} Tweets`}

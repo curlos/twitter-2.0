@@ -3,6 +3,7 @@ import { DotsHorizontalIcon, LogoutIcon, UserIcon } from "@heroicons/react/outli
 import { Menu, Transition } from "@headlessui/react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { HiBadgeCheck } from "react-icons/hi";
 
 interface ProfileButtonProps {
   onMenuItemClick?: () => void;
@@ -22,7 +23,10 @@ const ProfileButton = ({ onMenuItemClick }: ProfileButtonProps) => {
               <Menu.Button className="flex items-center space-x-2 w-full p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-base">
                 <img src={session.user.profilePic} alt={`${session.user.tag}'s profile pic`} className="rounded-full w-[55px] h-[55px] object-cover" />
                 <div className="flex flex-col w-full">
-                  <div className="text-left truncate max-w-[150px]">{session.user.name}</div>
+                  <div className="flex items-center">
+                    <div className="text-left truncate max-w-[150px]">{session.user.name}</div>
+                    <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+                  </div>
                   <div className="text-gray-500 break-word text-left">@{session.user.tag}</div>
                 </div>
                 <DotsHorizontalIcon className="h-5 w-5 text-gray-700 dark:text-gray-400" />

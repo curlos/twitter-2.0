@@ -7,6 +7,7 @@ import { db } from '../firebase';
 import { ITweet } from '../utils/types';
 import { PhotographIcon } from '@heroicons/react/solid';
 import DeletedTweet from './DeletedTweet';
+import { HiBadgeCheck } from 'react-icons/hi';
 
 interface ParentTweetProps {
   tweetBeingRepliedToId: string;
@@ -100,8 +101,11 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
 
           {/* Show basic information about the tweet. Does not include the tweet's stats (retweets, likes, comments, bookmarks) */}
           <div className="w-full">
-            <div className="text-gray-700 dark:text-gray-400 lg:flex">
-              <div className="text-black dark:text-white font-bold mr-[2px] truncate max-w-[150px] sm:max-w-[200px]">{author.name}</div>
+            <div className="text-gray-700 dark:text-gray-400 lg:flex items-center">
+              <div className="flex items-center mr-[2px]">
+                <div className="text-black dark:text-white font-bold truncate max-w-[150px] sm:max-w-[200px]">{author.name}</div>
+                <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+              </div>
               <div>@{author.tag}</div>
               <div className="text-gray-500 mx-1 font-bold hidden lg:block">·</div>
               {tweet.timestamp && tweet.timestamp.seconds && (
