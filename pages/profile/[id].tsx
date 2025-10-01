@@ -57,7 +57,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
         <img
           src={author.profilePic}
           alt=""
-          className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover cursor-pointer"
+          className="rounded-full h-[133.5px] w-[133.5px] border-4 border-white dark:border-black mt-[-88px] object-cover cursor-pointer bg-gray-200 dark:bg-gray-800"
           onClick={() => handleImageClick(author.profilePic)}
         />
 
