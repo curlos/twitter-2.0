@@ -140,7 +140,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
             <div className="flex">
               {followersYouFollow.slice(0, 3).map((user, i) => (
                 <Link key={user.tag} href={`/profile/${user.tag}`}>
-                  <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full z-50 ${i > 0 ? 'ml-[-9px]' : ''}`} />
+                  <img src={user.profilePic} alt="" className={`h-[18px] w-[18px] cursor-pointer border border-white rounded-full ${i > 0 ? 'ml-[-9px]' : ''}`} />
                 </Link>
               ))}
             </div>
