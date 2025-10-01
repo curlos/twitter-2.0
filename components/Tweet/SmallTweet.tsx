@@ -54,7 +54,7 @@ const SmallTweet = ({
         {retweetedBy ? (
           <div className="font-semibold ml-[63px]">
             <Link href={`/profile/${retweetedBy.tag}`}>
-              <span className="flex hover:underline">
+              <span className="flex hover:underline" onClick={(e) => e.stopPropagation()}>
                 <FaRetweet className="h-[18px] w-[18px] mr-2 mb-2" />
                 <span className="truncate max-w-[200px]">
                   {session && session.user && retweetedBy.tag === session.user.tag
@@ -74,6 +74,7 @@ const SmallTweet = ({
               src={author.profilePic}
               alt={`${author.tag}'s profile pic`}
               className="rounded-full h-[55px] w-[55px] object-cover max-w-none cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
             />
           </Link>
           {showParentTweetConnectingLine && (
@@ -82,49 +83,14 @@ const SmallTweet = ({
         </div>
 
         <div className="flex flex-col justify-between w-full">
-          {/* List of information about the tweet at the top - Author name, author username, verified user badge, timestamp, whether it's been edited or not. */}
-          <div className="flex justify-between w-full">
-            <div className="lg:flex">
-              <div className="flex">
-                <Link href={`/profile/${author.tag}`}>
-                  <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]">{author.name}</div>
-                </Link>
-                <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
-              </div>
-              <Link href={`/profile/${author.tag}`}>
-                <div className="text-gray-500 cursor-pointer hover:underline">@{author.tag}</div>
-              </Link>
-              <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
-              {tweet.timestamp && tweet.timestamp.seconds && (
-                <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
-              )}
+          <TweetTopGeneralInfo {...{ author, tweet, editedTweet, pastTweet, id, authorId, deleteTweet }} />
 
-              {/* Shows the pencil if the tweet has been edited. */}
-              {editedTweet && <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>}
-              {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500" />}
-            </div>
-
-            {/* Dropdown - Hidden for past tweets */}
-            {!pastTweet && (
-              <TweetDropdown
-                tweet={{
-                  ...tweet,
-                  tweetId: id,
-                }}
-                author={author}
-                authorId={authorId}
-                deleteTweet={deleteTweet}
-              />
-            )}
-          </div>
-
-          {/* Renders a message saying that this tweet is a reply to another one with the parent tweet's author's username in the message. For example, "Replying to @wojespn" */}
           <div className="pb-1">
             {parentTweet && parentTweetAuthor && !isQuoteTweet && (
               <div className="text-[15px] text-gray-500">
                 Replying to
                 <Link href={`/profile/${parentTweetAuthor.tag}`}>
-                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline">
+                  <span className="ml-1 text-lightblue-400 cursor-pointer hover:underline" onClick={(e) => e.stopPropagation()}>
                     @{parentTweetAuthor.tag}
                   </span>
                 </Link>
@@ -179,6 +145,45 @@ const SmallTweet = ({
     </div>
   );
 };
+
+const TweetTopGeneralInfo = ({ author, tweet, editedTweet, pastTweet, id, authorId, deleteTweet }) => {
+  return (
+    <div className="flex justify-between w-full">
+      <div className="lg:flex">
+        <div className="flex">
+          <Link href={`/profile/${author.tag}`}>
+            <div className="cursor-pointer hover:underline font-bold truncate max-w-[200px]" onClick={(e) => e.stopPropagation()}>{author.name}</div>
+          </Link>
+          <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
+        </div>
+        <Link href={`/profile/${author.tag}`}>
+          <div className="text-gray-500 cursor-pointer hover:underline" onClick={(e) => e.stopPropagation()}>@{author.tag}</div>
+        </Link>
+        <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>
+        {tweet.timestamp && tweet.timestamp.seconds && (
+          <div className="text-gray-500">{moment(tweet.timestamp.seconds * 1000).fromNow()}</div>
+        )}
+
+        {/* Shows the pencil if the tweet has been edited. */}
+        {editedTweet && <div className="hidden lg:block text-gray-500 mx-1 font-bold">·</div>}
+        {editedTweet && <BsPencilFill className="h-[18px] w-[18px] ml-[2px] text-gray-500" />}
+      </div>
+
+      {/* Dropdown - Hidden for past tweets */}
+      {!pastTweet && (
+        <TweetDropdown
+          tweet={{
+            ...tweet,
+            tweetId: id,
+          }}
+          author={author}
+          authorId={authorId}
+          deleteTweet={deleteTweet}
+        />
+      )}
+    </div>
+  )
+}
 
 const TweetImages = ({ tweet, handleImageClick }) => {
   if (tweet.images && tweet.images.length > 0) {
