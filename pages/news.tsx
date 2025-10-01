@@ -61,7 +61,11 @@ const News: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    // Parse the date string as UTC and convert to local timezone
+    const utcDate = dateString.includes('Z') ? dateString : dateString.replace(' ', 'T') + 'Z';
+    const date = new Date(utcDate);
+
+    return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
