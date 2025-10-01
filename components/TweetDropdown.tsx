@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { newTweetModalState, tweetToEditState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetBeingRepliedToIdState, isQuoteTweetState } from "../atoms/atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { newTweetModalState, tweetToEditState, authModalState, editInteractionSettingsModalState, editInteractionSettingsTweetState, tweetBeingRepliedToIdState, isQuoteTweetState, tweetSentAlertState } from "../atoms/atom";
 import { Menu, Transition } from "@headlessui/react";
 import { DotsHorizontalIcon } from "@heroicons/react/solid";
 import { ClockIcon, PencilIcon, TrashIcon, UserAddIcon, UserRemoveIcon, ClipboardCopyIcon, CogIcon, EyeOffIcon, TranslateIcon } from "@heroicons/react/outline";
@@ -36,6 +36,7 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const [_editInteractionSettingsTweet, setEditInteractionSettingsTweet] = useRecoilState(editInteractionSettingsTweetState);
   const [_tweetBeingRepliedToId, setTweetBeingRepliedToId] = useRecoilState(tweetBeingRepliedToIdState);
   const [_isQuoteTweet, setIsQuoteTweet] = useRecoilState(isQuoteTweetState);
+  const setTweetSentAlert = useSetRecoilState(tweetSentAlertState);
 
   useEffect(() => {
     let isMounted = true;
@@ -115,6 +116,12 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
   const handleCopyTweetText = async () => {
     try {
       await navigator.clipboard.writeText(tweet.text);
+      // Show success alert
+      setTweetSentAlert({
+        isVisible: true,
+        tweetId: '',
+        message: 'Tweet text copied'
+      });
     } catch (error) {
       console.error('Failed to copy tweet text:', error);
       // Fallback for older browsers
@@ -124,6 +131,12 @@ export const TweetDropdown = ({ tweet, author, authorId, deleteTweet }: Props) =
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
+      // Show success alert even for fallback
+      setTweetSentAlert({
+        isVisible: true,
+        tweetId: '',
+        message: 'Tweet text copied'
+      });
     }
   };
 
