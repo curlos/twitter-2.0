@@ -116,7 +116,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
             <div>
               <div className="text-black dark:text-white break-words max-w-[420px]">{tweet.text}</div>
 
-              {(tweet.images && tweet.images.length > 0) ? (
+              {tweet.images && tweet.images.length > 0 && (
                 <div className="pt-3">
                   {tweet.images.length === 1 ? (
                     <img
@@ -181,10 +181,6 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
                       ))}
                     </div>
                   )}
-                </div>
-              ) : tweet.image && (
-                <div className="pt-3">
-                  <img src={tweet.image} alt="" className="rounded-2xl max-h-[500px] object-contain border border-gray-400 dark:border-gray-700" />
                 </div>
               )}
             </div>

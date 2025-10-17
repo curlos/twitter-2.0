@@ -310,7 +310,7 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
       {/* Image Modal */}
       <ImageModal
         isOpen={showImageModal}
-        images={tweet.images && tweet.images.length > 0 ? tweet.images : tweet.image ? [tweet.image] : []}
+        images={tweet.images && tweet.images.length > 0 ? tweet.images : []}
         initialIndex={selectedImageIndex ?? 0}
         onClose={handleCloseImageModal}
       />

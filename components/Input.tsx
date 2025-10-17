@@ -64,7 +64,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   const { data: session } = useSession();
 
   const [input, setInput] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const filePickerRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -73,7 +72,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
   const setEditInteractionSettingsTweet = useSetRecoilState(editInteractionSettingsTweetState);
   const setTweetSentAlert = useSetRecoilState(tweetSentAlertState);
-  const isEditingTweet = (tweetToEdit && Object.keys(tweetToEdit).length >= 1 && (tweetToEdit?.text?.length > 0 || tweetToEdit?.image?.length > 0 || tweetToEdit?.images?.length > 0));
+  const isEditingTweet = (tweetToEdit && Object.keys(tweetToEdit).length >= 1 && (tweetToEdit?.text?.length > 0 || tweetToEdit?.images?.length > 0));
 
   // Interaction settings state
   const [allowQuotes, setAllowQuotes] = useState(tweetToEdit?.allowQuotes ?? true);
@@ -128,7 +127,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   useEffect(() => {
     if (!isEditingTweet || !tweetToEdit) {
       setInput('')
-      setSelectedFile('')
       setSelectedFiles([])
       return
     }
@@ -139,16 +137,12 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
 
     if (tweetToEdit?.images && tweetToEdit.images.length > 0) {
       setSelectedFiles(tweetToEdit.images);
-    } else if (tweetToEdit?.image) {
-      setSelectedFile(tweetToEdit?.image);
-      setSelectedFiles([]);
     }
   }, [tweetToEdit]);
 
   const resetCoreStateValues = () => {
     setLoading(false);
     setInput('');
-    setSelectedFile(null);
     setSelectedFiles([]);
     setIsOpen(false);
     setIsQuoteTweet(false);
@@ -160,7 +154,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
 
   const sendTweet = async () => {
     // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
-    if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
+    if (loading || (!input && selectedFiles.length === 0)) return;
     setLoading(true);
 
     const newTweet = {
@@ -211,11 +205,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       await updateDoc(doc(db, "tweets", docRef.id), {
         images: imageUrls
       });
-    } else if (selectedFile) {
-      const downloadURL = await uploadImageAndGetURL(docRef.id);
-      await updateDoc(doc(db, "tweets", docRef.id), {
-        image: downloadURL
-      });
     }
 
     resetCoreStateValues()
@@ -236,7 +225,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     const currentTweet = tweetToEdit;
 
     // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
-    if (loading || (!input && !selectedFile && selectedFiles.length === 0)) return;
+    if (loading || (!input && selectedFiles.length === 0)) return;
 
     setLoading(true);
 
@@ -246,7 +235,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     }
 
     // If the image(s) have already been uploaded (meaning they have not been changed since the past version and have URLs as strings)
-    const imageAlreadyUploaded = selectedFile && selectedFile.startsWith('http');
     const imagesAlreadyUploaded = selectedFiles.length > 0 && selectedFiles.every(file => file.startsWith('http'));
     const hasNewImages = selectedFiles.length > 0 && selectedFiles.some(file => !file.startsWith('http'));
     const updatedObject: any = {
@@ -262,8 +250,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
 
     if (imagesAlreadyUploaded) {
       updatedObject.images = selectedFiles;
-    } else if (imageAlreadyUploaded) {
-      updatedObject.image = selectedFile;
     }
 
     const { versionHistory, allowRepliesFrom: currentAllowRepliesFrom, timestamp, ...tweetPrimitiveData } = currentTweet
@@ -290,12 +276,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
         if (imageUrls.length > 0) {
           updatedObject.images = imageUrls;
         }
-      } else if (selectedFile && !imageAlreadyUploaded) {
-        // If this is a new single image that the user just uploaded
-        const downloadURL = await uploadImageAndGetURL(currentTweet.tweetId);
-        if (downloadURL) {
-          updatedObject.image = downloadURL;
-        }
       }
 
       await updateDoc(doc(db, "tweets", currentTweet.tweetId), updatedObject);
@@ -321,17 +301,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       }
       console.error(error);
     }
-  };
-
-  const uploadImageAndGetURL = async (docRefId: string) => {
-    const imageRef = ref(storage, `tweets/${docRefId}/image`);
-
-    if (selectedFile) {
-      await uploadString(imageRef, selectedFile, "data_url");
-      const downloadURL = await getDownloadURL(imageRef);
-      return downloadURL;
-    }
-    return null;
   };
 
   const uploadImagesAndGetURLs = async (docRefId: string) => {
@@ -495,18 +464,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                 </DndContext>
               </div>
             )}
-
-            {selectedFile && (
-              <div className="py-3">
-                <div className="relative">
-                  <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 left-1 cursor-pointer" onClick={() => setSelectedFile(null)}>
-                    <XIcon className="text-white h-7" />
-                  </div>
-                </div>
-
-                <img src={selectedFile} alt="" className="rounded-2xl max-h-80 object-contain" />
-              </div>
-            )}
           </div>
 
           {!loading && (
@@ -596,18 +553,6 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                       </div>
                     </SortableContext>
                   </DndContext>
-                </div>
-              )}
-
-              {selectedFile && (
-                <div className="py-3">
-                  <div className="relative">
-                    <div className="absolute w-8 h-7 bg-[#15181c] hover:bg-[#272c26] bg-opacity-75 rounded-full flex items-center justify-center top-1 left-1 cursor-pointer" onClick={() => setSelectedFile(null)}>
-                      <XIcon className="text-white h-7" />
-                    </div>
-                  </div>
-
-                  <img src={selectedFile} alt="" className="rounded-2xl max-h-80 object-contain" />
                 </div>
               )}
             </div>

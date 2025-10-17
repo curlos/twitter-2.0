@@ -270,7 +270,7 @@ const TweetBottomGeneralInfo = ({ editedTweet, id, tweet, handleInteractionClick
 const TweetImages = ({ tweet, handleImageClick }) => {
   return (
     <>
-      {tweet.images && tweet.images.length > 0 ? (
+      {tweet.images && tweet.images.length > 0 && (
         <div className="pt-3">
           {tweet.images.length === 1 ? (
             <img
@@ -348,17 +348,6 @@ const TweetImages = ({ tweet, handleImageClick }) => {
             </div>
           )}
         </div>
-      ) : (
-        tweet.image && (
-          <div className="pt-3">
-            <img
-              src={tweet.image}
-              alt=""
-              className="rounded-2xl w-full object-contain border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={(e) => handleImageClick(e, 0)}
-            />
-          </div>
-        )
       )}
     </>
   )
