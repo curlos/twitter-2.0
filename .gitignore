@@ -42,3 +42,7 @@ firebase.json
 
 package-lock.json
 tsconfig.tsbuildinfo
+
+serviceAccountKey.json
+firebase-backup/
+firebase-images
