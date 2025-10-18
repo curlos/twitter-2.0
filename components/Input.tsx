@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { db, storage } from '../firebase';
+import { db } from '../firebase';
+import imageCompression from 'browser-image-compression';
 
 const MAX_TWEET_LENGTH = 500;
 const MAX_IMAGES = 10;
@@ -12,7 +13,6 @@ import {
   writeBatch,
   increment,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   PhotographIcon,
@@ -313,18 +313,35 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       if (file.startsWith('http')) {
         imageUrls.push(file);
       } else {
-        // Only upload new images (base64 data)
-        const imageRef = ref(storage, `tweets/${docRefId}/image_${i}`);
-        await uploadString(imageRef, file, "data_url");
-        const downloadURL = await getDownloadURL(imageRef);
-        imageUrls.push(downloadURL);
+        // Upload new images to Cloudinary
+        const response = await fetch('/api/upload/tweet-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: file,
+            tweetId: docRefId,
+            imageIndex: i,
+            userId: session.user.uid,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          imageUrls.push(data.imageUrl);
+        } else {
+          console.error('Failed to upload image:', data.error);
+          throw new Error('Failed to upload image');
+        }
       }
     }
 
     return imageUrls;
   };
 
-  const addImageToPost = (e) => {
+  const addImageToPost = async (e) => {
     const files = Array.from(e.target.files);
     const totalFiles = selectedFiles.length + files.length;
 
@@ -333,12 +350,34 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       return;
     }
 
-    const filePromises = files.map(file => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (readerEvent) => resolve(readerEvent.target.result);
-        reader.readAsDataURL(file as Blob);
-      });
+    // Compression options for tweet images
+    const compressionOptions = {
+      maxSizeMB: 0.2,              // 200KB target
+      maxWidthOrHeight: 1600,       // Good for social media
+      useWebWorker: true,           // Non-blocking
+      initialQuality: 0.7,          // 70% quality
+    };
+
+    const filePromises = files.map(async (file) => {
+      try {
+        // Compress the image
+        const compressedFile = await imageCompression(file as File, compressionOptions);
+
+        // Convert compressed file to base64
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (readerEvent) => resolve(readerEvent.target.result);
+          reader.readAsDataURL(compressedFile);
+        });
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        // Fallback to original file if compression fails
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (readerEvent) => resolve(readerEvent.target.result);
+          reader.readAsDataURL(file as Blob);
+        });
+      }
     });
 
     Promise.all(filePromises).then(results => {

@@ -6,9 +6,9 @@ import React, { useState, Fragment, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { colorThemeState, editProfileModalState } from '../atoms/atom';
 import { FiCamera } from 'react-icons/fi';
-import { db, storage } from '../firebase';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { db } from '../firebase';
 import { useRouter } from 'next/router';
+import imageCompression from 'browser-image-compression';
 
 /**
  * @description - Renders a modal where the user can edit their profile info such as their name, username, bio, location and website.
@@ -83,26 +83,54 @@ const EditProfileModal = () => {
       setLoading(false);
     } else {
 
-      // Create a StorageReference for the profile pic and banner pic (essentially tells us WHERE the files will be stored)
-      const profilePicRef = ref(storage, `users/profilePic/${session.user.uid}/image`);
-      const bannerRef = ref(storage, `users/banner/${session.user.uid}/image`);
-
+      // Upload profile pic to Cloudinary
       if (selectedFileProfilePic) {
-        // Upload the string of type "data_url" (this is a URI schema for uploading files) and put it in the "/users/profilePic/${}/image" storage reference
-        await uploadString(profilePicRef, selectedFileProfilePic, "data_url").then(async () => {
-          const downloadURL = await getDownloadURL(profilePicRef);
-          updatedUserData.profilePic = downloadURL;
+        const response = await fetch('/api/upload/profile-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: selectedFileProfilePic,
+            userId: session.user.uid,
+            imageType: 'profilePic',
+          }),
         });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updatedUserData.profilePic = data.imageUrl;
+        } else {
+          console.error('Failed to upload profile pic:', data.error);
+          setLoading(false);
+          return;
+        }
       }
 
+      // Upload banner to Cloudinary
       if (selectedFileBanner) {
-        // Upload the string of type "data_url" (this is a URI schema for uploading files) and put it in the "/users/profilePic/${}/image" storage reference
-        await uploadString(bannerRef, selectedFileBanner, "data_url").then(async () => {
-          // "getDownloadURL()" generates a public URL that can be used to download the file or display it directly in a web browser.
-          const downloadURL = await getDownloadURL(bannerRef);
-          // Sets the user's banner to this download URL, will be used as the "img" src.
-          updatedUserData.banner = downloadURL;
+        const response = await fetch('/api/upload/profile-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: selectedFileBanner,
+            userId: session.user.uid,
+            imageType: 'banner',
+          }),
         });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updatedUserData.banner = data.imageUrl;
+        } else {
+          console.error('Failed to upload banner:', data.error);
+          setLoading(false);
+          return;
+        }
       }
 
       // Find the user in the database without the currently logged in user's ID and set their data to the updated data here.
@@ -144,8 +172,33 @@ const EditProfileModal = () => {
    * @description - Handles when a user changes their profile pic by uploading a new file.
    * @param e - event from input
    */
-  const changePic = (e, picType: String) => {
+  const changePic = async (e, picType: String) => {
     try {
+      // Check if a file was selected
+      if (!e.target.files[0]) {
+        return;
+      }
+
+      const file = e.target.files[0];
+
+      // Compression options based on image type
+      const compressionOptions = picType === 'profile'
+        ? {
+            maxSizeMB: 0.16,          // 160KB for profile pics
+            maxWidthOrHeight: 600,     // Profile pics don't need huge dimensions
+            useWebWorker: true,
+            initialQuality: 0.7,
+          }
+        : {
+            maxSizeMB: 0.24,          // 240KB for banners
+            maxWidthOrHeight: 1500,    // Banners need more detail
+            useWebWorker: true,
+            initialQuality: 0.7,
+          };
+
+      // Compress the image
+      const compressedFile = await imageCompression(file, compressionOptions);
+
       // FileReader is a JavaScript Object used to read data from 'Blob' or 'File' objects.
       const reader = new FileReader();
 
@@ -160,16 +213,22 @@ const EditProfileModal = () => {
         }
       };
 
-      // Check if a file was selected 
-      // e.target.files is a FileList object representing the files selected in the input
-      // If the user selected at least one file, e.target.files[0] will be truthy
+      // Start reading the compressed file as a data URL
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      // Fallback to original file if compression fails
       if (e.target.files[0]) {
-        // Start reading the first selected file as a data URL
-        // When the reader finishes it will call the onload handler defined above with the data URL from this reader reading the data from the file.
+        const reader = new FileReader();
+        reader.onload = (readerEvent) => {
+          if (picType === 'profile') {
+            setSelectedFileProfilePic(readerEvent.target.result);
+          } else if (picType === 'banner') {
+            setSelectedFileBanner(readerEvent.target.result);
+          }
+        };
         reader.readAsDataURL(e.target.files[0]);
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
