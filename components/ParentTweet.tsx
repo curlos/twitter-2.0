@@ -114,7 +114,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
             </div>
 
             <div>
-              <div className="text-black dark:text-white break-words max-w-[420px]">{tweet.text}</div>
+              <div className="text-black dark:text-white break-words max-w-[380px]">{tweet.text}</div>
 
               {tweet.images && tweet.images.length > 0 && (
                 <div className="pt-3">
