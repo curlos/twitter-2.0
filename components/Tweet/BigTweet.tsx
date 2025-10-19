@@ -39,6 +39,14 @@ const BigTweet = ({
   handleInteractionClick,
   getReplyStatus
 }) => {
+  const getLongestWord = () => {
+    if (!tweet.text) {
+      return '';
+    } else {
+      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
+    }
+  };
+
   return (
     <div
       className={`text-base border-b border-[#AAB8C2] dark:border-gray-700 w-full ${isReplyTweetWithConnectedLine ? "p-3 pt-0" : "p-3"}`}
@@ -68,7 +76,7 @@ const BigTweet = ({
         ) : null}
 
         {/* Main content of the tweet - Renders both the text AND image(s) in the tweet. */}
-        <div className="break-all" style={{ whiteSpace: "pre-line" }}>
+        <div className={getLongestWord().length > 26 ? "break-all" : "break-words"} style={{ whiteSpace: "pre-line" }}>
           {tweet.text}
         </div>
         

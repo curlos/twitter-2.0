@@ -26,6 +26,14 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
   const [tweetExists, setTweetExists] = useState(true);
   const router = useRouter();
 
+  const getLongestWord = () => {
+    if (!tweet?.text) {
+      return '';
+    } else {
+      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
+    }
+  };
+
   const handleTweetClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!fromTweetModal && isQuoteTweet) {
@@ -114,7 +122,7 @@ const ParentTweet = ({ tweetBeingRepliedToId, isQuoteTweet, fromTweetModal = fal
             </div>
 
             <div>
-              <div className="text-black dark:text-white break-words max-w-[380px]">{tweet.text}</div>
+              <div className={`text-black dark:text-white ${getLongestWord().length > 26 ? "break-all" : "break-words"}`} style={{ whiteSpace: "pre-line" }}>{tweet.text}</div>
 
               {tweet.images && tweet.images.length > 0 && (
                 <div className="pt-3">
