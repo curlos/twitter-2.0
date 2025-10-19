@@ -68,6 +68,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   const filePickerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [compressingImages, setCompressingImages] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
   const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
@@ -157,6 +158,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     // If a tweet is already being sent or there's no text AND no images then DO NOT send tweet
     if (loading || (!input && selectedFiles.length === 0)) return;
     setLoading(true);
+    setUploadError('');
 
     const newTweet = {
       userID: session.user.uid,
@@ -201,25 +203,31 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       await batch.commit();
     }
 
-    if (selectedFiles.length > 0) {
-      const imageUrls = await uploadImagesAndGetURLs(docRef.id);
-      await updateDoc(doc(db, "tweets", docRef.id), {
-        images: imageUrls
+    try {
+      if (selectedFiles.length > 0) {
+        const imageUrls = await uploadImagesAndGetURLs(docRef.id);
+        await updateDoc(doc(db, "tweets", docRef.id), {
+          images: imageUrls
+        });
+      }
+
+      resetCoreStateValues()
+
+      // Show success alert
+      const message = isNewReply ? 'Your reply was sent' :
+                     isNewQuote ? 'Your quote tweet was sent' :
+                     'Your tweet was sent';
+
+      setTweetSentAlert({
+        isVisible: true,
+        tweetId: docRef.id,
+        message: message
       });
+    } catch (error) {
+      // Error is already handled in uploadImagesAndGetURLs
+      // Just stop execution here
+      return;
     }
-
-    resetCoreStateValues()
-
-    // Show success alert
-    const message = isNewReply ? 'Your reply was sent' :
-                   isNewQuote ? 'Your quote tweet was sent' :
-                   'Your tweet was sent';
-
-    setTweetSentAlert({
-      isVisible: true,
-      tweetId: docRef.id,
-      message: message
-    });
   };
 
   const editTweet = async () => {
@@ -229,6 +237,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     if (loading || (!input && selectedFiles.length === 0)) return;
 
     setLoading(true);
+    setUploadError('');
 
     // Enable editing mode to pause onSnapshot updates
     if (setIsEditing) {
@@ -296,34 +305,46 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
         message: 'Your tweet was updated'
       });
     } catch (error) {
+      // Error is already handled in uploadImagesAndGetURLs
       // Make sure to disable editing mode even on error
       if (setIsEditing) {
         setIsEditing(false);
       }
-      console.error(error);
+      // Don't log or propagate the error as it's already handled
+      return;
     }
   };
 
   const uploadImagesAndGetURLs = async (docRefId: string) => {
-    const imageUrls = [];
+    const imagesToUpload = [];
+    const imageIndexMap = [];
 
+    // Build a map of which images need uploading and their original indices
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
 
-      // If the file is already a URL (starts with http), just add it to the array
       if (file.startsWith('http')) {
-        imageUrls.push(file);
+        // Already uploaded, keep the URL
+        imageIndexMap.push({ index: i, url: file, needsUpload: false });
       } else {
-        // Upload new images to Cloudinary
+        // Needs upload
+        imageIndexMap.push({ index: i, needsUpload: true, uploadIndex: imagesToUpload.length });
+        imagesToUpload.push(file);
+      }
+    }
+
+    // Upload all new images in a single API call
+    let uploadedUrls = [];
+    if (imagesToUpload.length > 0) {
+      try {
         const response = await fetch('/api/upload/tweet-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            image: file,
+            images: imagesToUpload,
             tweetId: docRefId,
-            imageIndex: i,
             userId: session.user.uid,
           }),
         });
@@ -331,13 +352,27 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
         const data = await response.json();
 
         if (response.ok) {
-          imageUrls.push(data.imageUrl);
+          uploadedUrls = data.imageUrls;
         } else {
-          console.error('Failed to upload image:', data.error);
-          throw new Error('Failed to upload image');
+          setUploadError(data.error || 'Failed to upload images. Please try again.');
+          setLoading(false);
+          throw new Error('Failed to upload images');
         }
+      } catch (error) {
+        setUploadError('Failed to upload images. Please try again.');
+        setLoading(false);
+        throw error;
       }
     }
+
+    // Reconstruct the array in original order
+    const imageUrls = imageIndexMap.map(item => {
+      if (item.needsUpload) {
+        return uploadedUrls[item.uploadIndex];
+      } else {
+        return item.url;
+      }
+    });
 
     return imageUrls;
   };
@@ -512,6 +547,13 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
             )}
           </div>
 
+          {uploadError && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-500 text-red-600 dark:text-red-400 px-3 py-2 rounded mt-2 flex items-start gap-2">
+              <ExclamationCircleIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
+              <span className="text-sm">{uploadError}</span>
+            </div>
+          )}
+
           {!loading && !compressingImages && (
             <div>
               {/* Interaction settings display - only show for new tweets, not edits */}
@@ -604,6 +646,13 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
             </div>
           </div>
         </div>
+
+        {uploadError && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-500 text-red-600 dark:text-red-400 px-3 py-2 rounded mb-2 flex items-start gap-2">
+            <ExclamationCircleIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <span className="text-sm">{uploadError}</span>
+          </div>
+        )}
 
         {/* Controls section - full width on mobile */}
         {!loading && !compressingImages && (

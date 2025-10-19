@@ -14,30 +14,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { image, tweetId, imageIndex, userId } = req.body;
+    const { images, tweetId, userId } = req.body;
 
-    if (!image) {
-      return res.status(400).json({ error: 'No image provided' });
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({ error: 'No images provided' });
     }
 
     if (!userId) {
       return res.status(400).json({ error: 'User ID is required' });
     }
 
-    // Upload to Cloudinary with compression and auto-format conversion
-    const result = await cloudinary.uploader.upload(image, {
-      folder: `twitter-2.0/tweets/${userId}`,
-      public_id: `${tweetId}_${imageIndex}_${Date.now()}`,
-      resource_type: 'image',
-      quality: 'auto:eco',
-      format: 'webp',  // Convert to WebP for smaller file sizes
-    });
+    // Upload all images to Cloudinary in parallel using Promise.all
+    const uploadPromises = images.map((image, index) =>
+      cloudinary.uploader.upload(image, {
+        folder: `twitter-2.0/tweets/${userId}`,
+        public_id: `${tweetId}_${index}_${Date.now()}`,
+        resource_type: 'image',
+        quality: 'auto:eco',
+        format: 'webp',  // Convert to WebP for smaller file sizes
+      })
+    );
+
+    const results = await Promise.all(uploadPromises);
+    const imageUrls = results.map(result => result.secure_url);
 
     return res.status(200).json({
-      imageUrl: result.secure_url
+      imageUrls
     });
   } catch (error) {
     console.error('Cloudinary upload error:', error);
-    return res.status(500).json({ error: 'Failed to upload image' });
+    return res.status(500).json({ error: 'Failed to upload images' });
   }
 }
