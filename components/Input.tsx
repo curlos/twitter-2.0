@@ -67,6 +67,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   const [selectedFiles, setSelectedFiles] = useState([]);
   const filePickerRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [compressingImages, setCompressingImages] = useState(false);
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
   const setEditInteractionSettingsModalOpen = useSetRecoilState(editInteractionSettingsModalState);
@@ -358,6 +359,8 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       initialQuality: 0.7,          // 70% quality
     };
 
+    setCompressingImages(true);
+
     const filePromises = files.map(async (file) => {
       try {
         // Compress the image
@@ -380,9 +383,13 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       }
     });
 
-    Promise.all(filePromises).then(results => {
-      setSelectedFiles(prev => [...prev, ...results]);
-    });
+    Promise.all(filePromises)
+      .then(results => {
+        setSelectedFiles(prev => [...prev, ...results]);
+      })
+      .finally(() => {
+        setCompressingImages(false);
+      });
   };
 
   const removeImage = (index) => {
@@ -458,7 +465,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
 
   return (
     <div className={`w-full relative flex sm:block space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'border-none' : ''}`}>
-      {loading && (
+      {(loading || compressingImages) && (
         <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
           <Spinner />
         </div>
@@ -505,7 +512,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
             )}
           </div>
 
-          {!loading && (
+          {!loading && !compressingImages && (
             <div>
               {/* Interaction settings display - only show for new tweets, not edits */}
               <div className="flex items-center gap-1 py-2 border-t border-[#AAB8C2] dark:border-gray-700">
@@ -599,7 +606,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
         </div>
 
         {/* Controls section - full width on mobile */}
-        {!loading && (
+        {!loading && !compressingImages && (
           <div>
             {/* Interaction settings display - only show for new tweets, not edits */}
             <div className="flex items-center gap-1 py-2">
