@@ -135,7 +135,7 @@ const News: React.FC = () => {
                           </span>
                         </div>
                       </div>
-                      <h2 className="text-lg font-bold mb-2 md:line-clamp-2">
+                      <h2 className="text-lg font-bold mb-2 line-clamp-2">
                         {article.title}
                       </h2>
 
@@ -154,7 +154,7 @@ const News: React.FC = () => {
                       )}
 
                       {article.description && (
-                        <p className="text-gray-700 dark:text-gray-400 md:line-clamp-3 mb-3">
+                        <p className="text-gray-700 dark:text-gray-400 line-clamp-3 mb-3">
                           {article.description}
                         </p>
                       )}

@@ -54,7 +54,7 @@ const ReplyInfoModal: React.FC<ReplyInfoModalProps> = ({
       if (settings.length === 1) {
         description += settings[0];
       } else if (settings.length === 2) {
-        description += settings[0] + ' and ' + settings[1];
+        description += settings[0] + ' or ' + settings[1];
       }
       description += ' can reply to this tweet.';
 
