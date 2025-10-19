@@ -181,6 +181,14 @@ const EditProfileModal = () => {
 
       const file = e.target.files[0];
 
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert(`File type not supported: ${file.name}\n\nPlease upload only JPG, PNG, or WEBP images.`);
+        e.target.value = ''; // Reset the input
+        return;
+      }
+
       // Compression options based on image type
       const compressionOptions = picType === 'profile'
         ? {
@@ -309,6 +317,7 @@ const EditProfileModal = () => {
                         type="file"
                         ref={bannerFilePickerRef}
                         hidden
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
                         onChange={(e) => changePic(e, 'banner')}
                       />
                     </div>
@@ -330,6 +339,7 @@ const EditProfileModal = () => {
                         type="file"
                         ref={profilePicFilePickerRef}
                         hidden
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
                         onChange={(e) => changePic(e, 'profile')}
                       />
                     </div>

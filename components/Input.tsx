@@ -379,6 +379,18 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
 
   const addImageToPost = async (e) => {
     const files = Array.from(e.target.files);
+
+    // Validate file types
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const invalidFiles = files.filter((file: File) => !allowedTypes.includes(file.type));
+
+    if (invalidFiles.length > 0) {
+      const invalidFileNames = invalidFiles.map((f: File) => f.name).join(', ');
+      alert(`The following files are not supported: ${invalidFileNames}\n\nPlease upload only JPG, PNG, or WEBP images.`);
+      e.target.value = ''; // Reset the input
+      return;
+    }
+
     const totalFiles = selectedFiles.length + files.length;
 
     if (totalFiles > MAX_IMAGES) {
@@ -577,7 +589,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                       ref={filePickerRef}
                       hidden
                       multiple
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={addImageToPost}
                     />
                   </div>
@@ -678,7 +690,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                     ref={filePickerRef}
                     hidden
                     multiple
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={addImageToPost}
                   />
                 </div>
