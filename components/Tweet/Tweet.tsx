@@ -165,18 +165,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
     setSelectedImageIndex(null);
   };
 
-  /**
-   * @description - Gets the longest word in string (separated by whitespace).
-   * @returns {String}
-   */
-  const getLongestWord = () => {
-    if (!tweet.text) {
-      return '';
-    } else {
-      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
-    }
-  };
-
   // Check if the tweet has been edited at least once.
   const editedTweet = tweet?.versionHistory && tweet.versionHistory.length > 0;
 
@@ -256,7 +244,6 @@ const Tweet = ({ id, tweet, tweetID, tweetPage, topParentTweet, pastTweet, showF
               parentTweetAuthor,
               isQuoteTweet,
               replyingToDeletedTweet,
-              getLongestWord,
               handleImageClick,
               likesCount,
               retweetsCount,

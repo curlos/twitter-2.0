@@ -8,6 +8,7 @@ import ParentTweet from "../ParentTweet";
 import { TweetDropdown } from "../TweetDropdown";
 import TweetActions from "./TweetActions";
 import { useRouter } from "next/router";
+import { getWordBreakClass } from "../../utils/textHelpers";
 
 const SmallTweet = ({
   retweetedBy,
@@ -24,7 +25,6 @@ const SmallTweet = ({
   parentTweetAuthor,
   isQuoteTweet,
   replyingToDeletedTweet,
-  getLongestWord,
   handleImageClick,
   likesCount,
   retweetsCount,
@@ -107,7 +107,7 @@ const SmallTweet = ({
             )}
 
             <div
-              className={`${pastTweet ? " text-gray-500" : ""} ${getLongestWord().length > 26 ? "break-all" : "break-words"}`}
+              className={`${pastTweet ? " text-gray-500" : ""} ${getWordBreakClass(tweet.text)}`}
               style={{ whiteSpace: "pre-line" }}
             >
               {tweet.text}

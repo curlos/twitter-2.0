@@ -18,6 +18,7 @@ import { useFollow } from '../../utils/useFollow';
 import EditProfileModal from '../../components/EditProfileModal';
 import ImageModal from '../../components/ImageModal';
 import { HiBadgeCheck } from 'react-icons/hi';
+import { getWordBreakClass } from '../../utils/textHelpers';
 
 // Utility function to split array into chunks of specified size
 const chunkArray = (array, chunkSize) => {
@@ -76,7 +77,7 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
 
         <div className="text-base text-gray-500">@{author.tag}</div>
 
-        <div className="text-base">{author.bio}</div>
+        <div className={`text-base ${getWordBreakClass(author.bio)}`} style={{ whiteSpace: "pre-line" }}>{author.bio}</div>
 
         <div className="flex text-base text-gray-500 space-x-4 py-2">
           {author.location ? (

@@ -9,6 +9,7 @@ import { HiBadgeCheck } from "react-icons/hi";
 import ParentTweet from "../ParentTweet";
 import { TweetDropdown } from "../TweetDropdown";
 import TweetActions from "./TweetActions";
+import { getWordBreakClass } from "../../utils/textHelpers";
 
 const BigTweet = ({
   session,
@@ -39,14 +40,6 @@ const BigTweet = ({
   handleInteractionClick,
   getReplyStatus
 }) => {
-  const getLongestWord = () => {
-    if (!tweet.text) {
-      return '';
-    } else {
-      return tweet.text.split(' ').reduce((a, b) => a.length > b.length ? a : b);
-    }
-  };
-
   return (
     <div
       className={`text-base border-b border-[#AAB8C2] dark:border-gray-700 w-full ${isReplyTweetWithConnectedLine ? "p-3 pt-0" : "p-3"}`}
@@ -76,7 +69,7 @@ const BigTweet = ({
         ) : null}
 
         {/* Main content of the tweet - Renders both the text AND image(s) in the tweet. */}
-        <div className={getLongestWord().length > 26 ? "break-all" : "break-words"} style={{ whiteSpace: "pre-line" }}>
+        <div className={getWordBreakClass(tweet.text)} style={{ whiteSpace: "pre-line" }}>
           {tweet.text}
         </div>
         
