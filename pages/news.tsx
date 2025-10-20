@@ -5,6 +5,7 @@ import { ArrowLeftIcon, ExternalLinkIcon } from '@heroicons/react/outline';
 import AppLayout from '../components/Layout/AppLayout';
 import { getLatestNews } from '../services/news.service';
 import { latestNewsFromLateSeptember2025 } from '../latestNewsFromLateSeptember2025';
+import Spinner from '../components/Spinner';
 
 interface NewsItem {
   article_id: string;
@@ -96,8 +97,8 @@ const News: React.FC = () => {
         {/* Content */}
         <div className="pb-20">
           {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lightblue-500"></div>
+            <div className="py-4">
+              <Spinner />
             </div>
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-800">
