@@ -7,6 +7,7 @@ import TweetSkeletonLoader from './TweetSkeletonLoader';
 
 interface SortableTweetListProps {
   tweets: any[];
+  id?: string;
   loading?: boolean;
   emptyStateMessage?: string;
   emptyStateSubtitle?: string;
@@ -22,6 +23,7 @@ interface SortableTweetListProps {
  */
 const SortableTweetList = ({
   tweets,
+  id,
   loading = false,
   emptyStateMessage = 'No Tweets',
   emptyStateSubtitle = 'When you post, they\'ll show up here.',
@@ -56,12 +58,39 @@ const SortableTweetList = ({
   };
 
   /**
-   * @description - Memoized sorted tweets - only recalculates when tweets length or sort type changes
+   * @description - Memoized sorted tweets - recalculates when:
+   * - tweets.length changes (new tweet added/removed)
+   * - sortType changes (user changes sort order)
+   * - id changes (navigating to different tweet page)
+   * - first tweet's parentTweet changes (new tweet data loaded)
+   *
+   * This ensures we recalculate when navigating between pages even if tweet count is the same
    */
   const sortedTweetIds = useMemo(() => {
-    const sorted = getSortedTweets(tweets);
-    return sorted.map(tweet => tweet.uniqueId || tweet.id);
-  }, [tweets.length, sortType]);
+    // If no id is provided, just sort normally (used for feed/profile pages)
+    if (!id) {
+      const sorted = getSortedTweets(tweets);
+      return sorted.map(tweet => tweet.uniqueId || tweet.id);
+    }
+
+    // If id is provided but no tweets yet, return empty (waiting for data to load)
+    if (tweets.length === 0) {
+      return [];
+    }
+
+    // Check if the first tweet's parentTweet matches the current id
+    const firstTweetData = tweets[0]?.data ? tweets[0].data() : tweets[0];
+    const firstTweetParent = firstTweetData?.parentTweet;
+
+    // Only sort if tweets belong to the current parent
+    if (firstTweetParent === id) {
+      const sorted = getSortedTweets(tweets);
+      return sorted.map(tweet => tweet.uniqueId || tweet.id);
+    }
+
+    // If parentTweet doesn't match, these are stale tweets from previous page
+    return [];
+  }, [tweets.length, sortType, id, tweets[0]?.data ? tweets[0].data()?.parentTweet : tweets[0]?.parentTweet]);
 
   /**
    * @description - Get current tweet data in sorted order using stable IDs

@@ -47,6 +47,7 @@ const TweetPage = () => {
                 ) : (
                     <SortableTweetList
                         tweets={replies}
+                        id={tweetID}
                         emptyStateMessage="No replies yet"
                         emptyStateSubtitle="Be the first to reply!"
                         emptyStateIcon={ChatAltIcon}
