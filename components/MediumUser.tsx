@@ -18,7 +18,6 @@ interface Props {
  * @returns {React.FC}
  */
 const MediumUser = ({ userID, user }: Props) => {
-
   const { data: session } = useSession();
   const [followed, setFollowed] = useState(false);
   const [_authModalOpen, setAuthModalOpen] = useRecoilState(authModalState);
@@ -71,6 +70,17 @@ const MediumUser = ({ userID, user }: Props) => {
     }
   };
 
+  const renderFollowButton = () => {
+    return (
+      !session || userID !== session.user.uid ? (
+        <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={handleFollowClick}>{followed ? 'Following' : 'Follow'}</div>
+      ) : (
+        // If the user is not found (meaning their account has been deleted), then don't render anything.
+        null
+      )
+    )
+  }
+
   return (
     user ? (
         <Link href={`/profile/${user.tag}`}>
@@ -88,19 +98,17 @@ const MediumUser = ({ userID, user }: Props) => {
                   </div>
                 </Link>
                 <div className="text-gray-700 dark:text-gray-400">@{user.tag}</div>
+                <div className="truncate max-w-[230px] sm:max-w-[300px] md:max-w-[400px]">{user.bio}</div>
 
-                <div>{user.bio}</div>
+                <div className="pt-2 flex sm:hidden">
+                  {renderFollowButton()}
+                </div>
               </div>
             </div>
 
-            {!session || userID !== session.user.uid ? (
-              <div className="font-semibold text-sm px-4 py-2 text-black bg-white rounded-full" onClick={handleFollowClick}>{followed ? 'Following' : 'Follow'}</div>
-            ) : (
-              // If the user is not found (meaning their account has been deleted), then don't render anything.
-              null
-            )}
-
-
+            <div className="hidden sm:block">
+              {renderFollowButton()}
+            </div>
           </div>
         </Link>
       ) : null
