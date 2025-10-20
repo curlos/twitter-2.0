@@ -299,7 +299,7 @@ const TweetImages = ({ tweet, handleImageClick }) => {
               <img
                 src={tweet.images[0]}
                 alt=""
-                className="rounded-l-2xl w-full h-full object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
+                className="rounded-l-2xl w-full h-full aspect-[6/2] object-cover border border-[#AAB8C2] dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={(e) => handleImageClick(e, 0)}
               />
               <div className="flex flex-col gap-2">
