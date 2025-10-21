@@ -8,7 +8,8 @@ import { colorThemeState, editProfileModalState } from '../atoms/atom';
 import { FiCamera } from 'react-icons/fi';
 import { db } from '../firebase';
 import { useRouter } from 'next/router';
-import imageCompression from 'browser-image-compression';
+import { processImage, isValidImageType, SUPPORTED_IMAGE_FORMATS } from '../utils/imageProcessing';
+import Spinner from './Spinner';
 
 /**
  * @description - Renders a modal where the user can edit their profile info such as their name, username, bio, location and website.
@@ -33,6 +34,8 @@ const EditProfileModal = () => {
   const [selectedFileProfilePic, setSelectedFileProfilePic] = useState(null);
   const [selectedFileBanner, setSelectedFileBanner] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [processingImage, setProcessingImage] = useState(false);
+  const [imageError, setImageError] = useState('');
   const [theme, _setTheme] = useRecoilState(colorThemeState);
 
   const validateUsername = () => {
@@ -172,7 +175,7 @@ const EditProfileModal = () => {
    * @description - Handles when a user changes their profile pic by uploading a new file.
    * @param e - event from input
    */
-  const changePic = async (e, picType: String) => {
+  const changePic = async (e: any, picType: String) => {
     try {
       // Check if a file was selected
       if (!e.target.files[0]) {
@@ -180,11 +183,14 @@ const EditProfileModal = () => {
       }
 
       const file = e.target.files[0];
+      setImageError(''); // Clear any previous errors
+      setProcessingImage(true); // Start loading
 
       // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        alert(`File type not supported: ${file.name}\n\nPlease upload only JPG, PNG, or WEBP images.`);
+      if (!isValidImageType(file)) {
+        const errorMsg = `File type not supported: ${file.name}. Please upload only ${SUPPORTED_IMAGE_FORMATS} images.`;
+        setImageError(errorMsg);
+        setProcessingImage(false);
         e.target.value = ''; // Reset the input
         return;
       }
@@ -204,39 +210,23 @@ const EditProfileModal = () => {
             initialQuality: 0.7,
           };
 
-      // Compress the image
-      const compressedFile = await imageCompression(file, compressionOptions);
+      // Process the image (convert HEIC if needed, then compress)
+      const processedImageDataUrl = await processImage(file, compressionOptions);
 
-      // FileReader is a JavaScript Object used to read data from 'Blob' or 'File' objects.
-      const reader = new FileReader();
-
-      // Onload will be finished when a read operation of a file is complete.
-      // Extract the result of reading the file (this will be a data URL representing the file)
-      // and set it in the state.
-      reader.onload = (readerEvent) => {
-        if (picType === 'profile') {
-          setSelectedFileProfilePic(readerEvent.target.result);
-        } else if (picType === 'banner') {
-          setSelectedFileBanner(readerEvent.target.result);
-        }
-      };
-
-      // Start reading the compressed file as a data URL
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.error('Error compressing image:', error);
-      // Fallback to original file if compression fails
-      if (e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (readerEvent) => {
-          if (picType === 'profile') {
-            setSelectedFileProfilePic(readerEvent.target.result);
-          } else if (picType === 'banner') {
-            setSelectedFileBanner(readerEvent.target.result);
-          }
-        };
-        reader.readAsDataURL(e.target.files[0]);
+      // Set the processed image in state
+      if (picType === 'profile') {
+        setSelectedFileProfilePic(processedImageDataUrl);
+      } else if (picType === 'banner') {
+        setSelectedFileBanner(processedImageDataUrl);
       }
+      setImageError(''); // Clear error on success
+    } catch (error: any) {
+      console.error('Error compressing image:', error);
+      const errorMsg = `Failed to process ${e.target.files[0]?.name || 'image'}. This file format may not be supported by your browser. Please try JPG, PNG, or WEBP.`;
+      setImageError(errorMsg);
+      e.target.value = ''; // Reset the input
+    } finally {
+      setProcessingImage(false); // Stop loading
     }
   };
 
@@ -272,7 +262,13 @@ const EditProfileModal = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="inline-block align-bottom bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw]">
+              <div className="inline-block align-bottom bg-white dark:bg-black rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-top w-[90vw] lg:w-[50vw] relative">
+                {processingImage && (
+                  <div className="absolute inset-0 flex justify-center items-center z-50 bg-white/50 dark:bg-black/50 rounded-2xl">
+                    <Spinner />
+                  </div>
+                )}
+
                 <div className="bg-white dark:bg-black p-3 border-b border-[#AAB8C2] dark:border-gray-700">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -301,8 +297,8 @@ const EditProfileModal = () => {
 
                   <div className="">
                     <div
-                      className={`w-full h-[140px] sm:h-[200px] xl:h-[225px] relative flex items-center justify-center overflow-hidden bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                      onClick={loading ? undefined : () => bannerFilePickerRef.current.click()}
+                      className={`w-full h-[140px] sm:h-[200px] xl:h-[225px] relative flex items-center justify-center overflow-hidden bg-black ${(loading || processingImage) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      onClick={(loading || processingImage) ? undefined : () => bannerFilePickerRef.current.click()}
                     >
                       {/* Background image with opacity */}
                       <div
@@ -317,14 +313,14 @@ const EditProfileModal = () => {
                         type="file"
                         ref={bannerFilePickerRef}
                         hidden
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                         onChange={(e) => changePic(e, 'banner')}
                       />
                     </div>
 
                     <div
-                      className={`mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                      onClick={loading ? undefined : () => profilePicFilePickerRef.current.click()}
+                      className={`mt-[-56px] h-[112px] w-[112px] ml-2 rounded-full relative flex items-center justify-center border-4 border-white dark:border-black overflow-hidden z-50 bg-black ${(loading || processingImage) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      onClick={(loading || processingImage) ? undefined : () => profilePicFilePickerRef.current.click()}
                     >
                       {/* Background image with opacity */}
                       <div
@@ -339,13 +335,19 @@ const EditProfileModal = () => {
                         type="file"
                         ref={profilePicFilePickerRef}
                         hidden
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                         onChange={(e) => changePic(e, 'profile')}
                       />
                     </div>
 
 
                   </div>
+
+                  {imageError && (
+                    <div className="mx-3 mt-3 bg-red-50 dark:bg-red-900/20 border border-red-500 text-red-600 dark:text-red-400 px-3 py-2 rounded flex items-start gap-2">
+                      <span className="text-sm">{imageError}</span>
+                    </div>
+                  )}
 
                   <div className="p-3 space-y-4">
                     <div className="p-2 border border-gray-700 space-y-1 rounded">

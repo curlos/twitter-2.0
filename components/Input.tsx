@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { db } from '../firebase';
-import imageCompression from 'browser-image-compression';
+import { processImage, isValidImageType, SUPPORTED_IMAGE_FORMATS, batchImagesBySize } from '../utils/imageProcessing';
 
 const MAX_TWEET_LENGTH = 500;
 const MAX_IMAGES = 10;
@@ -68,6 +68,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   const filePickerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [compressingImages, setCompressingImages] = useState(false);
+  const [imageProcessingProgress, setImageProcessingProgress] = useState({ current: 0, total: 0 });
   const [uploadError, setUploadError] = useState('');
   const [_isOpen, setIsOpen] = useRecoilState(newTweetModalState);
   const setIsQuoteTweet = useSetRecoilState(isQuoteTweetState);
@@ -333,30 +334,42 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
       }
     }
 
-    // Upload all new images in a single API call
+    // Upload images in batches to avoid 1MB limit
     let uploadedUrls = [];
     if (imagesToUpload.length > 0) {
       try {
-        const response = await fetch('/api/upload/tweet-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            images: imagesToUpload,
-            tweetId: docRefId,
-            userId: session.user.uid,
-          }),
-        });
+        // Batch images by size
+        const batches = batchImagesBySize(imagesToUpload);
 
-        const data = await response.json();
+        // Upload each batch sequentially
+        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+          const batch = batches[batchIndex];
+          const batchImages = batch.map(item => item.image);
 
-        if (response.ok) {
-          uploadedUrls = data.imageUrls;
-        } else {
-          setUploadError(data.error || 'Failed to upload images. Please try again.');
-          setLoading(false);
-          throw new Error('Failed to upload images');
+          const response = await fetch('/api/upload/tweet-image', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              images: batchImages,
+              tweetId: docRefId,
+              userId: session.user.uid,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Add returned URLs to the uploadedUrls array in the correct order
+            batch.forEach((item, i) => {
+              uploadedUrls[item.originalIndex] = data.imageUrls[i];
+            });
+          } else {
+            setUploadError(data.error || 'Failed to upload images. Please try again.');
+            setLoading(false);
+            throw new Error('Failed to upload images');
+          }
         }
       } catch (error) {
         setUploadError('Failed to upload images. Please try again.');
@@ -381,12 +394,11 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     const files = Array.from(e.target.files);
 
     // Validate file types
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const invalidFiles = files.filter((file: File) => !allowedTypes.includes(file.type));
+    const invalidFiles = files.filter((file: File) => !isValidImageType(file));
 
     if (invalidFiles.length > 0) {
       const invalidFileNames = invalidFiles.map((f: File) => f.name).join(', ');
-      alert(`The following files are not supported: ${invalidFileNames}\n\nPlease upload only JPG, PNG, or WEBP images.`);
+      alert(`The following files are not supported: ${invalidFileNames}\n\nPlease upload only ${SUPPORTED_IMAGE_FORMATS} images.`);
       e.target.value = ''; // Reset the input
       return;
     }
@@ -407,35 +419,40 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
     };
 
     setCompressingImages(true);
+    setUploadError('');
+    setImageProcessingProgress({ current: 0, total: files.length });
 
-    const filePromises = files.map(async (file) => {
+    let completedCount = 0;
+
+    const filePromises = files.map(async (file: File) => {
       try {
-        // Compress the image
-        const compressedFile = await imageCompression(file as File, compressionOptions);
+        const result = await processImage(file, compressionOptions);
 
-        // Convert compressed file to base64
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (readerEvent) => resolve(readerEvent.target.result);
-          reader.readAsDataURL(compressedFile);
-        });
-      } catch (error) {
-        console.error('Error compressing image:', error);
-        // Fallback to original file if compression fails
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (readerEvent) => resolve(readerEvent.target.result);
-          reader.readAsDataURL(file as Blob);
-        });
+        // Update progress when this image completes
+        completedCount++;
+        setImageProcessingProgress({ current: completedCount, total: files.length });
+
+        return result;
+      } catch (error: any) {
+        console.error('Error processing image:', error.message);
+        // If processing fails, throw error with details
+        throw new Error(error.message || `Failed to process ${file.name}. This file format may not be supported by your browser.`);
       }
     });
 
     Promise.all(filePromises)
       .then(results => {
         setSelectedFiles(prev => [...prev, ...results]);
+        setUploadError('');
+      })
+      .catch((error) => {
+        console.error('Error processing images:', error);
+        setUploadError(error.message || 'Failed to process one or more images. Please try a different format (JPG, PNG, or WEBP).');
+        e.target.value = ''; // Reset the input
       })
       .finally(() => {
         setCompressingImages(false);
+        setImageProcessingProgress({ current: 0, total: 0 });
       });
   };
 
@@ -513,8 +530,13 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
   return (
     <div className={`w-full relative flex sm:block space-x-2 z-10 border-b border-[#AAB8C2] dark:border-gray-700 ${fromModal ? 'border-none' : ''}`}>
       {(loading || compressingImages) && (
-        <div className="absolute inset-0 flex justify-center items-center z-20 bg-white/50 dark:bg-black/50">
+        <div className="absolute inset-0 flex flex-col justify-center items-center z-20 bg-white/50 dark:bg-black/50 pt-2">
           <Spinner />
+          {imageProcessingProgress.total > 0 && (
+            <div className="mt-[-6px] pb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Processed {imageProcessingProgress.current} / {imageProcessingProgress.total} images
+            </div>
+          )}
         </div>
       )}
 
@@ -589,7 +611,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                       ref={filePickerRef}
                       hidden
                       multiple
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                       onChange={addImageToPost}
                     />
                   </div>
@@ -690,7 +712,7 @@ const Input = ({ tweetToEdit, setTweetToEdit, tweetBeingRepliedToId, isNewReply,
                     ref={filePickerRef}
                     hidden
                     multiple
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                     onChange={addImageToPost}
                   />
                 </div>
