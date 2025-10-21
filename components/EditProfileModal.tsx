@@ -10,6 +10,7 @@ import { db } from '../firebase';
 import { useRouter } from 'next/router';
 import { processImage, isValidImageType, SUPPORTED_IMAGE_FORMATS } from '../utils/imageProcessing';
 import Spinner from './Spinner';
+import ImageCropModal from './ImageCropModal';
 
 /**
  * @description - Renders a modal where the user can edit their profile info such as their name, username, bio, location and website.
@@ -37,6 +38,11 @@ const EditProfileModal = () => {
   const [processingImage, setProcessingImage] = useState(false);
   const [imageError, setImageError] = useState('');
   const [theme, _setTheme] = useRecoilState(colorThemeState);
+
+  // Crop modal state
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [cropImageType, setCropImageType] = useState<'profile' | 'banner'>('profile');
 
   const validateUsername = () => {
     // Check for spaces
@@ -173,6 +179,7 @@ const EditProfileModal = () => {
 
   /**
    * @description - Handles when a user changes their profile pic by uploading a new file.
+   * Converts HEIC if needed, then opens the crop modal for the user to reposition the image.
    * @param e - event from input
    */
   const changePic = async (e: any, picType: String) => {
@@ -195,8 +202,42 @@ const EditProfileModal = () => {
         return;
       }
 
+      // Process the image first (convert HEIC if needed) but without compression
+      // We'll compress after cropping
+      const processedImageDataUrl = await processImage(file, {
+        maxSizeMB: 10, // Large size to preserve quality for cropping
+        maxWidthOrHeight: 4096, // High resolution for cropping
+        useWebWorker: true,
+        initialQuality: 1, // Full quality
+      });
+
+      // Now show the crop modal with the processed image
+      setImageToCrop(processedImageDataUrl);
+      setCropImageType(picType as 'profile' | 'banner');
+      setShowCropModal(true);
+      setProcessingImage(false);
+
+      e.target.value = ''; // Reset the input
+    } catch (error: any) {
+      console.error('Error processing image:', error);
+      const errorMsg = `Failed to process ${e.target.files[0]?.name || 'image'}. This file format may not be supported by your browser. Please try JPG, PNG, or WEBP.`;
+      setImageError(errorMsg);
+      setProcessingImage(false);
+      e.target.value = ''; // Reset the input
+    }
+  };
+
+  /**
+   * @description - Handles the cropped image from the crop modal and processes it
+   * @param croppedImageUrl - Data URL of the cropped image
+   */
+  const handleCropComplete = async (croppedImageUrl: string) => {
+    try {
+      setProcessingImage(true); // Start loading
+      setImageError(''); // Clear any previous errors
+
       // Compression options based on image type
-      const compressionOptions = picType === 'profile'
+      const compressionOptions = cropImageType === 'profile'
         ? {
             maxSizeMB: 0.16,          // 160KB for profile pics
             maxWidthOrHeight: 600,     // Profile pics don't need huge dimensions
@@ -210,21 +251,25 @@ const EditProfileModal = () => {
             initialQuality: 0.7,
           };
 
+      // Convert data URL to File object for processing
+      const response = await fetch(croppedImageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+
       // Process the image (convert HEIC if needed, then compress)
       const processedImageDataUrl = await processImage(file, compressionOptions);
 
       // Set the processed image in state
-      if (picType === 'profile') {
+      if (cropImageType === 'profile') {
         setSelectedFileProfilePic(processedImageDataUrl);
-      } else if (picType === 'banner') {
+      } else if (cropImageType === 'banner') {
         setSelectedFileBanner(processedImageDataUrl);
       }
       setImageError(''); // Clear error on success
     } catch (error: any) {
-      console.error('Error compressing image:', error);
-      const errorMsg = `Failed to process ${e.target.files[0]?.name || 'image'}. This file format may not be supported by your browser. Please try JPG, PNG, or WEBP.`;
+      console.error('Error processing cropped image:', error);
+      const errorMsg = `Failed to process cropped image. Please try again.`;
       setImageError(errorMsg);
-      e.target.value = ''; // Reset the input
     } finally {
       setProcessingImage(false); // Stop loading
     }
@@ -450,6 +495,14 @@ const EditProfileModal = () => {
             </Transition.Child>
           </div>
         </div>
+        <ImageCropModal
+          isOpen={showCropModal}
+          onClose={() => setShowCropModal(false)}
+          imageSrc={imageToCrop || ''}
+          aspectRatio={cropImageType === 'profile' ? 1 : 3}
+          onCropComplete={handleCropComplete}
+          imageType={cropImageType}
+        />
       </Dialog>
     </Transition.Root>
   );
