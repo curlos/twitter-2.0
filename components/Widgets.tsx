@@ -5,6 +5,7 @@ import SmallEvent from './SmallEvent';
 import { getLatestNews } from '../services/news.service';
 import { useDebounceSearch } from '../hooks/useDebounceSearch';
 import { latestNewsFromLateSeptember2025 } from '../latestNewsFromLateSeptember2025';
+import Spinner from './Spinner';
 
 /**
  * @description - This is the RIGHT sidebar displayed on DESKTOP (or a screen big enough to hold it). This will show recommended users to follow as well as the trending events of the day. Those trending events are currently set as only video games but may change in the future.
@@ -14,6 +15,7 @@ const Widgets = () => {
   const router = useRouter();
   const { searchQuery, setSearchQuery } = useDebounceSearch();
   const [latestNews, setLatestNews] = useState([]);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
 
 
   // Make the call to get the latest news once.
@@ -26,6 +28,7 @@ const Widgets = () => {
    */
   const getData = async () => {
     try {
+      setIsLoadingNews(true);
       const latestNewsInCache = sessionStorage.getItem('latestNews');
       let newsData = [];
 
@@ -52,6 +55,8 @@ const Widgets = () => {
       // Use fallback data when error occurs
       const sortedFallbackNews = latestNewsFromLateSeptember2025.sort((a, b) => a.source_priority - b.source_priority);
       setLatestNews(sortedFallbackNews);
+    } finally {
+      setIsLoadingNews(false);
     }
   };
 
@@ -70,16 +75,24 @@ const Widgets = () => {
         <div className="bg-gray-200 dark:bg-gray-800 rounded-lg py-3 w-[350px]">
           <h2 className="text-xl font-bold mb-4 px-3">What's happening</h2>
 
-          {latestNews && latestNews.length > 0 && latestNews.slice(0, 5).map((news) => (
-            <SmallEvent key={news.link} news={news} />
-          ))}
+          {isLoadingNews ? (
+            <div className="py-4">
+              <Spinner />
+            </div>
+          ) : (
+            <>
+              {latestNews && latestNews.length > 0 && latestNews.slice(0, 5).map((news) => (
+                <SmallEvent key={news.link} news={news} />
+              ))}
 
-          <button
-            className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3"
-            onClick={() => router.push('/news')}
-          >
-            Show more
-          </button>
+              <button
+                className="cursor-pointer text-lightblue-400 hover:underline px-3 pt-3"
+                onClick={() => router.push('/news')}
+              >
+                Show more
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>
