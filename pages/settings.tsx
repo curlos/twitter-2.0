@@ -131,7 +131,7 @@ const EmailAccordion = ({ session, update }) => {
       return;
     }
 
-    if (newEmail === session?.user?.email) {
+    if (newEmail?.toLowerCase() === session?.user?.email?.toLowerCase()) {
       setEmailError('New email must be different from current email');
       return;
     }

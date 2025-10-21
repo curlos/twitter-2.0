@@ -20,8 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Check if user already exists
-    const existingUserQuery = query(collection(db, 'users'), where('email', '==', email));
+    // Check if user already exists (case-insensitive)
+    const existingUserQuery = query(collection(db, 'users'), where('email', '==', email?.toLowerCase()));
     const existingUserSnapshot = await getDocs(existingUserQuery);
 
     if (existingUserSnapshot.docs.length > 0) {
@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Create user document
     const userDoc = {
-      email,
+      email: email?.toLowerCase(),
       name,
       tag: userTag,
       hashedPassword,

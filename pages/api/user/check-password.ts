@@ -16,8 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Find current user document by email
-    const currentUserQuery = query(collection(db, 'users'), where('email', '==', session.user.email));
+    // Find current user document by email (case-insensitive)
+    const currentUserQuery = query(collection(db, 'users'), where('email', '==', session.user.email?.toLowerCase()));
     const currentUserSnapshot = await getDocs(currentUserQuery);
 
     if (currentUserSnapshot.docs.length === 0) {

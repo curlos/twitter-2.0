@@ -26,21 +26,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid email format' });
   }
 
-  if (newEmail === session.user.email) {
+  if (newEmail?.toLowerCase() === session.user.email?.toLowerCase()) {
     return res.status(400).json({ error: 'New email must be different from current email' });
   }
 
   try {
-    // Check if new email is already in use
-    const emailCheckQuery = query(collection(db, 'users'), where('email', '==', newEmail));
+    // Check if new email is already in use (case-insensitive)
+    const emailCheckQuery = query(collection(db, 'users'), where('email', '==', newEmail?.toLowerCase()));
     const emailCheckSnapshot = await getDocs(emailCheckQuery);
 
     if (emailCheckSnapshot.docs.length > 0) {
       return res.status(400).json({ error: 'Email is already in use' });
     }
 
-    // Find current user document by email
-    const currentUserQuery = query(collection(db, 'users'), where('email', '==', session.user.email));
+    // Find current user document by email (case-insensitive)
+    const currentUserQuery = query(collection(db, 'users'), where('email', '==', session.user.email?.toLowerCase()));
     const currentUserSnapshot = await getDocs(currentUserQuery);
 
     if (currentUserSnapshot.docs.length === 0) {
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const userDoc = currentUserSnapshot.docs[0];
     await updateDoc(userDoc.ref, {
-      email: newEmail
+      email: newEmail?.toLowerCase()
     });
 
     return res.status(200).json({ success: true, message: 'Email updated successfully' });

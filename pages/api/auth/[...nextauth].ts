@@ -85,7 +85,7 @@ const addNewUser = async (session: Session) => {
 
   // Add this user to the "users" collection, thus creating a NEW user.
   const docRef = await addDoc(collection(db, 'users'), {
-    email: session.user.email,
+    email: session.user.email?.toLowerCase(),
     name: session.user.name,
     profilePic: session.user.image,
     tag: userTag,
@@ -125,8 +125,8 @@ export const authOptions = {
 
           const { query, collection, where, getDocs } = firebase;
 
-          // Look up user by email
-          const q = query(collection(db, "users"), where('email', '==', credentials.email));
+          // Look up user by email (case-insensitive)
+          const q = query(collection(db, "users"), where('email', '==', credentials.email?.toLowerCase()));
           const querySnapshot = await withTimeout(getDocs(q), 3000);
 
           if ((querySnapshot as any)?.docs?.length === 0) {
@@ -268,7 +268,8 @@ export const authOptions = {
 
         const { query, collection, where, getDocs } = firebase;
 
-        const q = query(collection(db, "users"), where('email', '==', session.user.email));
+        // Look up user by email (case-insensitive)
+        const q = query(collection(db, "users"), where('email', '==', session.user.email?.toLowerCase()));
         const querySnapshot = await withTimeout(getDocs(q), 3000);
 
         if ((querySnapshot as any)?.docs?.length > 0) {

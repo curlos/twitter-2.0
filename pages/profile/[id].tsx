@@ -87,15 +87,13 @@ const ProfileHeader = ({ author, session, id, followed, handleEditOrFollow, foll
             </div>
           ) : null}
 
-          <div className="hidden sm:block">
-            {author.website ? (
-              <div className="flex space-x-1">
-                <LinkIcon className="h-5 w-5 flex-shrink-0" />
-                <a href={`${!author.website.includes('https://') ?
-                  `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline truncate max-w-[200px]">{author.website}</a>
-              </div>
-            ) : null}
-          </div>
+          {author.website ? (
+            <div className="hidden sm:flex space-x-1">
+              <LinkIcon className="h-5 w-5 flex-shrink-0" />
+              <a href={`${!author.website.includes('https://') ?
+                `https://${author.website}` : author.website}`} target="_blank" className="text-lightblue-400 hover:underline truncate max-w-[200px]">{author.website}</a>
+            </div>
+          ) : null}
 
           <div className="flex space-x-1">
             <CalendarIcon className="h-5 w-5" />
