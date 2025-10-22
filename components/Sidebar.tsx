@@ -50,7 +50,7 @@ const Sidebar = () => {
   const showLoginAndSignupButtons = !session || !session.user
 
   return (
-    <div className={`${theme} hidden sm:flex flex-col sticky top-0 h-screen px-4 pt-4 overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
+    <div className={`${theme} hidden sm:flex flex-col sticky top-0 h-screen px-4 pt-4 xl:overflow-auto scrollbar-hide border-r border-gray-400 dark:border-gray-700 w-[80px] xl:w-[280px] py-4`}>
       <div className="flex flex-col justify-start items-center xl:items-start space-y-6 flex-grow">
         <div className="cursor-pointer" onClick={() => router.push('/')}>
           <BsTwitter className="h-[30px] w-[30px] text-lightblue-500 dark:text-white" />
@@ -103,7 +103,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="hidden xl:block">
+      <div className="hidden sm:block">
         <ProfileButton />
       </div>
     </div>

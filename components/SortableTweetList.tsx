@@ -149,8 +149,8 @@ const SortableTweetList = ({
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-gray-900 dark:text-gray-500">
           {EmptyIcon && <EmptyIcon className="h-12 w-12 mb-4" />}
-          <p className="text-xl font-semibold">{emptyStateMessage}</p>
-          <p className="text-gray-700 dark:text-gray-400 mt-2">{emptyStateSubtitle}</p>
+          <p className="text-xl font-semibold px-2">{emptyStateMessage}</p>
+          <p className="text-gray-700 dark:text-gray-400 mt-2 px-4">{emptyStateSubtitle}</p>
         </div>
       )}
 

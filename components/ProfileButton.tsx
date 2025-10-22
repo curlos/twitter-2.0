@@ -20,16 +20,16 @@ const ProfileButton = ({ onMenuItemClick }: ProfileButtonProps) => {
         <Menu>
           {({ open }) => (
             <>
-              <Menu.Button className="flex items-center space-x-2 w-full p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-base">
-                <img src={session.user.profilePic} alt={`${session.user.tag}'s profile pic`} className="rounded-full w-[55px] h-[55px] object-cover" />
-                <div className="flex flex-col w-full">
+              <Menu.Button className="flex items-center space-x-2 w-full xl:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-base">
+                <img src={session.user.profilePic} alt={`${session.user.tag}'s profile pic`} className="rounded-full xl:w-[55px] xl:h-[55px] object-cover" />
+                <div className="hidden xl:flex flex-col w-full">
                   <div className="flex items-center">
                     <div className="text-left truncate max-w-[150px]">{session.user.name}</div>
                     <HiBadgeCheck className="h-[18px] w-[18px] ml-[2px] text-lightblue-500" />
                   </div>
                   <div className="text-gray-500 break-word text-left">@{session.user.tag}</div>
                 </div>
-                <DotsHorizontalIcon className="h-5 w-5 text-gray-700 dark:text-gray-400" />
+                <DotsHorizontalIcon className="hidden xl:block h-5 w-5 text-gray-700 dark:text-gray-400" />
               </Menu.Button>
 
               <Transition
@@ -43,7 +43,7 @@ const ProfileButton = ({ onMenuItemClick }: ProfileButtonProps) => {
               >
                 <Menu.Items
                   static
-                  className="absolute -top-2 transform -translate-y-full left-0 w-full origin-bottom-left divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
+                  className="absolute -top-2 transform -translate-y-full left-0 w-[200px] xl:w-full origin-bottom-left divide-y rounded-md shadow-gray-800 shadow-lg outline-none border border-[#AAB8C2] dark:border-gray-700 z-[100]"
                 >
                   <div className="p-1 bg-white dark:bg-black rounded-md">
                     <Menu.Item>
