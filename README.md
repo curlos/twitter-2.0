@@ -16,6 +16,24 @@ A modern, full-featured Twitter clone built with Next.js, TypeScript, and Fireba
   </p>
 </div>
 
+## 📱 Screenshots
+
+<div align="center">
+
+### 🏠 Homepage/Feed Page (Desktop & Mobile)
+<img src="https://github.com/user-attachments/assets/42086562-1e11-41c9-9dce-79485b515c84" height="250" /> <img src="https://github.com/user-attachments/assets/2d6f9e1b-ecb3-40b8-8289-09e220648a3c" height="250" />
+
+### 👟 Tweet Page (Desktop & Mobile)
+<img src="https://github.com/user-attachments/assets/c94f6efe-e2fe-49ac-9053-679c9b46403e" height="250" /> <img src="https://github.com/user-attachments/assets/982ae6a3-af1e-436e-b8ee-6be7b62991d4" height="250" />
+
+### 📱 Profile Page (Desktop & Mobile)
+<img src="https://github.com/user-attachments/assets/7755230c-c097-4433-bd6d-e2564bd7a754" height="250" /> <img src="https://github.com/user-attachments/assets/e06f3dfc-0420-4438-88af-920460eda924" height="250" />
+
+### 🛒 News Page (Desktop & Mobile)
+<img src="https://github.com/user-attachments/assets/45a78737-351b-4191-9a97-0eb67da3ef35" height="250" /> <img src="https://github.com/user-attachments/assets/6dff0460-dc30-4011-ad2c-f9b0daf9d0ce" height="250" />
+
+</div>
+
 ## ✨ Features
 
 ### Core Twitter Functionality
